@@ -5,10 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.buildCreate = buildCreate;
 
-var _knex = require('knex');
-
-var _knex2 = _interopRequireDefault(_knex);
-
 var _setParams = require('./../utils/set-params');
 
 var _setParams2 = _interopRequireDefault(_setParams);

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Types = exports.Schema = undefined;
+exports.middleware = exports.Types = exports.Schema = undefined;
 
 var _knex = require('knex');
 
@@ -51,6 +51,7 @@ function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in ob
 
 exports.Schema = _schema2.default;
 var Types = exports.Types = _schemaTypes2.default;
+var middleware = exports.middleware = _knex2.default;
 
 exports.default = function () {
   var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
