@@ -1,5 +1,5 @@
 {
-  "name": "microjs-plugins-dal",
+  "name": "@microjs/microjs-plugins-dal",
   "version": "0.1.0",
   "description": "Плагин Microjs для взаимодействия с базой данных",
   "main": "index.js",
