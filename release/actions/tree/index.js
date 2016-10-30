@@ -29,7 +29,7 @@ exports.default = function (middleware, micro, plugin) {
     },
     create: (0, _createNode2.default)(middleware, micro, plugin),
     update: (0, _updateNode2.default)(middleware, micro, plugin),
-    delete: (0, _removeNode2.default)(middleware, micro, plugin)
+    remove: (0, _removeNode2.default)(middleware, micro, plugin)
   };
 };
 //# sourceMappingURL=index.js.map

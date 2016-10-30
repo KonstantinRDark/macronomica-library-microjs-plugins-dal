@@ -91,7 +91,7 @@ exports.default = function () {
         count: (0, _count2.default)(middleware, micro, plugin),
         create: (0, _create2.default)(middleware, micro, plugin),
         update: (0, _update2.default)(middleware, micro, plugin),
-        delete: (0, _remove2.default)(middleware, micro, plugin)
+        remove: (0, _remove2.default)(middleware, micro, plugin)
       }
     };
   };

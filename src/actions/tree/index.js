@@ -10,6 +10,6 @@ export default (middleware, micro, plugin) => {
     },
     create: createNode(middleware, micro, plugin),
     update: updateNode(middleware, micro, plugin),
-    delete: removeNode(middleware, micro, plugin)
+    remove: removeNode(middleware, micro, plugin)
   }
 }

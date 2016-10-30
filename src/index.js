@@ -46,7 +46,7 @@ export default ({ driver:client, ...connection } = {}) => (micro, name, pluginId
       count : count(middleware, micro, plugin),
       create: create(middleware, micro, plugin),
       update: update(middleware, micro, plugin),
-      delete: remove(middleware, micro, plugin)
+      remove: remove(middleware, micro, plugin)
     }
   }
 }
