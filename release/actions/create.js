@@ -51,7 +51,7 @@ function buildCreate(middleware, schema) {
     builder.then(resolve).catch(function (error) {
       reject(error.code === _constants.ERROR_FIND_ONE ? error : {
         code: _constants.ERROR_CREATE,
-        message: error.detail
+        message: error.detail || error.message.split(' - ')[1]
       });
     });
   });

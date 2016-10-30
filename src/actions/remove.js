@@ -24,7 +24,7 @@ export function buildRemove (middleware, schema, criteria = {}) {
       .catch(error => {
         reject({
           code   : ERROR_REMOVE,
-          message: error.detail
+          message: error.detail || error.message.split(' - ')[ 1 ]
         });
       });
   });

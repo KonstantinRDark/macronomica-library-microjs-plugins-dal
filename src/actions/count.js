@@ -1,5 +1,5 @@
 import setCriteria from './../utils/set-criteria';
-import {ERROR_COUNT} from './constants';
+import { ERROR_COUNT } from './constants';
 
 export default (middleware, micro, plugin) =>
   (schema, params, options) =>
@@ -26,7 +26,7 @@ export function buildCount (middleware, schema, criteria = {}, { sql = false } =
       .catch(error => {
         reject({
           code   : ERROR_COUNT,
-          message: error.detail
+          message: error.detail || error.message.split(' - ')[ 1 ]
         });
       });
   });

@@ -40,7 +40,7 @@ export function buildCreate (middleware, schema, params = {}, options = {}) {
       .catch(error => {
         reject(error.code === ERROR_FIND_ONE ? error : {
           code   : ERROR_CREATE,
-          message: error.detail
+          message: error.detail || error.message.split(' - ')[ 1 ]
         });
       });
   });

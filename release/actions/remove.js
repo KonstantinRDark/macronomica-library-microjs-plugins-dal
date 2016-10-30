@@ -39,7 +39,7 @@ function buildRemove(middleware, schema) {
     builder.then(resolve).catch(function (error) {
       reject({
         code: _constants.ERROR_REMOVE,
-        message: error.detail
+        message: error.detail || error.message.split(' - ')[1]
       });
     });
   });

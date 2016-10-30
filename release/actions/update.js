@@ -56,7 +56,7 @@ function buildUpdate(middleware, schema) {
       return builder.catch(function (error) {
         reject(error.code === _constants.ERROR_FIND_ONE ? error : {
           code: _constants.ERROR_UPDATE,
-          message: error.detail
+          message: error.detail || error.message.split(' - ')[1]
         });
       });
     }).then(resolve).catch(reject);

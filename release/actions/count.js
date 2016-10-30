@@ -48,7 +48,7 @@ function buildCount(middleware, schema) {
     }).then(resolve).catch(function (error) {
       reject({
         code: _constants.ERROR_COUNT,
-        message: error.detail
+        message: error.detail || error.message.split(' - ')[1]
       });
     });
   });

@@ -33,7 +33,7 @@ export function buildUpdate (middleware, schema, criteria = {}, params = {}, opt
           .catch(error => {
             reject(error.code === ERROR_FIND_ONE ? error : {
               code   : ERROR_UPDATE,
-              message: error.detail
+              message: error.detail || error.message.split(' - ')[ 1 ]
             });
           });
       })

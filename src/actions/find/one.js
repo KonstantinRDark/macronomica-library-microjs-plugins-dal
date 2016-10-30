@@ -30,7 +30,7 @@ export function buildFindOne(middleware, schema, criteria = {}, { fields, sql = 
       .catch(error => {
         reject({
           code   : ERROR_FIND_ONE,
-          message: error.detail
+          message: error.detail || error.message.split(' - ')[ 1 ]
         });
       });
   });

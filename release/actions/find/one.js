@@ -65,7 +65,7 @@ function buildFindOne(middleware, schema) {
     }).catch(function (error) {
       reject({
         code: _constants.ERROR_FIND_ONE,
-        message: error.detail
+        message: error.detail || error.message.split(' - ')[1]
       });
     });
   });
