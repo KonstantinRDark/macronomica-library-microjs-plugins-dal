@@ -34,9 +34,9 @@ var Schema = function Schema(modelName) {
   this.tableName = undefined;
 
   this.getMyFields = function () {
-    var fields = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : ['*'];
+    var fields = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : ['id'];
     return fields.reduce(function (fields, name) {
-      if (name === '*' || _this.has(name)) {
+      if (_this.has(name)) {
         fields.push(name);
       }
       return fields;

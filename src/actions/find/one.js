@@ -1,6 +1,6 @@
 import isEmpty from 'lodash.isempty';
 import setCriteria from './../../utils/set-criteria';
-import {ERROR_FIND_ONE} from './../constants';
+import { ERROR_FIND_ONE } from './../constants';
 
 export default (middleware, micro, plugin) =>
   (schema, criteria = {}, options) =>

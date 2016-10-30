@@ -17,8 +17,8 @@ export default class Schema {
     };
   }
   
-  getMyFields = (fields = [ '*' ]) => fields.reduce((fields, name) => {
-    if (name === '*' || this.has(name)) {
+  getMyFields = (fields = [ 'id' ]) => fields.reduce((fields, name) => {
+    if (this.has(name)) {
       fields.push(name);
     }
     return fields;

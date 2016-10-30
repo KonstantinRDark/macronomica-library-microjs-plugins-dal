@@ -9,10 +9,6 @@ var _setParams = require('./../utils/set-params');
 
 var _setParams2 = _interopRequireDefault(_setParams);
 
-var _list = require('./find/list');
-
-var _one = require('./find/one');
-
 var _constants = require('./constants');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -52,19 +48,7 @@ function buildCreate(middleware, schema) {
       builder = middleware(schema.tableName).insert((0, _setParams2.default)(schema, params, reject)).returning('id');
     }
 
-    builder.then(function () {
-      var ids = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
-      if (!ids.length) {
-        return null;
-      }
-
-      if (isBulkInsert) {
-        return (0, _list.buildFindList)(middleware, schema, { id: { in: ids } }, options);
-      } else {
-        return (0, _one.buildFindOne)(middleware, schema, { id: ids[0] }, options);
-      }
-    }).then(resolve).catch(function (error) {
+    builder.then(resolve).catch(function (error) {
       reject(error.code === _constants.ERROR_FIND_ONE ? error : {
         code: _constants.ERROR_CREATE,
         message: error.detail

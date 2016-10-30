@@ -17,8 +17,6 @@ var _setParams = require('./../utils/set-params');
 
 var _setParams2 = _interopRequireDefault(_setParams);
 
-var _one = require('./find/one');
-
 var _count = require('./count');
 
 var _constants = require('./constants');
@@ -35,9 +33,6 @@ function buildUpdate(middleware, schema) {
   var criteria = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var params = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
   var options = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
-  var _options$sql = options.sql,
-      sql = _options$sql === undefined ? false : _options$sql;
-
 
   return new Promise(function (resolve, reject) {
     criteria = schema.getMyParams(criteria);
@@ -47,11 +42,7 @@ function buildUpdate(middleware, schema) {
     }
 
     var table = middleware(schema.tableName);
-    var builder = (0, _setCriteria2.default)(table, criteria, reject).update((0, _setParams2.default)(schema, params, reject));
-
-    if (sql) {
-      return resolve(builder.toSQL());
-    }
+    var builder = (0, _setCriteria2.default)(table, criteria, reject).update((0, _setParams2.default)(schema, params, reject)).returning('id');
 
     // Узнаем кол-во обновляемых строк
     (0, _count.buildCount)(middleware, schema, criteria).then(function (_ref) {
@@ -62,7 +53,7 @@ function buildUpdate(middleware, schema) {
         return null;
       }
 
-      return builder.then(findUpdated).catch(function (error) {
+      return builder.catch(function (error) {
         reject(error.code === _constants.ERROR_FIND_ONE ? error : {
           code: _constants.ERROR_UPDATE,
           message: error.detail
@@ -70,15 +61,5 @@ function buildUpdate(middleware, schema) {
       });
     }).then(resolve).catch(reject);
   });
-
-  function findUpdated(affectedRows) {
-    // Если ничего не обновилось
-    if (affectedRows === 0) {
-      return null;
-    }
-
-    // Запросим элемент
-    return (0, _one.buildFindOne)(middleware, schema, criteria, options);
-  }
 }
 //# sourceMappingURL=update.js.map

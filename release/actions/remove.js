@@ -26,10 +26,6 @@ exports.default = function (middleware, micro, plugin) {
 function buildRemove(middleware, schema) {
   var criteria = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
-  var _ref = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
-      _ref$sql = _ref.sql,
-      sql = _ref$sql === undefined ? false : _ref$sql;
-
   return new Promise(function (resolve, reject) {
     criteria = schema.getMyParams(criteria);
 
@@ -38,11 +34,7 @@ function buildRemove(middleware, schema) {
     }
 
     var table = middleware(schema.tableName);
-    var builder = (0, _setCriteria2.default)(table, criteria, reject).del();
-
-    if (sql) {
-      return resolve(builder.toSQL());
-    }
+    var builder = (0, _setCriteria2.default)(table, criteria, reject).del().returning('id');
 
     builder.then(resolve).catch(function (error) {
       reject({

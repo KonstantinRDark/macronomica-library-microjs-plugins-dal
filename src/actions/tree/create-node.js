@@ -1,4 +1,4 @@
-import {buildCreate} from './../create';
+import { buildCreate } from './../create';
 import setParentLeafFalse from './utils/set-parent-leaf-false';
 
 export default (middleware, micro, plugin) =>

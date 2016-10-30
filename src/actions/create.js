@@ -1,7 +1,5 @@
 import setParams from './../utils/set-params';
-import {buildFindList} from './find/list';
-import {buildFindOne} from './find/one';
-import {ERROR_CREATE, ERROR_FIND_ONE} from './constants';
+import { ERROR_CREATE, ERROR_FIND_ONE } from './constants';
 
 export default (middleware, micro, plugin) =>
   (schema, params, options) =>
@@ -38,17 +36,6 @@ export function buildCreate (middleware, schema, params = {}, options = {}) {
     }
 
     builder
-      .then((ids = []) => {
-        if (!ids.length) {
-          return null;
-        }
-
-        if (isBulkInsert) {
-          return buildFindList(middleware, schema, { id: { in: ids } }, options);
-        } else {
-          return buildFindOne(middleware, schema, { id: ids[ 0 ] }, options);
-        }
-      })
       .then(resolve)
       .catch(error => {
         reject(error.code === ERROR_FIND_ONE ? error : {
