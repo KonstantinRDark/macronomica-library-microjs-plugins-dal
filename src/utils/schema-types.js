@@ -201,5 +201,18 @@ export default {
         ]);
       })
     };
+  },
+  get datetime() {
+    return {
+      value : 'datetime',
+      schema: memoize((options = Object.create(null)) => {
+        let schema = Joi.date().iso();
+        
+        return applyValidators(options, schema, [
+          setDefault,
+          setRequired
+        ]);
+      })
+    };
   }
 };
