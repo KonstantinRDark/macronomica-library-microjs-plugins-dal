@@ -234,6 +234,18 @@ exports.default = {
         return applyValidators(options, schema, [setMinMax(), setDefault, setRequired]);
       })
     };
+  },
+  get datetime() {
+    return {
+      value: 'datetime',
+      schema: (0, _lodash2.default)(function () {
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Object.create(null);
+
+        var schema = _joi2.default.date().iso();
+
+        return applyValidators(options, schema, [setDefault, setRequired]);
+      })
+    };
   }
 };
 //# sourceMappingURL=schema-types.js.map
