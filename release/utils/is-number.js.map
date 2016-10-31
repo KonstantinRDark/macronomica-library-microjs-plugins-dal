@@ -1,1 +1,0 @@
-{"version":3,"sources":["utils/is-number.js"],"names":["isNumber","value","isFinite","isNaN"],"mappings":";;;;;kBACwBA,Q;AAAT,SAASA,QAAT,CAAkBC,KAAlB,EAAyB;AACtC,SAAOC,SAAS,CAACD,KAAV,KAAoB,CAACE,MAAM,CAACF,KAAP,CAA5B;AACD","file":"is-number.js","sourceRoot":"../../src"}
