@@ -78,7 +78,7 @@ export default class Schema {
       switch (options.type.value) {
         case 'date' : { type = 'date'; break }
         case 'text' : { type = 'text'; break }
-        case 'float' : { type = 'float'; break }
+        case 'float' : { type = 'decimal'; break }
         case 'money' : { type = 'decimal'; break }
         case 'number' :
         case 'integer': { type = 'int'; break }
@@ -86,6 +86,7 @@ export default class Schema {
         case 'boolean': { type = 'boolean'; break }
         case 'smallint': { type = 'smallint'; break }
         case 'datetime': { type = 'datetime'; break }
+        case 'array': { type = 'string'; break }
       }
       
       if (!type) { continue }

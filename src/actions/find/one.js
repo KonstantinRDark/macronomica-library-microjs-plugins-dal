@@ -30,15 +30,14 @@ export function buildFindOne(middleware, schema, criteria = {}, { fields, sql = 
         if(!result) {
           resolve(null);
         }
-        return { ...result };
-      })
-      .then((result) => {
+
         manyLinks.forEach(name => {
           if (name in result) {
             result[ name ] = result[ name ].split(',');
           }
         });
-        return result;
+
+        resolve({ ...result });
       })
       .catch(error => {
         reject({
