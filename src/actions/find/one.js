@@ -1,5 +1,6 @@
 import isEmpty from 'lodash.isempty';
 import setCriteria from './../../utils/set-criteria';
+import checkArray from './../../utils/check-array';
 import { ERROR_FIND_ONE } from './../constants';
 
 export default (middleware, micro, plugin) =>
@@ -9,6 +10,7 @@ export default (middleware, micro, plugin) =>
 export function buildFindOne(middleware, schema, criteria = {}, { fields, sql = false } = {}) {
   return new Promise((resolve, reject) => {
     criteria = schema.getMyParams(criteria);
+    const manyLinks = checkArray(schema.properties);
     
     if (isEmpty(criteria)) {
       return resolve(null);
@@ -25,7 +27,18 @@ export function buildFindOne(middleware, schema, criteria = {}, { fields, sql = 
 
     builder
       .then(([ result ] = []) => {
-        resolve(!result ? null : { ...result });
+        if(!result) {
+          resolve(null);
+        }
+        return { ...result };
+      })
+      .then((result) => {
+        manyLinks.forEach(name => {
+          if (name in result) {
+            result[ name ] = result[ name ].split(',');
+          }
+        });
+        return result;
       })
       .catch(error => {
         reject({

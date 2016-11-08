@@ -1,4 +1,5 @@
 import setParams from './../utils/set-params';
+import checkArray from './../utils/check-array';
 import { ERROR_CREATE, ERROR_FIND_ONE } from './constants';
 
 export default (middleware, micro, plugin) =>
@@ -7,6 +8,13 @@ export default (middleware, micro, plugin) =>
 
 export function buildCreate (middleware, schema, params = {}, options = {}) {
   const isBulkInsert = Array.isArray(params);
+  const manyLinks = checkArray(schema.properties);
+
+  manyLinks.forEach(name => {
+    if (name in params && Array.isArray(params[ name ])) {
+      params[ name ] = params[ name ].join(',');
+    }
+  });
 
   return new Promise((resolve, reject) => {
     if (!params) {
