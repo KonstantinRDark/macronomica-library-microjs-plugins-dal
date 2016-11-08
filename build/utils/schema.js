@@ -117,7 +117,7 @@ var Schema = function Schema(modelName) {
             }
           case 'float':
             {
-              type = 'float';break;
+              type = 'decimal';break;
             }
           case 'money':
             {
@@ -143,6 +143,10 @@ var Schema = function Schema(modelName) {
           case 'datetime':
             {
               type = 'datetime';break;
+            }
+          case 'array':
+            {
+              type = 'string';break;
             }
         }
 

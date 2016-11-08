@@ -9,6 +9,10 @@ var _setParams = require('./../utils/set-params');
 
 var _setParams2 = _interopRequireDefault(_setParams);
 
+var _checkArray = require('./../utils/check-array');
+
+var _checkArray2 = _interopRequireDefault(_checkArray);
+
 var _constants = require('./constants');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -24,6 +28,13 @@ function buildCreate(middleware, schema) {
   var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
   var isBulkInsert = Array.isArray(params);
+  var manyLinks = (0, _checkArray2.default)(schema.properties);
+
+  manyLinks.forEach(function (name) {
+    if (name in params && Array.isArray(params[name])) {
+      params[name] = params[name].join(',');
+    }
+  });
 
   return new Promise(function (resolve, reject) {
     if (!params) {

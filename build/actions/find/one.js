@@ -18,6 +18,10 @@ var _setCriteria2 = require('./../../utils/set-criteria');
 
 var _setCriteria3 = _interopRequireDefault(_setCriteria2);
 
+var _checkArray = require('./../../utils/check-array');
+
+var _checkArray2 = _interopRequireDefault(_checkArray);
+
 var _constants = require('./../constants');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -44,6 +48,7 @@ function buildFindOne(middleware, schema) {
     var _setCriteria;
 
     criteria = schema.getMyParams(criteria);
+    var manyLinks = (0, _checkArray2.default)(schema.properties);
 
     if ((0, _lodash2.default)(criteria)) {
       return resolve(null);
@@ -61,7 +66,17 @@ function buildFindOne(middleware, schema) {
           _ref3 = _slicedToArray(_ref2, 1),
           result = _ref3[0];
 
-      resolve(!result ? null : _extends({}, result));
+      if (!result) {
+        resolve(null);
+      }
+
+      manyLinks.forEach(function (name) {
+        if (name in result) {
+          result[name] = result[name].split(',');
+        }
+      });
+
+      resolve(_extends({}, result));
     }).catch(function (error) {
       reject({
         code: _constants.ERROR_FIND_ONE,
