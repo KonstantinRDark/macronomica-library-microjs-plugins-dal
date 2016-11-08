@@ -65,7 +65,7 @@ export function buildFindList(middleware, schema, criteria = {}, options = {}) {
           if (manyLinks.length > 0) {
             result = result.map(item => {
               manyLinks.forEach(name => {
-                if (name in item) {
+                if (name in item && !!item[ name ]) {
                   item[ name ] = item[ name ].split(',');
                 }
               });
