@@ -20,6 +20,10 @@ var _setCriteria2 = require('./../../utils/set-criteria');
 
 var _setCriteria3 = _interopRequireDefault(_setCriteria2);
 
+var _checkArray = require('./../../utils/check-array');
+
+var _checkArray2 = _interopRequireDefault(_checkArray);
+
 var _constants = require('./../constants');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -45,6 +49,8 @@ function buildFindList(middleware, schema) {
       limit = options.limit,
       offset = options.offset;
 
+
+  var manyLinks = (0, _checkArray2.default)(schema.properties);
 
   return new Promise(function (resolve, reject) {
     var _setCriteria;
@@ -85,7 +91,20 @@ function buildFindList(middleware, schema) {
     } else {
       builder.then(function () {
         var result = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-        return resolve(result.map(function (row) {
+
+        if (manyLinks.length > 0) {
+          result = result.map(function (item) {
+            manyLinks.forEach(function (name) {
+              if (name in item) {
+                item[name] = item[name].split(',');
+              }
+            });
+
+            return item;
+          });
+        }
+
+        resolve(result.map(function (row) {
           return _extends({}, row);
         }));
       }).catch(function (error) {

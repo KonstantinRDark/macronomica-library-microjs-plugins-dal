@@ -10,12 +10,6 @@ export function buildCreate (middleware, schema, params = {}, options = {}) {
   const isBulkInsert = Array.isArray(params);
   const manyLinks = checkArray(schema.properties);
 
-  manyLinks.forEach(name => {
-    if (name in params && Array.isArray(params[ name ])) {
-      params[ name ] = params[ name ].join(',');
-    }
-  });
-
   return new Promise((resolve, reject) => {
     if (!params) {
       return;
@@ -38,6 +32,12 @@ export function buildCreate (middleware, schema, params = {}, options = {}) {
             .catch(trx.rollback);
         });
     } else {
+      manyLinks.forEach(name => {
+        if (name in params && Array.isArray(params[ name ])) {
+          params[ name ] = params[ name ].join(',');
+        }
+      });
+
       builder = middleware(schema.tableName)
         .insert(setParams(schema, params, reject))
         .returning('id');

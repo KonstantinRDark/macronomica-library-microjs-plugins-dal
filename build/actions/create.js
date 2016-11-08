@@ -30,12 +30,6 @@ function buildCreate(middleware, schema) {
   var isBulkInsert = Array.isArray(params);
   var manyLinks = (0, _checkArray2.default)(schema.properties);
 
-  manyLinks.forEach(function (name) {
-    if (name in params && Array.isArray(params[name])) {
-      params[name] = params[name].join(',');
-    }
-  });
-
   return new Promise(function (resolve, reject) {
     if (!params) {
       return;
@@ -56,6 +50,12 @@ function buildCreate(middleware, schema) {
         }).then(trx.commit).catch(trx.rollback);
       });
     } else {
+      manyLinks.forEach(function (name) {
+        if (name in params && Array.isArray(params[name])) {
+          params[name] = params[name].join(',');
+        }
+      });
+
       builder = middleware(schema.tableName).insert((0, _setParams2.default)(schema, params, reject)).returning('id');
     }
 

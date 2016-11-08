@@ -1,7 +1,8 @@
 import isString from 'lodash.isstring';
 import isNumber from './../../utils/is-number';
 import setCriteria from './../../utils/set-criteria';
-import {ERROR_FIND_LIST} from './../constants';
+import checkArray from './../../utils/check-array';
+import { ERROR_FIND_LIST } from './../constants';
 
 export default (middleware, micro, plugin) =>
   (schema, criteria = {}, options) =>
@@ -15,6 +16,8 @@ export function buildFindList(middleware, schema, criteria = {}, options = {}) {
     limit,
     offset,
   } = options;
+
+  const manyLinks = checkArray(schema.properties);
 
   return new Promise((resolve, reject) => {
     let builder = setCriteria(
@@ -58,7 +61,21 @@ export function buildFindList(middleware, schema, criteria = {}, options = {}) {
       resolve(builder.toSQL());
     } else {
       builder
-        .then((result = []) => resolve(result.map(row => ({ ...row }))))
+        .then((result = []) => {
+          if (manyLinks.length > 0) {
+            result = result.map(item => {
+              manyLinks.forEach(name => {
+                if (name in item) {
+                  item[ name ] = item[ name ].split(',');
+                }
+              });
+
+              return item;
+            });
+          }
+
+          resolve(result.map(row => ({ ...row })));
+        })
         .catch(error => {
           reject({
             code   : ERROR_FIND_LIST,
