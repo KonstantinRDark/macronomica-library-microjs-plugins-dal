@@ -214,5 +214,18 @@ export default {
         ]);
       })
     };
+  },
+  get array() {
+    return {
+      value : 'array',
+      schema: memoize((options = Object.create(null)) => {
+        let schema = Joi.string();
+
+        return applyValidators(options, schema, [
+          setDefault,
+          setRequired
+        ]);
+      })
+    };
   }
 };
