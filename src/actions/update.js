@@ -1,4 +1,5 @@
 import isEmpty from 'lodash.isempty';
+import checkArray from './../utils/check-array';
 import setCriteria from './../utils/set-criteria';
 import setParams from './../utils/set-params';
 import { buildCount } from './count';
@@ -11,6 +12,7 @@ export default (middleware, micro, plugin) =>
 export function buildUpdate (middleware, schema, criteria = {}, params = {}, options = {}) {
   return new Promise((resolve, reject) => {
     criteria = schema.getMyParams(criteria);
+    const manyLinks = checkArray(schema.properties);
 
     if (isEmpty(criteria)) {
       return resolve(null);
@@ -28,6 +30,12 @@ export function buildUpdate (middleware, schema, criteria = {}, params = {}, opt
         if (count === 0) {
           return null;
         }
+
+        manyLinks.forEach(name => {
+          if (name in params && Array.isArray(params[ name ])) {
+            params[ name ] = params[ name ].join(',');
+          }
+        });
 
         return builder
           .catch(error => {
