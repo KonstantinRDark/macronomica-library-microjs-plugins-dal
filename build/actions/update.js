@@ -9,10 +9,6 @@ var _lodash = require('lodash.isempty');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _checkArray = require('./../utils/check-array');
-
-var _checkArray2 = _interopRequireDefault(_checkArray);
-
 var _setCriteria = require('./../utils/set-criteria');
 
 var _setCriteria2 = _interopRequireDefault(_setCriteria);
@@ -40,12 +36,10 @@ function buildUpdate(middleware, schema) {
 
   return new Promise(function (resolve, reject) {
     criteria = schema.getMyParams(criteria);
-    var manyLinks = (0, _checkArray2.default)(schema.properties);
 
     if ((0, _lodash2.default)(criteria)) {
       return resolve(null);
     }
-
     var table = middleware(schema.tableName);
     var builder = (0, _setCriteria2.default)(table, criteria, reject).update((0, _setParams2.default)(schema, params, reject)).returning('id');
 
@@ -57,12 +51,6 @@ function buildUpdate(middleware, schema) {
       if (count === 0) {
         return null;
       }
-
-      manyLinks.forEach(function (name) {
-        if (name in params && Array.isArray(params[name])) {
-          params[name] = params[name].join(',');
-        }
-      });
 
       return builder.catch(function (error) {
         reject(error.code === _constants.ERROR_FIND_ONE ? error : {

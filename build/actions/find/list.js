@@ -95,7 +95,7 @@ function buildFindList(middleware, schema) {
         if (manyLinks.length > 0) {
           result = result.map(function (item) {
             manyLinks.forEach(function (name) {
-              if (name in item && !!item[name]) {
+              if (name in item && !!item[name] && (0, _lodash2.default)(item[name])) {
                 item[name] = item[name].split(',');
               }
             });

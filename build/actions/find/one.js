@@ -14,6 +14,10 @@ var _lodash = require('lodash.isempty');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
+var _lodash3 = require('lodash.isstring');
+
+var _lodash4 = _interopRequireDefault(_lodash3);
+
 var _setCriteria2 = require('./../../utils/set-criteria');
 
 var _setCriteria3 = _interopRequireDefault(_setCriteria2);
@@ -71,7 +75,7 @@ function buildFindOne(middleware, schema) {
       }
 
       manyLinks.forEach(function (name) {
-        if (name in result) {
+        if (name in result && !!result[name] && (0, _lodash4.default)(result[name])) {
           result[name] = result[name].split(',');
         }
       });

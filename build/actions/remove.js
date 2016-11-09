@@ -18,8 +18,8 @@ var _constants = require('./constants');
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = function (middleware, micro, plugin) {
-  return function (schema, params, options) {
-    return buildRemove(middleware, schema, params, options);
+  return function (schema, criteria, options) {
+    return buildRemove(middleware, schema, criteria, options);
   };
 };
 
