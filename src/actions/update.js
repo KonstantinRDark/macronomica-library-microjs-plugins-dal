@@ -18,6 +18,12 @@ export function buildUpdate (middleware, schema, criteria = {}, params = {}, opt
       return resolve(null);
     }
 
+    manyLinks.forEach(name => {
+      if (name in params && Array.isArray(params[ name ])) {
+        params[ name ] = params[ name ].join(',');
+      }
+    });
+
     const table = middleware(schema.tableName);
     const builder = setCriteria(table, criteria, reject)
       .update(setParams(schema, params, reject))
@@ -30,12 +36,6 @@ export function buildUpdate (middleware, schema, criteria = {}, params = {}, opt
         if (count === 0) {
           return null;
         }
-
-        manyLinks.forEach(name => {
-          if (name in params && Array.isArray(params[ name ])) {
-            params[ name ] = params[ name ].join(',');
-          }
-        });
 
         return builder
           .catch(error => {
