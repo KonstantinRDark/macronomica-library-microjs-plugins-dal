@@ -25,6 +25,7 @@
     "url": "https://gitlab.com/microjs/microjs-plugins-dal.git"
   },
   "dependencies": {
+    "html-entities": "^1.2.0",
     "joi": "^9.2.0",
     "knex": "^0.12.6",
     "lodash.isempty": "^4.4.0",
@@ -32,7 +33,8 @@
     "lodash.isplainobject": "^4.0.6",
     "lodash.isstring": "^4.0.1",
     "lodash.memoize": "^4.1.2",
-    "pg": "^6.1.0"
+    "pg": "^6.1.0",
+    "striptags": "^2.1.1"
   },
   "peerDependencies": {
     "microjs": "git+ssh://git@gitlab.com/microjs/microjs.git"

@@ -1,7 +1,6 @@
 import isEmpty from 'lodash.isempty';
-import isString from 'lodash.isstring';
 import setCriteria from './../../utils/set-criteria';
-import checkArray from './../../utils/check-array';
+import checkConvertOut from './../../utils/check-convert-out';
 import { ERROR_FIND_ONE } from './../constants';
 
 export default (middleware, micro, plugin) =>
@@ -11,7 +10,7 @@ export default (middleware, micro, plugin) =>
 export function buildFindOne(middleware, schema, criteria = {}, { fields, sql = false } = {}) {
   return new Promise((resolve, reject) => {
     criteria = schema.getMyParams(criteria);
-    const manyLinks = checkArray(schema.properties);
+    const convertOuts = checkConvertOut(schema.properties);
 
     if (isEmpty(criteria)) {
       return resolve(null);
@@ -32,11 +31,9 @@ export function buildFindOne(middleware, schema, criteria = {}, { fields, sql = 
           resolve(null);
         }
 
-        manyLinks.forEach(name => {
-          if (name in result && !!result[ name ] && isString(result[ name ])) {
-            result[ name ] = result[ name ].split(',');
-          }
-        });
+        for (let { name, callback } of convertOuts) {
+          result[ name ] = callback(result[ name ], schema.properties[ name ]);
+        }
 
         resolve({ ...result });
       })

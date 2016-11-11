@@ -20,9 +20,9 @@ var _setCriteria2 = require('./../../utils/set-criteria');
 
 var _setCriteria3 = _interopRequireDefault(_setCriteria2);
 
-var _checkArray = require('./../../utils/check-array');
+var _checkConvertOut = require('./../../utils/check-convert-out');
 
-var _checkArray2 = _interopRequireDefault(_checkArray);
+var _checkConvertOut2 = _interopRequireDefault(_checkConvertOut);
 
 var _constants = require('./../constants');
 
@@ -50,7 +50,7 @@ function buildFindList(middleware, schema) {
       offset = options.offset;
 
 
-  var manyLinks = (0, _checkArray2.default)(schema.properties);
+  var convertOuts = (0, _checkConvertOut2.default)(schema.properties);
 
   return new Promise(function (resolve, reject) {
     var _setCriteria;
@@ -92,13 +92,35 @@ function buildFindList(middleware, schema) {
       builder.then(function () {
         var result = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
-        if (manyLinks.length > 0) {
+        if (convertOuts.length > 0) {
           result = result.map(function (item) {
-            manyLinks.forEach(function (name) {
-              if (name in item && !!item[name] && (0, _lodash2.default)(item[name])) {
-                item[name] = item[name].split(',');
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+
+              for (var _iterator = convertOuts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                var _ref2 = _step.value;
+                var name = _ref2.name;
+                var callback = _ref2.callback;
+
+                item[name] = callback(item[name], schema.properties[name]);
               }
-            });
+            } catch (err) {
+              _didIteratorError = true;
+              _iteratorError = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion && _iterator.return) {
+                  _iterator.return();
+                }
+              } finally {
+                if (_didIteratorError) {
+                  throw _iteratorError;
+                }
+              }
+            }
 
             return item;
           });

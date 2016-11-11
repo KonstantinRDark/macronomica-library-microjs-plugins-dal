@@ -1,7 +1,7 @@
 import isString from 'lodash.isstring';
 import isNumber from './../../utils/is-number';
 import setCriteria from './../../utils/set-criteria';
-import checkArray from './../../utils/check-array';
+import checkConvertOut from './../../utils/check-convert-out';
 import { ERROR_FIND_LIST } from './../constants';
 
 export default (middleware, micro, plugin) =>
@@ -17,7 +17,7 @@ export function buildFindList(middleware, schema, criteria = {}, options = {}) {
     offset,
   } = options;
 
-  const manyLinks = checkArray(schema.properties);
+  const convertOuts = checkConvertOut(schema.properties);
 
   return new Promise((resolve, reject) => {
     let builder = setCriteria(
@@ -62,13 +62,12 @@ export function buildFindList(middleware, schema, criteria = {}, options = {}) {
     } else {
       builder
         .then((result = []) => {
-          if (manyLinks.length > 0) {
+          if (convertOuts.length > 0) {
             result = result.map(item => {
-              manyLinks.forEach(name => {
-                if (name in item && !!item[ name ] && isString(item[ name ])) {
-                  item[ name ] = item[ name ].split(',');
-                }
-              });
+
+              for (let { name, callback } of convertOuts) {
+                item[ name ] = callback(item[ name ], schema.properties[ name ]);
+              }
 
               return item;
             });

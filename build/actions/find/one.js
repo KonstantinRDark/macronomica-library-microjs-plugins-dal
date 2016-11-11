@@ -14,17 +14,13 @@ var _lodash = require('lodash.isempty');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _lodash3 = require('lodash.isstring');
-
-var _lodash4 = _interopRequireDefault(_lodash3);
-
 var _setCriteria2 = require('./../../utils/set-criteria');
 
 var _setCriteria3 = _interopRequireDefault(_setCriteria2);
 
-var _checkArray = require('./../../utils/check-array');
+var _checkConvertOut = require('./../../utils/check-convert-out');
 
-var _checkArray2 = _interopRequireDefault(_checkArray);
+var _checkConvertOut2 = _interopRequireDefault(_checkConvertOut);
 
 var _constants = require('./../constants');
 
@@ -52,7 +48,7 @@ function buildFindOne(middleware, schema) {
     var _setCriteria;
 
     criteria = schema.getMyParams(criteria);
-    var manyLinks = (0, _checkArray2.default)(schema.properties);
+    var convertOuts = (0, _checkConvertOut2.default)(schema.properties);
 
     if ((0, _lodash2.default)(criteria)) {
       return resolve(null);
@@ -74,11 +70,32 @@ function buildFindOne(middleware, schema) {
         resolve(null);
       }
 
-      manyLinks.forEach(function (name) {
-        if (name in result && !!result[name] && (0, _lodash4.default)(result[name])) {
-          result[name] = result[name].split(',');
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = convertOuts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var _ref5 = _step.value;
+          var name = _ref5.name;
+          var callback = _ref5.callback;
+
+          result[name] = callback(result[name], schema.properties[name]);
         }
-      });
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
 
       resolve(_extends({}, result));
     }).catch(function (error) {

@@ -1,6 +1,5 @@
 import Joi from 'joi';
 import SchemaTypes from './schema-types';
-import isNumber from './is-number';
 
 export const Types = SchemaTypes;
 
@@ -40,11 +39,8 @@ export default class Schema {
     const props = this.properties[ property ];
     if (!props) { return false }
 
-    if (props.type.value === 'array' && Array.isArray(value)) {
-      return {
-        error: undefined,
-        value: value.filter(id => isNumber(id)).join(',')
-      };
+    if ('convertIn' in props.type) {
+      value = props.type.convertIn(value, props);
     }
 
     if ('null' in props && Boolean(props.null) === true && value === null) {

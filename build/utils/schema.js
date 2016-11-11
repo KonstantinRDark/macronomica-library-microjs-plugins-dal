@@ -15,10 +15,6 @@ var _schemaTypes = require('./schema-types');
 
 var _schemaTypes2 = _interopRequireDefault(_schemaTypes);
 
-var _isNumber = require('./is-number');
-
-var _isNumber2 = _interopRequireDefault(_isNumber);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -67,13 +63,8 @@ var Schema = function Schema(modelName) {
       return false;
     }
 
-    if (props.type.value === 'array' && Array.isArray(value)) {
-      return {
-        error: undefined,
-        value: value.filter(function (id) {
-          return (0, _isNumber2.default)(id);
-        }).join(',')
-      };
+    if ('convertIn' in props.type) {
+      value = props.type.convertIn(value, props);
     }
 
     if ('null' in props && Boolean(props.null) === true && value === null) {
