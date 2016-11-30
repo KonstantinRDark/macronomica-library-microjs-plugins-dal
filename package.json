@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/microjs/microjs-plugins-dal.git"
+    "url": "https://github.com/macronomica/macronomica-library-microjs-plugins-dal.git"
   },
   "dependencies": {
     "html-entities": "^1.2.0",
@@ -37,14 +37,15 @@
     "striptags": "^2.1.1"
   },
   "peerDependencies": {
-    "microjs": "git+ssh://git@gitlab.com/microjs/microjs.git"
+    "microjs": "git+ssh://git@github.com:macronomica/macronomica-library-microjs.git#1.x.x"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "babel-eslint": "^7.0.0",
     "babel-plugin-transform-es2015-destructuring": "^6.9.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.18.0",
+    "babel-plugin-transform-es2015-parameters": "^6.18.0",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
-    "babel-preset-es2015": "^6.9.0",
     "babel-preset-stage-0": "^6.5.0",
     "chai": "^3.5.0",
     "cpx": "^1.5.0",
