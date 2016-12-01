@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../src/modules/list/constants.js"],"names":["MODULE_NAME"],"mappings":";;;;;AAAO,MAAMA,oCAAc,MAApB","file":"constants.js","sourcesContent":["export const MODULE_NAME = 'list';"]}

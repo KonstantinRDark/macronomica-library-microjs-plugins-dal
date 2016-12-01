@@ -1,12 +1,30 @@
 import isEmpty from 'lodash.isempty';
-import setCriteria from './../utils/set-criteria';
-import { ERROR_REMOVE } from '../../../constants';
+import Schema from './../../../utils/schema';
+import setCriteria from './../../../utils/set-criteria';
+import checkConvertOut from './../../../utils/check-convert-out';
+import { MODULE_NAME } from './../constants';
+import {
+  internalError,
+  schemaNotFoundError,
+  schemaNotInstanceSchemaClassError
+} from '../../../errors';
 
-export default (middleware, micro, plugin) =>
-  (schema, criteria, options) =>
-    buildRemove(middleware, schema, criteria, options);
+const ERROR_INFO = { module: MODULE_NAME, action: 'remove' };
 
-export function buildRemove (middleware, schema, criteria = {}) {
+export default (app, middleware, plugin) => (msg) => buildRemove(app, middleware, msg);
+
+export function buildRemove (app, middleware, { schema, criteria = {}, options = {} }) {
+  const { transaction, outer = false, fields } = options;
+  const convertOuts = checkConvertOut(schema.properties);
+
+  if (!schema) {
+    return Promise.reject(schemaNotFoundError(ERROR_INFO));
+  }
+
+  if (!(schema instanceof Schema)) {
+    return Promise.reject(schemaNotInstanceSchemaClassError(ERROR_INFO));
+  }
+
   return new Promise((resolve, reject) => {
     criteria = schema.getMyParams(criteria);
 
@@ -14,18 +32,33 @@ export function buildRemove (middleware, schema, criteria = {}) {
       return resolve(null);
     }
 
-    const table = middleware(schema.tableName);
-    const builder = setCriteria(table, criteria, reject)
+    let builder = setCriteria(app, middleware(schema.tableName), criteria, reject)
       .del()
-      .returning('id');
+      .returning(...schema.getMyFields(fields));
+    /*
+    if (transaction) {
+      // Если передали внешнюю транзакцию - привяжемся к ней
+      builder = builder.transacting(transaction);
+    }
+    */
+    if (/*transaction || */outer) {
+      // Если передали внешнюю транзакцию или кто-то сам хочет запускать запрос - вернем builder
+      return resolve(builder);
+    }
 
     builder
-      .then(resolve)
-      .catch(error => {
-        reject({
-          code   : ERROR_REMOVE,
-          message: error.detail || error.message.split(' - ')[ 1 ]
-        });
-      });
+      .then(result => {
+        if(!result) {
+          resolve(null);
+        }
+
+        for (let { name, callback } of convertOuts) {
+          result[ name ] = callback(result[ name ], schema.properties[ name ]);
+        }
+
+        resolve({ ...result });
+      })
+      .catch(internalError(app, ERROR_INFO))
+      .catch(reject);
   });
 }

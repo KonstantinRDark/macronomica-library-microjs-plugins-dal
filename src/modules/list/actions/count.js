@@ -1,33 +1,49 @@
-import setCriteria from './../utils/set-criteria';
-import { ERROR_COUNT } from '../../../constants';
+import Schema from './../../../utils/schema';
+import setCriteria from './../../../utils/set-criteria';
+import { MODULE_NAME } from './../constants';
+import {
+  internalError,
+  schemaNotFoundError,
+  schemaNotInstanceSchemaClassError
+} from '../../../errors';
 
-export default (middleware, micro, plugin) =>
-  (schema, criteria, options) =>
-    buildCount(middleware, schema, criteria, options);
+const ERROR_INFO = { module: MODULE_NAME, action: 'count' };
 
-export function buildCount (middleware, schema, criteria = {}, { sql = false } = {}) {
+export default (app, middleware, plugin) => (msg) => buildCount(app, middleware, msg);
+
+export function buildCount (app, middleware, { schema, criteria = {}, options = {} }) {
+  const {
+    transaction,
+    outer = false
+  } = options;
+
+  if (!schema) {
+    return Promise.reject(schemaNotFoundError(ERROR_INFO));
+  }
+
+  if (!(schema instanceof Schema)) {
+    return Promise.reject(schemaNotInstanceSchemaClassError(ERROR_INFO));
+  }
+
   return new Promise((resolve, reject) => {
     criteria = schema.getMyParams(criteria);
 
-    const table = middleware(schema.tableName);
+    let builder = setCriteria(app, middleware(schema.tableName), criteria, reject).count();
 
-    const builder = setCriteria(table, criteria, reject)
-      .count();
+    if (transaction) {
+      // Если передали внешнюю транзакцию - привяжемся к ней
+      builder = builder.transacting(transaction);
+    }
 
-    if (sql) {
-      return resolve(builder.toSQL());
+    if (transaction || outer) {
+      // Если передали внешнюю транзакцию или кто-то сам хочет запускать запрос - вернем builder
+      return resolve(builder);
     }
 
     return builder
-      .then(([ { count } ]) => {
-        return { count: +count };
-      })
+      .then(([ { count } ]) => ({ count: +count }))
       .then(resolve)
-      .catch(error => {
-        reject({
-          code   : ERROR_COUNT,
-          message: error.detail || error.message.split(' - ')[ 1 ]
-        });
-      });
+      .catch(internalError(app, ERROR_INFO))
+      .catch(reject);
   });
 }

@@ -2,8 +2,11 @@ import isPlainObject from 'lodash.isplainobject';
 import isFunction from 'lodash.isfunction';
 import criteria from './criteria';
 import sqlStringProtector from './sql-string-protector';
+import { detectedSqlInjectionError } from './../errors';
 
-export default (builder, params, reject) => {
+const ERROR_INFO = { module: 'utils', action: 'set-criteria' };
+
+export default (app, builder, params, reject) => {
   const { or = [], ...and } = params;
 
   return builder
@@ -16,12 +19,12 @@ export default (builder, params, reject) => {
   function addWhere(obj) {
     return function () {
       const builder = this;
-      setWhere(builder, obj, reject);
+      setWhere(app, builder, obj, reject);
     };
   }
 };
 
-function setWhere(builder, params, reject) {
+function setWhere(app, builder, params, reject) {
   const keys = Object.keys(params);
 
   for(let property of keys) {
@@ -40,9 +43,7 @@ function setWhere(builder, params, reject) {
     } else {
       
       if (!sqlStringProtector(value)) {
-        reject({
-          code   : 'detected.sql.injection',
-          message: `При запросе обнаружена SQL-Injection в свойстве {${ property }: "${ value }"` });
+        reject(detectedSqlInjectionError(app, { ...ERROR_INFO, property, value }));
         break;
       }
 

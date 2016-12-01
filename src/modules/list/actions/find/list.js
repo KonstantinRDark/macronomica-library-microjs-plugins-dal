@@ -1,16 +1,23 @@
 import isString from 'lodash.isstring';
-import isNumber from './../../utils/is-number';
-import setCriteria from './../../utils/set-criteria';
-import checkConvertOut from './../../utils/check-convert-out';
-import { ERROR_FIND_LIST } from '../../../../constants';
+import Schema from './../../../../utils/schema';
+import isNumber from './../../../../utils/is-number';
+import setCriteria from './../../../../utils/set-criteria';
+import checkConvertOut from './../../../../utils/check-convert-out';
+import { MODULE_NAME } from './../../constants';
+import {
+  internalError,
+  schemaNotFoundError,
+  schemaNotInstanceSchemaClassError
+} from '../../../../errors';
 
-export default (middleware, micro, plugin) =>
-  (schema, criteria = {}, options) =>
-    buildFindList(middleware, schema, criteria, options);
+const ERROR_INFO = { module: MODULE_NAME, action: 'find-list' };
 
-export function buildFindList(middleware, schema, criteria = {}, options = {}) {
-  let {
-    sql = false,
+export default (app, middleware, plugin) => (msg) => buildFindList(app, middleware, msg);
+
+export function buildFindList(app, middleware, { schema, criteria = {}, options = {} }) {
+  const {
+    transaction,
+    outer = false,
     fields,
     sort = 'id',
     limit,
@@ -19,8 +26,17 @@ export function buildFindList(middleware, schema, criteria = {}, options = {}) {
 
   const convertOuts = checkConvertOut(schema.properties);
 
+  if (!schema) {
+    return Promise.reject(schemaNotFoundError(ERROR_INFO));
+  }
+
+  if (!(schema instanceof Schema)) {
+    return Promise.reject(schemaNotInstanceSchemaClassError(ERROR_INFO));
+  }
+
   return new Promise((resolve, reject) => {
     let builder = setCriteria(
+      app,
       middleware(schema.tableName),
       schema.getMyParams(criteria),
       reject
@@ -31,17 +47,11 @@ export function buildFindList(middleware, schema, criteria = {}, options = {}) {
       let orderDirection;
 
       if (isString(sort)) {
-        sort = sort.split(' ');
+        [ orderKey, orderDirection = 'asc' ] = sort.split(' ');
 
-        if (sort.length === 2) {
-          orderKey = sort[ 0 ];
-          orderDirection = [ 'asc', 'desc' ].includes(sort[ 1 ].toLowerCase())
-            ? sort[ 1 ].toLowerCase()
-            : 'asc';
-        } else {
-          orderKey = sort;
-          orderDirection = 'asc';
-        }
+        orderDirection = [ 'asc', 'desc' ].includes(orderDirection.toLowerCase())
+          ? orderDirection.toLowerCase()
+          : 'asc';
       }
 
       if (orderKey && orderDirection) {
@@ -56,31 +66,33 @@ export function buildFindList(middleware, schema, criteria = {}, options = {}) {
     if (offset && isNumber(offset)) {
       builder = builder.offset(offset);
     }
-
-    if (sql) {
-      resolve(builder.toSQL());
-    } else {
-      builder
-        .then((result = []) => {
-          if (convertOuts.length > 0) {
-            result = result.map(item => {
-
-              for (let { name, callback } of convertOuts) {
-                item[ name ] = callback(item[ name ], schema.properties[ name ]);
-              }
-
-              return item;
-            });
-          }
-
-          resolve(result.map(row => ({ ...row })));
-        })
-        .catch(error => {
-          reject({
-            code   : ERROR_FIND_LIST,
-            message: error.detail || error.message.split(' - ')[ 1 ]
-          });
-        });
+    /*
+    if (transaction) {
+      // Если передали внешнюю транзакцию - привяжемся к ней
+      builder = builder.transacting(transaction);
     }
+    */
+    if (/*transaction || */outer) {
+      // Если передали внешнюю транзакцию или кто-то сам хочет запускать запрос - вернем builder
+      return resolve(builder);
+    }
+
+    builder
+      .then((result = []) => {
+        if (convertOuts.length > 0) {
+          result = result.map(item => {
+
+            for (let { name, callback } of convertOuts) {
+              item[ name ] = callback(item[ name ], schema.properties[ name ]);
+            }
+
+            return item;
+          });
+        }
+
+        resolve(result.map(row => ({ ...row })));
+      })
+      .catch(internalError(app, ERROR_INFO))
+      .catch(reject);
   });
 }

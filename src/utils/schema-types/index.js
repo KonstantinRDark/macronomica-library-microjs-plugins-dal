@@ -10,14 +10,14 @@ import datetimeType from './types/datetime';
 import arrayType from './types/array';
 
 export default {
-  get boolean () { return booleanType },
-  get number  () { return numberType },
-  get smallint() { return smallintType },
-  get integer () { return integerType },
-  get float   () { return floatType },
-  get money   () { return moneyType },
-  get string  () { return stringType },
-  get text    () { return textType },
-  get datetime() { return datetimeType },
-  get array   () { return arrayType }
+  boolean : booleanType,
+  number  : numberType,
+  smallint: smallintType,
+  integer : integerType,
+  float   : floatType,
+  money   : moneyType,
+  string  : stringType,
+  text    : textType,
+  datetime: datetimeType,
+  array   : arrayType
 };

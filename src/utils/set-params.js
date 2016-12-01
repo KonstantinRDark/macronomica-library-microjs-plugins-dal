@@ -1,6 +1,9 @@
 import sqlStringProtector from './sql-string-protector';
+import { detectedSqlInjectionError } from './../errors';
 
-export default (schema, params, reject) => {
+const ERROR_INFO = { module: 'utils', action: 'set-params' };
+
+export default (app, schema, params, reject) => {
   const keys = Object.keys(params);
   const result = {};
   
@@ -8,10 +11,7 @@ export default (schema, params, reject) => {
     const value = params[ property ];
     
     if (!sqlStringProtector(value)) {
-      reject({
-        code   : 'detected.sql.injection',
-        message: `При запросе обнаружена SQL-Injection в свойстве {${ property }: "${ value }"`
-      });
+      reject(detectedSqlInjectionError(app, { ...ERROR_INFO, property, value }));
       break;
     }
 

@@ -1,9 +1,17 @@
 import setParams from './../../../utils/set-params';
-import { ERROR_CREATE, ERROR_FIND_ONE } from './../../../constants';
+import Schema from './../../../utils/schema';
+import { MODULE_NAME } from './../constants';
+import {
+  internalError,
+  schemaNotFoundError,
+  schemaNotInstanceSchemaClassError
+} from '../../../errors';
 
-export default (app, middleware, plugin) => (msg) => buildCreate(app, middleware, plugin, msg);
+const ERROR_INFO = { module: MODULE_NAME, action: 'create' };
 
-export function buildCreate (app, middleware, plugin, { schema:schemaName, params = {}, options = {} }) {
+export default (app, middleware, plugin) => (msg) => buildCreate(app, middleware, msg);
+
+export function buildCreate (app, middleware, { schema, params = {}, options = {} }) {
   const { transaction, outer = false, fields } = options;
   const isBulkInsert = Array.isArray(params);
 
@@ -11,53 +19,63 @@ export function buildCreate (app, middleware, plugin, { schema:schemaName, param
     return Promise.resolve(null);
   }
 
-  return plugin
-    .schema(schemaName)
-    .then(schema => new Promise((resolve, reject) => {
-      let builder;
+  if (!schema) {
+    return Promise.reject(schemaNotFoundError(ERROR_INFO));
+  }
 
-      // Создание множества записей
-      if (isBulkInsert) {
-        if (transaction) {
-          // Если передали внешнюю транзакцию - привяжемся к ней
-          builder = bulkCreate(middleware, schema, params, fields, transaction, reject);
-        } else {
-          // Создаем свою
-          builder = middleware.transaction(trx => bulkCreate(middleware, schema, params, fields, trx, reject)
-            .then(trx.commit)
-            .catch(trx.rollback)
-          );
-        }
-      }
-      // Создание одной записи
-      else {
-        builder = middleware(schema.tableName)
-          .insert(setParams(schema, params, reject))
-          .returning(...schema.getMyFields(fields));
+  if (!(schema instanceof Schema)) {
+    return Promise.reject(schemaNotInstanceSchemaClassError(ERROR_INFO));
+  }
 
-        if (transaction) {
-          // Если передали внешнюю транзакцию - привяжемся к ней
-          builder = builder.transacting(trx);
-        }
-      }
+  return new Promise((resolve, reject) => {
+    let builder;
 
-      if (transaction || outer) {
-        // Если передали внешнюю транзакцию или кто-то сам хочет запускать запрос - вернем builder
-        resolve(builder);
+    // Создание множества записей
+    if (isBulkInsert) {
+      /*
+      if (transaction) {
+        // Если передали внешнюю транзакцию - привяжемся к ней
+        builder = bulkCreate(app, middleware, schema, params, fields, transaction, reject);
       } else {
-        // Иначе вызовем его выполнение
-        builder
-          .then(resolve)
-          .catch(error => {
-            reject(error.code === ERROR_FIND_ONE ? error : new Error(ERROR_CREATE));
-          });
+      */
+        // Создаем свою
+        builder = middleware.transaction(trx => bulkCreate(app, middleware, schema, params, fields, trx, reject)
+          .then(trx.commit)
+          .catch(trx.rollback)
+        );
+      /*
       }
-    }));
+      */
+    }
+    // Создание одной записи
+    else {
+      builder = middleware(schema.tableName)
+        .insert(setParams(app, schema, params, reject))
+        .returning(...schema.getMyFields(fields));
+      /*
+      if (transaction) {
+        // Если передали внешнюю транзакцию - привяжемся к ней
+        builder = builder.transacting(transaction);
+      }
+      */
+    }
+
+    if (/*transaction ||*/ outer) {
+      // Если передали внешнюю транзакцию или кто-то сам хочет запускать запрос - вернем builder
+      return resolve(builder);
+    }
+
+    // Иначе вызовем его выполнение
+    builder
+      .then(resolve)
+      .catch(internalError(app, ERROR_INFO))
+      .catch(reject);
+  });
 }
 
-function bulkCreate(middleware, schema, params, fields, trx, reject) {
+function bulkCreate(app, middleware, schema, params, fields, trx, reject) {
   return middleware(schema.tableName)
-    .insert(params.map(params => setParams(schema, params, reject)))
+    .insert(params.map(params => setParams(app, schema, params, reject)))
     .returning(...schema.getMyFields(fields))
     .transacting(trx)
     .then(function(ids) {

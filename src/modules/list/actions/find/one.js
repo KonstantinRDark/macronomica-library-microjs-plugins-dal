@@ -1,32 +1,54 @@
 import isEmpty from 'lodash.isempty';
-import setCriteria from './../../utils/set-criteria';
-import checkConvertOut from './../../utils/check-convert-out';
-import { ERROR_FIND_ONE } from '../../../../constants';
+import Schema from './../../../../utils/schema';
+import setCriteria from './../../../../utils/set-criteria';
+import checkConvertOut from './../../../../utils/check-convert-out';
+import { MODULE_NAME } from './../../constants';
+import {
+  internalError,
+  schemaNotFoundError,
+  schemaNotInstanceSchemaClassError
+} from '../../../../errors';
 
-export default (middleware, micro, plugin) =>
-  (schema, criteria = {}, options) =>
-    buildFindOne(middleware, schema, criteria, options);
+const ERROR_INFO = { module: MODULE_NAME, action: 'find-one' };
 
-export function buildFindOne(middleware, schema, criteria = {}, { fields, sql = false } = {}) {
+export default (app, middleware, plugin) => (msg) => buildFindOne(app, middleware, msg);
+
+export function buildFindOne(app, middleware, { schema, criteria = {}, options = {} }) {
+  const { transaction, outer = false, fields } = options;
+  const convertOuts = checkConvertOut(schema.properties);
+
+  if (!schema) {
+    return Promise.reject(schemaNotFoundError(ERROR_INFO));
+  }
+
+  if (!(schema instanceof Schema)) {
+    return Promise.reject(schemaNotInstanceSchemaClassError(ERROR_INFO));
+  }
+
   return new Promise((resolve, reject) => {
     criteria = schema.getMyParams(criteria);
-    const convertOuts = checkConvertOut(schema.properties);
 
     if (isEmpty(criteria)) {
       return resolve(null);
     }
 
-    const table = middleware(schema.tableName);
-    const builder = setCriteria(table, criteria, reject)
+    let builder = setCriteria(app, middleware(schema.tableName), criteria, reject)
       .select(...schema.getMyFields(fields))
       .limit(1);
-
-    if (sql) {
-      return resolve(builder.toSQL());
+    /*
+    if (transaction) {
+      // Если передали внешнюю транзакцию - привяжемся к ней
+      builder = builder.transacting(transaction);
+    }
+    */
+    if (/*transaction || */outer) {
+      // Если передали внешнюю транзакцию или кто-то сам хочет запускать запрос - вернем builder
+      return resolve(builder);
     }
 
+    // Иначе вызовем его выполнение
     builder
-      .then(([ result ] = []) => {
+      .then(result => {
         if(!result) {
           resolve(null);
         }
@@ -37,11 +59,7 @@ export function buildFindOne(middleware, schema, criteria = {}, { fields, sql = 
 
         resolve({ ...result });
       })
-      .catch(error => {
-        reject({
-          code   : ERROR_FIND_ONE,
-          message: error.detail || error.message.split(' - ')[ 1 ]
-        });
-      });
+      .catch(internalError(app, ERROR_INFO))
+      .catch(reject);
   });
 }
