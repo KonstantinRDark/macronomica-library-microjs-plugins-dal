@@ -9,6 +9,10 @@ var _setParams = require('./../../../utils/set-params');
 
 var _setParams2 = _interopRequireDefault(_setParams);
 
+var _convertToResponse = require('./../../../utils/convert-to-response');
+
+var _convertToResponse2 = _interopRequireDefault(_convertToResponse);
+
 var _schema = require('./../../../utils/schema');
 
 var _schema2 = _interopRequireDefault(_schema);
@@ -35,6 +39,7 @@ function buildCreate(app, middleware, _ref) {
         fields = options.fields;
 
   const isBulkInsert = Array.isArray(params);
+  const __fields = schema.getMyFields(fields);
 
   if (!params) {
     return Promise.resolve(null);
@@ -56,18 +61,18 @@ function buildCreate(app, middleware, _ref) {
       /*
       if (transaction) {
         // Если передали внешнюю транзакцию - привяжемся к ней
-        builder = bulkCreate(app, middleware, schema, params, fields, transaction, reject);
+        builder = bulkCreate(app, middleware, schema, params, __fields, transaction, reject);
       } else {
       */
       // Создаем свою
-      builder = middleware.transaction(trx => bulkCreate(app, middleware, schema, params, fields, trx, reject).then(trx.commit).catch(trx.rollback));
+      builder = middleware.transaction(trx => bulkCreate(app, middleware, schema, params, __fields, trx, reject).then(trx.commit).catch(trx.rollback));
       /*
       }
       */
     }
     // Создание одной записи
     else {
-        builder = middleware(schema.tableName).insert((0, _setParams2.default)(app, schema, params, reject)).returning(...schema.getMyFields(fields));
+        builder = middleware(schema.tableName).insert((0, _setParams2.default)(app, schema, params, reject)).returning(...__fields);
         /*
         if (transaction) {
           // Если передали внешнюю транзакцию - привяжемся к ней
@@ -82,12 +87,22 @@ function buildCreate(app, middleware, _ref) {
     }
 
     // Иначе вызовем его выполнение
-    builder.then(resolve).catch((0, _errors.internalError)(app, ERROR_INFO)).catch(reject);
+    builder.then(result => {
+      if (!result) {
+        return result;
+      }
+
+      if (isBulkInsert) {
+        return result.map((0, _convertToResponse2.default)(schema, __fields));
+      }
+
+      return (0, _convertToResponse2.default)(schema, __fields)(result);
+    }).then(resolve).catch((0, _errors.internalError)(app, ERROR_INFO)).catch(reject);
   });
 }
 
 function bulkCreate(app, middleware, schema, params, fields, trx, reject) {
-  return middleware(schema.tableName).insert(params.map(params => (0, _setParams2.default)(app, schema, params, reject))).returning(...schema.getMyFields(fields)).transacting(trx).then(function (ids) {
+  return middleware(schema.tableName).insert(params.map(params => (0, _setParams2.default)(app, schema, params, reject))).returning(...fields).transacting(trx).then(function (ids) {
     const max = ids.reduce((max, id) => max < id ? id : max, 0);
     return middleware.raw(`ALTER SEQUENCE ${ schema.tableName }_id_seq RESTART WITH ${ max };`).then(() => ids);
   });

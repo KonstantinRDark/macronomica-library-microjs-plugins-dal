@@ -4,8 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 exports.buildUpdate = buildUpdate;
@@ -26,9 +24,9 @@ var _setParams = require('./../../../utils/set-params');
 
 var _setParams2 = _interopRequireDefault(_setParams);
 
-var _checkConvertOut = require('./../../../utils/check-convert-out');
+var _convertToResponse = require('./../../../utils/convert-to-response');
 
-var _checkConvertOut2 = _interopRequireDefault(_checkConvertOut);
+var _convertToResponse2 = _interopRequireDefault(_convertToResponse);
 
 var _constants = require('../../constants');
 
@@ -55,7 +53,7 @@ function buildUpdate(app, middleware, _ref) {
   const outer = _options$outer === undefined ? false : _options$outer,
         fields = options.fields;
 
-  const convertOuts = (0, _checkConvertOut2.default)(schema.properties);
+  const __fields = schema.getMyFields(fields);
 
   if (!params) {
     return Promise.resolve(null);
@@ -85,7 +83,7 @@ function buildUpdate(app, middleware, _ref) {
         return null;
       }
 
-      let builder = (0, _setCriteria2.default)(app, middleware(schema.tableName), criteria, reject).update((0, _setParams2.default)(app, schema, params, reject)).returning(...schema.getMyFields(fields));
+      let builder = (0, _setCriteria2.default)(app, middleware(schema.tableName), criteria, reject).update((0, _setParams2.default)(app, schema, params, reject)).returning(...__fields);
       /*
       if (transaction) {
         // Если передали внешнюю транзакцию - привяжемся к ней
@@ -94,29 +92,21 @@ function buildUpdate(app, middleware, _ref) {
       */
       if ( /*transaction || */outer) {
         // Если передали внешнюю транзакцию или кто-то сам хочет запускать запрос - вернем builder
-        return resolve(builder);
+        return builder;
       }
 
-      return builder.then(function () {
-        var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [],
-            _ref4 = _slicedToArray(_ref3, 1);
-
-        let result = _ref4[0];
-
+      return builder.then(result => {
         if (!result) {
-          resolve(null);
+          return result;
         }
 
-        for (let _ref5 of convertOuts) {
-          let name = _ref5.name;
-          let callback = _ref5.callback;
-
-          result[name] = callback(result[name], schema.properties[name]);
+        if (Array.isArray(result)) {
+          return result.map((0, _convertToResponse2.default)(schema, __fields));
         }
 
-        resolve(_extends({}, result));
+        return (0, _convertToResponse2.default)(schema, __fields)(result);
       }).catch((0, _errors.internalError)(app, ERROR_INFO));
-    }).catch(reject);
+    }).then(resolve).catch(reject);
   });
 }
 //# sourceMappingURL=update.js.map

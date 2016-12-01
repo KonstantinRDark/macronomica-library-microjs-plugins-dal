@@ -3,9 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 exports.buildRemove = buildRemove;
 
 var _lodash = require('lodash.isempty');
@@ -20,9 +17,9 @@ var _setCriteria = require('./../../../utils/set-criteria');
 
 var _setCriteria2 = _interopRequireDefault(_setCriteria);
 
-var _checkConvertOut = require('./../../../utils/check-convert-out');
+var _convertToResponse = require('./../../../utils/convert-to-response');
 
-var _checkConvertOut2 = _interopRequireDefault(_checkConvertOut);
+var _convertToResponse2 = _interopRequireDefault(_convertToResponse);
 
 var _constants = require('./../constants');
 
@@ -45,7 +42,7 @@ function buildRemove(app, middleware, _ref) {
   const outer = _options$outer === undefined ? false : _options$outer,
         fields = options.fields;
 
-  const convertOuts = (0, _checkConvertOut2.default)(schema.properties);
+  const __fields = schema.getMyFields(fields);
 
   if (!schema) {
     return Promise.reject((0, _errors.schemaNotFoundError)(ERROR_INFO));
@@ -62,7 +59,7 @@ function buildRemove(app, middleware, _ref) {
       return resolve(null);
     }
 
-    let builder = (0, _setCriteria2.default)(app, middleware(schema.tableName), criteria, reject).del().returning(...schema.getMyFields(fields));
+    let builder = (0, _setCriteria2.default)(app, middleware(schema.tableName), criteria, reject).del().returning(__fields);
     /*
     if (transaction) {
       // Если передали внешнюю транзакцию - привяжемся к ней
@@ -76,18 +73,15 @@ function buildRemove(app, middleware, _ref) {
 
     builder.then(result => {
       if (!result) {
-        resolve(null);
+        return result;
       }
 
-      for (let _ref2 of convertOuts) {
-        let name = _ref2.name;
-        let callback = _ref2.callback;
-
-        result[name] = callback(result[name], schema.properties[name]);
+      if (Array.isArray(result)) {
+        return result.map((0, _convertToResponse2.default)(schema, __fields));
       }
 
-      resolve(_extends({}, result));
-    }).catch((0, _errors.internalError)(app, ERROR_INFO)).catch(reject);
+      return (0, _convertToResponse2.default)(schema, __fields)([result]);
+    }).then(resolve).catch((0, _errors.internalError)(app, ERROR_INFO)).catch(reject);
   });
 }
 //# sourceMappingURL=remove.js.map

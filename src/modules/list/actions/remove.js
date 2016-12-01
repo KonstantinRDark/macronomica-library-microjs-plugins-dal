@@ -1,7 +1,7 @@
 import isEmpty from 'lodash.isempty';
 import Schema from './../../../utils/schema';
 import setCriteria from './../../../utils/set-criteria';
-import checkConvertOut from './../../../utils/check-convert-out';
+import convertToResponse from './../../../utils/convert-to-response';
 import { MODULE_NAME } from './../constants';
 import {
   internalError,
@@ -15,7 +15,7 @@ export default (app, middleware, plugin) => (msg) => buildRemove(app, middleware
 
 export function buildRemove (app, middleware, { schema, criteria = {}, options = {} }) {
   const { transaction, outer = false, fields } = options;
-  const convertOuts = checkConvertOut(schema.properties);
+  const __fields = schema.getMyFields(fields);
 
   if (!schema) {
     return Promise.reject(schemaNotFoundError(ERROR_INFO));
@@ -34,7 +34,7 @@ export function buildRemove (app, middleware, { schema, criteria = {}, options =
 
     let builder = setCriteria(app, middleware(schema.tableName), criteria, reject)
       .del()
-      .returning(...schema.getMyFields(fields));
+      .returning(__fields);
     /*
     if (transaction) {
       // Если передали внешнюю транзакцию - привяжемся к ней
@@ -49,15 +49,16 @@ export function buildRemove (app, middleware, { schema, criteria = {}, options =
     builder
       .then(result => {
         if(!result) {
-          resolve(null);
+          return result;
         }
 
-        for (let { name, callback } of convertOuts) {
-          result[ name ] = callback(result[ name ], schema.properties[ name ]);
+        if (Array.isArray(result)) {
+          return result.map(convertToResponse(schema, __fields));
         }
 
-        resolve({ ...result });
+        return convertToResponse(schema, __fields)([ result ]);
       })
+      .then(resolve)
       .catch(internalError(app, ERROR_INFO))
       .catch(reject);
   });

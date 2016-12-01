@@ -1,4 +1,5 @@
 import setParams from './../../../utils/set-params';
+import convertToResponse from './../../../utils/convert-to-response';
 import Schema from './../../../utils/schema';
 import { MODULE_NAME } from './../constants';
 import {
@@ -14,6 +15,7 @@ export default (app, middleware, plugin) => (msg) => buildCreate(app, middleware
 export function buildCreate (app, middleware, { schema, params = {}, options = {} }) {
   const { transaction, outer = false, fields } = options;
   const isBulkInsert = Array.isArray(params);
+  const __fields = schema.getMyFields(fields);
 
   if (!params) {
     return Promise.resolve(null);
@@ -35,11 +37,11 @@ export function buildCreate (app, middleware, { schema, params = {}, options = {
       /*
       if (transaction) {
         // Если передали внешнюю транзакцию - привяжемся к ней
-        builder = bulkCreate(app, middleware, schema, params, fields, transaction, reject);
+        builder = bulkCreate(app, middleware, schema, params, __fields, transaction, reject);
       } else {
       */
         // Создаем свою
-        builder = middleware.transaction(trx => bulkCreate(app, middleware, schema, params, fields, trx, reject)
+        builder = middleware.transaction(trx => bulkCreate(app, middleware, schema, params, __fields, trx, reject)
           .then(trx.commit)
           .catch(trx.rollback)
         );
@@ -51,7 +53,7 @@ export function buildCreate (app, middleware, { schema, params = {}, options = {
     else {
       builder = middleware(schema.tableName)
         .insert(setParams(app, schema, params, reject))
-        .returning(...schema.getMyFields(fields));
+        .returning(...__fields);
       /*
       if (transaction) {
         // Если передали внешнюю транзакцию - привяжемся к ней
@@ -67,6 +69,17 @@ export function buildCreate (app, middleware, { schema, params = {}, options = {
 
     // Иначе вызовем его выполнение
     builder
+      .then(result => {
+        if (!result) {
+          return result;
+        }
+
+        if (isBulkInsert) {
+          return result.map(convertToResponse(schema, __fields));
+        }
+
+        return convertToResponse(schema, __fields)(result);
+      })
       .then(resolve)
       .catch(internalError(app, ERROR_INFO))
       .catch(reject);
@@ -76,7 +89,7 @@ export function buildCreate (app, middleware, { schema, params = {}, options = {
 function bulkCreate(app, middleware, schema, params, fields, trx, reject) {
   return middleware(schema.tableName)
     .insert(params.map(params => setParams(app, schema, params, reject)))
-    .returning(...schema.getMyFields(fields))
+    .returning(...fields)
     .transacting(trx)
     .then(function(ids) {
       const max = ids.reduce((max, id) => max < id ? id : max, 0);

@@ -48,7 +48,7 @@ export function buildFindOne(app, middleware, { schema, criteria = {}, options =
 
     // Иначе вызовем его выполнение
     builder
-      .then(result => {
+      .then(([ result ]) => {
         if(!result) {
           resolve(null);
         }

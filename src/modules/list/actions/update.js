@@ -2,7 +2,7 @@ import isEmpty from 'lodash.isempty';
 import Schema from './../../../utils/schema';
 import setCriteria from './../../../utils/set-criteria';
 import setParams from './../../../utils/set-params';
-import checkConvertOut from './../../../utils/check-convert-out';
+import convertToResponse from './../../../utils/convert-to-response';
 import { PIN_LIST_COUNTS } from '../../constants';
 import { MODULE_NAME } from './../constants';
 import {
@@ -17,7 +17,7 @@ export default (app, middleware, plugin) => (msg) => buildUpdate(app, middleware
 
 export function buildUpdate (app, middleware, { schema, criteria = {}, params = {}, options = {} }) {
   const { transaction, outer = false, fields } = options;
-  const convertOuts = checkConvertOut(schema.properties);
+  const __fields = schema.getMyFields(fields);
 
   if (!params) {
     return Promise.resolve(null);
@@ -49,7 +49,7 @@ export function buildUpdate (app, middleware, { schema, criteria = {}, params = 
 
         let builder = setCriteria(app, middleware(schema.tableName), criteria, reject)
           .update(setParams(app, schema, params, reject))
-          .returning(...schema.getMyFields(fields));
+          .returning(...__fields);
         /*
         if (transaction) {
           // Если передали внешнюю транзакцию - привяжемся к ней
@@ -58,23 +58,24 @@ export function buildUpdate (app, middleware, { schema, criteria = {}, params = 
         */
         if (/*transaction || */outer) {
           // Если передали внешнюю транзакцию или кто-то сам хочет запускать запрос - вернем builder
-          return resolve(builder);
+          return builder;
         }
 
         return builder
-          .then(([ result ] = []) => {
-            if(!result) {
-              resolve(null);
+          .then(result => {
+            if (!result) {
+              return result;
             }
 
-            for (let { name, callback } of convertOuts) {
-              result[ name ] = callback(result[ name ], schema.properties[ name ]);
+            if (Array.isArray(result)) {
+              return result.map(convertToResponse(schema, __fields));
             }
 
-            resolve({ ...result });
+            return convertToResponse(schema, __fields)(result);
           })
           .catch(internalError(app, ERROR_INFO));
       })
+      .then(resolve)
       .catch(reject);
   });
 }
