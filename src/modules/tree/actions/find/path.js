@@ -1,17 +1,17 @@
-import Schema from './../../../utils/schema';
-import { PIN_LIST_FIND_ONE } from './../../constants';
-import { MODULE_NAME } from './../constants';
+import Schema from '../../../../utils/schema';
+import { PIN_LIST_FIND_ONE } from '../../../constants';
+import { MODULE_NAME } from '../../constants';
 import {
   internalError,
   schemaNotFoundError,
   schemaNotInstanceSchemaClassError
-} from '../../../errors';
+} from '../../../../errors';
 
-const ERROR_INFO = { module: MODULE_NAME, action: 'path-node' };
+const ERROR_INFO = { module: MODULE_NAME, action: 'find-path' };
 
-export default (app, middleware, plugin) => (msg) => buildPathTreeNode(app, middleware, msg);
+export default (app, middleware, plugin) => (msg) => buildFindPathTreeNodes(app, middleware, msg);
 
-export function buildPathTreeNode(app, middleware, { schema, criteria = {}, options = {} }) {
+export function buildFindPathTreeNodes(app, middleware, { schema, criteria = {}, options = {} }) {
   const { id } = criteria;
   const parents = [];
 

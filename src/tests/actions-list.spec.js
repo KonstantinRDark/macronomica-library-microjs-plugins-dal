@@ -1,7 +1,9 @@
 import chai from 'chai';
 import Micro, { LEVEL_ERROR } from '@microjs/microjs';
-import { CONNECT_OPTIONS, schema, createTable } from './constants';
+import { CONNECT_OPTIONS } from './constants';
 import Plugin, {
+  Schema,
+  SchemaTypes,
   PIN_CONNECTION,
   PIN_LIST_CREATE,
   PIN_LIST_UPDATE,
@@ -10,11 +12,27 @@ import Plugin, {
   PIN_LIST_REMOVE
 } from '../index';
 
+const tableName = 'module-list-db';
 const should = chai.should();
 const micro = Micro({
   level  : LEVEL_ERROR,
   plugins: [ Plugin(CONNECT_OPTIONS) ]
 });
+
+const schema = new Schema('UserInfo', {
+  userId: {
+    type       : SchemaTypes.number,
+    unique     : true,
+    description: 'Идентификатор пользователя'
+  },
+  login: {
+    type       : SchemaTypes.string,
+    max        : 128,
+    trim       : true,
+    unique     : true,
+    description: 'Уникальный логин (email) для входа'
+  },
+}, { tableName });
 
 before(() => micro
   .run()
@@ -23,7 +41,7 @@ before(() => micro
 );
 after(() => micro.end());
 
-describe('module-list', function() {
+describe('actions-list', function() {
   let model;
 
   it('#ping', () => micro
@@ -130,6 +148,15 @@ describe('module-list', function() {
   );
 
 });
+
+function createTable(connection) {
+  return connection.schema.createTableIfNotExists(tableName, function (table) {
+    table.increments();
+    table.integer('userId');
+    table.string('login');
+    table.unique([ 'userId', 'login' ]);
+  });
+}
 
 function findFull(id) {
   return micro
