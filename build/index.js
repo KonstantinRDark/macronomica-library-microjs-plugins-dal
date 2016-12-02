@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.PIN_TREE_REMOVE = exports.PIN_TREE_UPDATE = exports.PIN_TREE_CREATE = exports.PIN_TREE_FIND_PATH = exports.PIN_LIST_REMOVE = exports.PIN_LIST_UPDATE = exports.PIN_LIST_CREATE = exports.PIN_LIST_COUNTS = exports.PIN_LIST_FIND_LIST = exports.PIN_LIST_FIND_ONE = exports.PIN_CONNECTION = exports.PIN_OPTIONS = exports.isRange = exports.isNumber = exports.SchemaTypes = exports.Types = exports.Schema = undefined;
+exports.PIN_TREE_REMOVE = exports.PIN_TREE_UPDATE = exports.PIN_TREE_CREATE = exports.PIN_TREE_FIND_PATH = exports.PIN_TREE_FIND_PARENTS = exports.PIN_LIST_REMOVE = exports.PIN_LIST_UPDATE = exports.PIN_LIST_CREATE = exports.PIN_LIST_COUNTS = exports.PIN_LIST_FIND_LIST = exports.PIN_LIST_FIND_ONE = exports.PIN_CONNECTION = exports.PIN_OPTIONS = exports.isRange = exports.isNumber = exports.SchemaTypes = exports.Types = exports.Schema = undefined;
 
 var _plugin = require('./plugin');
 
@@ -47,6 +47,7 @@ exports.PIN_LIST_COUNTS = _constants2.PIN_LIST_COUNTS;
 exports.PIN_LIST_CREATE = _constants2.PIN_LIST_CREATE;
 exports.PIN_LIST_UPDATE = _constants2.PIN_LIST_UPDATE;
 exports.PIN_LIST_REMOVE = _constants2.PIN_LIST_REMOVE;
+exports.PIN_TREE_FIND_PARENTS = _constants2.PIN_TREE_FIND_PARENTS;
 exports.PIN_TREE_FIND_PATH = _constants2.PIN_TREE_FIND_PATH;
 exports.PIN_TREE_CREATE = _constants2.PIN_TREE_CREATE;
 exports.PIN_TREE_UPDATE = _constants2.PIN_TREE_UPDATE;

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.PIN_TREE_REMOVE = exports.PIN_TREE_UPDATE = exports.PIN_TREE_CREATE = exports.PIN_TREE_FIND_PATH = exports.PIN_LIST_REMOVE = exports.PIN_LIST_UPDATE = exports.PIN_LIST_CREATE = exports.PIN_LIST_COUNTS = exports.PIN_LIST_FIND_LIST = exports.PIN_LIST_FIND_ONE = exports.PIN_TREE = exports.PIN_LIST = undefined;
+exports.PIN_TREE_REMOVE = exports.PIN_TREE_UPDATE = exports.PIN_TREE_CREATE = exports.PIN_TREE_FIND_PARENTS = exports.PIN_TREE_FIND_PATH = exports.PIN_LIST_REMOVE = exports.PIN_LIST_UPDATE = exports.PIN_LIST_CREATE = exports.PIN_LIST_COUNTS = exports.PIN_LIST_FIND_LIST = exports.PIN_LIST_FIND_ONE = exports.PIN_TREE = exports.PIN_LIST = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -20,6 +20,7 @@ const PIN_LIST_UPDATE = exports.PIN_LIST_UPDATE = _extends({}, PIN_LIST, { actio
 const PIN_LIST_REMOVE = exports.PIN_LIST_REMOVE = _extends({}, PIN_LIST, { action: 'remove', criteria: '*' });
 
 const PIN_TREE_FIND_PATH = exports.PIN_TREE_FIND_PATH = _extends({}, PIN_TREE, { action: 'find-path', criteria: '*' });
+const PIN_TREE_FIND_PARENTS = exports.PIN_TREE_FIND_PARENTS = _extends({}, PIN_TREE, { action: 'find-parents', criteria: '*' });
 const PIN_TREE_CREATE = exports.PIN_TREE_CREATE = _extends({}, PIN_TREE, { action: 'create', params: '*' });
 const PIN_TREE_UPDATE = exports.PIN_TREE_UPDATE = _extends({}, PIN_TREE, { action: 'update', criteria: '*', params: '*' });
 const PIN_TREE_REMOVE = exports.PIN_TREE_REMOVE = _extends({}, PIN_TREE, { action: 'remove', criteria: '*' });

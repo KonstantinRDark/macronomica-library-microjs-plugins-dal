@@ -6,25 +6,25 @@ Object.defineProperty(exports, "__esModule", {
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-exports.buildPathTreeNode = buildPathTreeNode;
+exports.buildFindPathTreeNodes = buildFindPathTreeNodes;
 
-var _schema = require('./../../../utils/schema');
+var _schema = require('../../../../utils/schema');
 
 var _schema2 = _interopRequireDefault(_schema);
 
-var _constants = require('./../../constants');
+var _constants = require('../../../constants');
 
-var _constants2 = require('./../constants');
+var _constants2 = require('../../constants');
 
-var _errors = require('../../../errors');
+var _errors = require('../../../../errors');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const ERROR_INFO = { module: _constants2.MODULE_NAME, action: 'path-node' };
+const ERROR_INFO = { module: _constants2.MODULE_NAME, action: 'find-path' };
 
-exports.default = (app, middleware, plugin) => msg => buildPathTreeNode(app, middleware, msg);
+exports.default = (app, middleware, plugin) => msg => buildFindPathTreeNodes(app, middleware, msg);
 
-function buildPathTreeNode(app, middleware, _ref) {
+function buildFindPathTreeNodes(app, middleware, _ref) {
   let schema = _ref.schema;
   var _ref$criteria = _ref.criteria;
   let criteria = _ref$criteria === undefined ? {} : _ref$criteria;
@@ -83,4 +83,4 @@ function childrenPath(app, schema) {
     return childrenPath(app, schema, parentId, parents);
   });
 }
-//# sourceMappingURL=path-node.js.map
+//# sourceMappingURL=path.js.map
