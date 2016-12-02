@@ -3,7 +3,7 @@ import Schema from './../../../utils/schema';
 import setCriteria from './../../../utils/set-criteria';
 import setParams from './../../../utils/set-params';
 import convertToResponse from './../../../utils/convert-to-response';
-import { PIN_LIST_COUNTS } from '../../constants';
+import { PIN_LIST_COUNTS } from '../../../pins';
 import { MODULE_NAME } from './../constants';
 import {
   internalError,

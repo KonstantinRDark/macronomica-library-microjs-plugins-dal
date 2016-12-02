@@ -9,7 +9,7 @@ import {
   PIN_TREE_CREATE,
   PIN_TREE_UPDATE,
   PIN_TREE_REMOVE,
-} from './../constants';
+} from '../../pins';
 
 export default (app, plugin, { middleware, onClose }) => {
   app.add(PIN_TREE_FIND_PARENTS, findParents(app, middleware, plugin));

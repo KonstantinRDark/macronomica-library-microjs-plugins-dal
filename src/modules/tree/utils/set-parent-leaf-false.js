@@ -1,4 +1,4 @@
-import { PIN_LIST_UPDATE } from './../../constants';
+import { PIN_LIST_UPDATE } from '../../../pins';
 
 export default function setParentLeafFalse (app, schema, parentId) {
   if (!parentId) {

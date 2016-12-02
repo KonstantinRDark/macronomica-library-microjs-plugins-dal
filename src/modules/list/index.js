@@ -11,7 +11,7 @@ import {
   PIN_LIST_CREATE,
   PIN_LIST_UPDATE,
   PIN_LIST_REMOVE,
-} from './../constants';
+} from '../../pins';
 
 export default (app, plugin, { middleware, onClose }) => {
   app.add(PIN_LIST_FIND_ONE, findOne(app, middleware, plugin));

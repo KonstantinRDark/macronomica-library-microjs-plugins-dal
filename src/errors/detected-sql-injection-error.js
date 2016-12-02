@@ -1,5 +1,4 @@
-import { ERROR_DETECTED_SQL_INJECTION } from './../constants';
-import error from './error';
+import error, { ERROR_DETECTED_SQL_INJECTION } from './error';
 
 export default (app, { property, value, ...info }) => {
   app.log.error(ERROR_DETECTED_SQL_INJECTION, { property, value, ...info });

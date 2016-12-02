@@ -1,5 +1,5 @@
 import Schema from './../../../utils/schema';
-import { PIN_LIST_CREATE } from './../../constants';
+import { PIN_LIST_CREATE } from '../../../pins';
 import setParentLeafFalse from '../utils/set-parent-leaf-false';
 import { MODULE_NAME } from './../constants';
 import {

@@ -1,5 +1,4 @@
-import { ERROR_INTERNAL_ERROR } from './../constants';
-import error from './error';
+import error, { ERROR_INTERNAL_ERROR } from './error';
 
 export default (app, info = {}) => {
   return (err) => {

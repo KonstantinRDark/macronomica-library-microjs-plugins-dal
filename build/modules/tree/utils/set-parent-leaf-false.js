@@ -8,7 +8,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 exports.default = setParentLeafFalse;
 
-var _constants = require('./../../constants');
+var _pins = require('../../../pins');
 
 function setParentLeafFalse(app, schema, parentId) {
   if (!parentId) {
@@ -18,6 +18,6 @@ function setParentLeafFalse(app, schema, parentId) {
   const params = { leaf: false };
   const criteria = { id: parentId, leaf: true };
 
-  return app.act(_extends({}, _constants.PIN_LIST_UPDATE, { schema, criteria, params }));
+  return app.act(_extends({}, _pins.PIN_LIST_UPDATE, { schema, criteria, params }));
 }
 //# sourceMappingURL=set-parent-leaf-false.js.map

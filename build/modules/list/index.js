@@ -28,7 +28,7 @@ var _remove = require('./actions/remove');
 
 var _remove2 = _interopRequireDefault(_remove);
 
-var _constants = require('./../constants');
+var _pins = require('../../pins');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -36,22 +36,22 @@ exports.default = (app, plugin, _ref) => {
   let middleware = _ref.middleware,
       onClose = _ref.onClose;
 
-  app.add(_constants.PIN_LIST_FIND_ONE, (0, _one2.default)(app, middleware, plugin));
-  app.add(_constants.PIN_LIST_FIND_LIST, (0, _list2.default)(app, middleware, plugin));
-  app.add(_constants.PIN_LIST_COUNTS, (0, _count2.default)(app, middleware, plugin));
-  app.add(_constants.PIN_LIST_CREATE, (0, _create2.default)(app, middleware, plugin));
-  app.add(_constants.PIN_LIST_UPDATE, (0, _update2.default)(app, middleware, plugin));
-  app.add(_constants.PIN_LIST_REMOVE, (0, _remove2.default)(app, middleware, plugin));
+  app.add(_pins.PIN_LIST_FIND_ONE, (0, _one2.default)(app, middleware, plugin));
+  app.add(_pins.PIN_LIST_FIND_LIST, (0, _list2.default)(app, middleware, plugin));
+  app.add(_pins.PIN_LIST_COUNTS, (0, _count2.default)(app, middleware, plugin));
+  app.add(_pins.PIN_LIST_CREATE, (0, _create2.default)(app, middleware, plugin));
+  app.add(_pins.PIN_LIST_UPDATE, (0, _update2.default)(app, middleware, plugin));
+  app.add(_pins.PIN_LIST_REMOVE, (0, _remove2.default)(app, middleware, plugin));
 
   onClose(handlerOnClose);
 };
 
 function handlerOnClose(app) {
-  app.del(_constants.PIN_LIST_REMOVE);
-  app.del(_constants.PIN_LIST_UPDATE);
-  app.del(_constants.PIN_LIST_CREATE);
-  app.del(_constants.PIN_LIST_COUNTS);
-  app.del(_constants.PIN_LIST_FIND_LIST);
-  app.del(_constants.PIN_LIST_FIND_ONE);
+  app.del(_pins.PIN_LIST_REMOVE);
+  app.del(_pins.PIN_LIST_UPDATE);
+  app.del(_pins.PIN_LIST_CREATE);
+  app.del(_pins.PIN_LIST_COUNTS);
+  app.del(_pins.PIN_LIST_FIND_LIST);
+  app.del(_pins.PIN_LIST_FIND_ONE);
 }
 //# sourceMappingURL=index.js.map

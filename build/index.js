@@ -25,9 +25,7 @@ var _isRange = require('./utils/is-range');
 
 var _isRange2 = _interopRequireDefault(_isRange);
 
-var _constants = require('./constants');
-
-var _constants2 = require('./modules/constants');
+var _pins = require('./pins');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -39,17 +37,17 @@ exports.Types = Types;
 exports.SchemaTypes = _schemaTypes2.default;
 exports.isNumber = _isNumber2.default;
 exports.isRange = _isRange2.default;
-exports.PIN_OPTIONS = _constants.PIN_OPTIONS;
-exports.PIN_CONNECTION = _constants.PIN_CONNECTION;
-exports.PIN_LIST_FIND_ONE = _constants2.PIN_LIST_FIND_ONE;
-exports.PIN_LIST_FIND_LIST = _constants2.PIN_LIST_FIND_LIST;
-exports.PIN_LIST_COUNTS = _constants2.PIN_LIST_COUNTS;
-exports.PIN_LIST_CREATE = _constants2.PIN_LIST_CREATE;
-exports.PIN_LIST_UPDATE = _constants2.PIN_LIST_UPDATE;
-exports.PIN_LIST_REMOVE = _constants2.PIN_LIST_REMOVE;
-exports.PIN_TREE_FIND_PARENTS = _constants2.PIN_TREE_FIND_PARENTS;
-exports.PIN_TREE_FIND_PATH = _constants2.PIN_TREE_FIND_PATH;
-exports.PIN_TREE_CREATE = _constants2.PIN_TREE_CREATE;
-exports.PIN_TREE_UPDATE = _constants2.PIN_TREE_UPDATE;
-exports.PIN_TREE_REMOVE = _constants2.PIN_TREE_REMOVE;
+exports.PIN_OPTIONS = _pins.PIN_OPTIONS;
+exports.PIN_CONNECTION = _pins.PIN_CONNECTION;
+exports.PIN_LIST_FIND_ONE = _pins.PIN_LIST_FIND_ONE;
+exports.PIN_LIST_FIND_LIST = _pins.PIN_LIST_FIND_LIST;
+exports.PIN_LIST_COUNTS = _pins.PIN_LIST_COUNTS;
+exports.PIN_LIST_CREATE = _pins.PIN_LIST_CREATE;
+exports.PIN_LIST_UPDATE = _pins.PIN_LIST_UPDATE;
+exports.PIN_LIST_REMOVE = _pins.PIN_LIST_REMOVE;
+exports.PIN_TREE_FIND_PARENTS = _pins.PIN_TREE_FIND_PARENTS;
+exports.PIN_TREE_FIND_PATH = _pins.PIN_TREE_FIND_PATH;
+exports.PIN_TREE_CREATE = _pins.PIN_TREE_CREATE;
+exports.PIN_TREE_UPDATE = _pins.PIN_TREE_UPDATE;
+exports.PIN_TREE_REMOVE = _pins.PIN_TREE_REMOVE;
 //# sourceMappingURL=index.js.map

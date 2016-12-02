@@ -6,8 +6,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _constants = require('./../constants');
-
 var _error = require('./error');
 
 var _error2 = _interopRequireDefault(_error);
@@ -21,7 +19,7 @@ exports.default = (app, _ref) => {
       value = _ref.value,
       info = _objectWithoutProperties(_ref, ['property', 'value']);
 
-  app.log.error(_constants.ERROR_DETECTED_SQL_INJECTION, _extends({ property, value }, info));
-  return (0, _error2.default)(_extends({ message: _constants.ERROR_DETECTED_SQL_INJECTION }, info));
+  app.log.error(_error.ERROR_DETECTED_SQL_INJECTION, _extends({ property, value }, info));
+  return (0, _error2.default)(_extends({ message: _error.ERROR_DETECTED_SQL_INJECTION }, info));
 };
 //# sourceMappingURL=detected-sql-injection-error.js.map

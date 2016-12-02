@@ -8,19 +8,19 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 exports.default = setParentLeafTrue;
 
-var _constants = require('./../../constants');
+var _pins = require('../../../pins');
 
 function setParentLeafTrue(app, schema, parentId) {
   if (!parentId) {
     return Promise.resolve();
   }
 
-  return app.act(_extends({}, _constants.PIN_LIST_COUNTS, { schema, criteria: { parentId } })).then((_ref) => {
+  return app.act(_extends({}, _pins.PIN_LIST_COUNTS, { schema, criteria: { parentId } })).then((_ref) => {
     let count = _ref.count;
 
     const params = { leaf: true };
     const criteria = { id: parentId, leaf: false };
-    return count === 0 ? app.act(_extends({}, _constants.PIN_LIST_UPDATE, { schema, criteria, params })) : Promise.resolve();
+    return count === 0 ? app.act(_extends({}, _pins.PIN_LIST_UPDATE, { schema, criteria, params })) : Promise.resolve();
   });
 }
 //# sourceMappingURL=set-parent-leaf-true.js.map

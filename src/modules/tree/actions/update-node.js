@@ -5,7 +5,7 @@ import { MODULE_NAME } from './../constants';
 import {
   PIN_LIST_FIND_ONE,
   PIN_LIST_UPDATE
-} from './../../constants';
+} from '../../../pins';
 import {
   internalError,
   propertyIsRequiredError,

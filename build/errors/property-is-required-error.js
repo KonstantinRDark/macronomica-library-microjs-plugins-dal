@@ -6,8 +6,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _constants = require('./../constants');
-
 var _error = require('./error');
 
 var _error2 = _interopRequireDefault(_error);
@@ -20,6 +18,6 @@ exports.default = (_ref) => {
   let property = _ref.property,
       info = _objectWithoutProperties(_ref, ['property']);
 
-  return (0, _error2.default)(_extends({ message: `${ property }.${ _constants.ERROR_PROPERTY_IS_REQUIRED }` }, info));
+  return (0, _error2.default)(_extends({ message: `${ property }.${ _error.ERROR_PROPERTY_IS_REQUIRED }` }, info));
 };
 //# sourceMappingURL=property-is-required-error.js.map

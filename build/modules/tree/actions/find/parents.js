@@ -12,15 +12,15 @@ var _schema = require('./../../../../utils/schema');
 
 var _schema2 = _interopRequireDefault(_schema);
 
-var _constants = require('./../../../constants');
+var _pins = require('../../../../pins');
 
-var _constants2 = require('./../../constants');
+var _constants = require('./../../constants');
 
 var _errors = require('../../../../errors');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const ERROR_INFO = { module: _constants2.MODULE_NAME, action: 'find-parents' };
+const ERROR_INFO = { module: _constants.MODULE_NAME, action: 'find-parents' };
 
 exports.default = (app, middleware, plugin) => msg => buildFindParentsTreeNodes(app, middleware, msg);
 
@@ -46,7 +46,7 @@ function buildFindParentsTreeNodes(app, middleware, _ref) {
   }
 
   // Загружаем себя
-  return app.act(_extends({}, _constants.PIN_LIST_FIND_LIST, {
+  return app.act(_extends({}, _pins.PIN_LIST_FIND_LIST, {
     schema,
     options,
     criteria: { parentId }

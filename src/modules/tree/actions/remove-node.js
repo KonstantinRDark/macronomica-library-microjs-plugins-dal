@@ -5,7 +5,7 @@ import {
   PIN_LIST_FIND_ONE,
   PIN_LIST_UPDATE,
   PIN_LIST_REMOVE
-} from './../../constants';
+} from '../../../pins';
 import {
   internalError,
   propertyIsRequiredError,

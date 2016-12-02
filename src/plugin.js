@@ -1,7 +1,7 @@
 import { genid } from '@microjs/microjs';
 import knex from 'knex';
 import modules from './modules';
-import { PIN_OPTIONS, PIN_CONNECTION } from './constants';
+import { PIN_OPTIONS, PIN_CONNECTION } from './pins';
 
 export default ({ driver:client, ...connection } = {}) => {
   return (app, { onClose }) => {

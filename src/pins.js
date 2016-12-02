@@ -1,4 +1,6 @@
-import { PIN_PLUGIN } from './../constants';
+export const PIN_PLUGIN = { role: 'plugin' };
+export const PIN_OPTIONS = { ...PIN_PLUGIN, cmd: 'options' };
+export const PIN_CONNECTION = { ...PIN_PLUGIN, cmd: 'connection' };
 
 export const PIN_LIST = { ...PIN_PLUGIN, module: 'dal-actions-list', schema: '*' };
 export const PIN_TREE = { ...PIN_PLUGIN, module: 'dal-actions-tree', schema: '*' };

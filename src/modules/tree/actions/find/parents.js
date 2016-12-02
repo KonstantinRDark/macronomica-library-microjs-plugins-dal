@@ -1,5 +1,5 @@
 import Schema from './../../../../utils/schema';
-import { PIN_LIST_FIND_LIST } from './../../../constants';
+import { PIN_LIST_FIND_LIST } from '../../../../pins';
 import { MODULE_NAME } from './../../constants';
 import {
   internalError,

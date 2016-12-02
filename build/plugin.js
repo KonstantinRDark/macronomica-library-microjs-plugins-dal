@@ -14,7 +14,7 @@ var _modules = require('./modules');
 
 var _modules2 = _interopRequireDefault(_modules);
 
-var _constants = require('./constants');
+var _pins = require('./pins');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -39,12 +39,12 @@ exports.default = function () {
     };
     const middleware = (0, _knex2.default)(options);
 
-    app.add(_constants.PIN_OPTIONS, (_ref3) => {
+    app.add(_pins.PIN_OPTIONS, (_ref3) => {
       _objectDestructuringEmpty(_ref3);
 
       return Promise.resolve(options);
     });
-    app.add(_constants.PIN_CONNECTION, (_ref4) => {
+    app.add(_pins.PIN_CONNECTION, (_ref4) => {
       _objectDestructuringEmpty(_ref4);
 
       return Promise.resolve(middleware);
@@ -57,7 +57,7 @@ exports.default = function () {
 };
 
 function handlerOnClose(app) {
-  app.del(_constants.PIN_CONNECTION);
-  app.del(_constants.PIN_OPTIONS);
+  app.del(_pins.PIN_CONNECTION);
+  app.del(_pins.PIN_OPTIONS);
 }
 //# sourceMappingURL=plugin.js.map

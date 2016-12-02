@@ -47,30 +47,6 @@ describe('actions-tree', function () {
   let model;
 
   it('#ping', () => micro.act('cmd:ping').then(result => should.equal(result, 'pong')));
-
-  it('#create return { id }', () => micro.act(_extends({}, PIN_LIST_CREATE, { schema, params: { userId: 1, login: 'test' } })).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id'), result.id.should.be.a('number')]).then(() => result)).then(result => findFull(result.id).then(result => model = result)));
-
-  it('#find-one return { id, userId, login }', () => findFull(model.id).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id').be.a('number').equal(model.id), result.should.have.property('userId').be.a('number').equal(model.userId), result.should.have.property('login').be.a('string').equal(model.login)])));
-
-  it('#find-one return { id }', () => micro.act(_extends({}, _index.PIN_LIST_FIND_ONE, { schema, criteria: { id: model.id } })).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id').be.a('number').equal(model.id), result.should.not.have.property('userId'), result.should.not.have.property('login')])));
-
-  it('#find-list return [{ id }]', () => micro.act(_extends({}, _index.PIN_LIST_FIND_LIST, { schema })).then(result => Promise.all([should.exist(result), result.should.be.a('array').with.length(1), result[0].should.be.a('object'), result[0].should.have.property('id').be.a('number').equal(model.id), result[0].should.not.have.property('userId'), result[0].should.not.have.property('login')])));
-
-  it('#update update property login', () => micro.act(_extends({}, PIN_LIST_UPDATE, {
-    schema,
-    criteria: { id: model.id },
-    params: { login: 'login2' }
-  })).then(() => findFull(model.id)).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id').equal(model.id), result.should.have.property('login').not.equal(model.login), result.should.have.property('login').equal('login2'), result.should.have.property('userId').equal(model.userId)]).then(() => model = result)));
-
-  it('#update update property login, userId', () => micro.act(_extends({}, PIN_LIST_UPDATE, {
-    schema,
-    criteria: { id: model.id },
-    params: { login: 'login3', userId: 2 }
-  })).then(() => findFull(model.id)).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id').equal(model.id), result.should.have.property('login').not.equal(model.login), result.should.have.property('login').equal('login3'), result.should.have.property('userId').not.equal(model.userId), result.should.have.property('userId').equal(2)]).then(() => model = result)));
-
-  it('#remove return { id }', () => micro.act(_extends({}, PIN_LIST_REMOVE, { schema, criteria: { id: model.id } })).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id').be.a('number').equal(model.id)])));
-
-  it('#find-one should return null', () => micro.act(_extends({}, _index.PIN_LIST_FIND_ONE, { schema, criteria: { id: model.id } })).then(result => should.not.exist(result)));
 });
 
 function createTable(connection) {

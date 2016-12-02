@@ -12,19 +12,19 @@ var _schema = require('./../../../utils/schema');
 
 var _schema2 = _interopRequireDefault(_schema);
 
-var _constants = require('./../../constants');
+var _pins = require('../../../pins');
 
 var _setParentLeafFalse = require('../utils/set-parent-leaf-false');
 
 var _setParentLeafFalse2 = _interopRequireDefault(_setParentLeafFalse);
 
-var _constants2 = require('./../constants');
+var _constants = require('./../constants');
 
 var _errors = require('../../../errors');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const ERROR_INFO = { module: _constants2.MODULE_NAME, action: 'create-node' };
+const ERROR_INFO = { module: _constants.MODULE_NAME, action: 'create-node' };
 
 exports.default = (app, middleware, plugin) => msg => buildCreateTreeNode(app, middleware, msg);
 
@@ -46,6 +46,6 @@ function buildCreateTreeNode(app, middleware, _ref) {
     return Promise.reject((0, _errors.schemaNotInstanceSchemaClassError)(ERROR_INFO));
   }
 
-  return app.act(_extends({}, _constants.PIN_LIST_CREATE, { schema, params: _extends({}, params, { parentId }), options })).then(node => (0, _setParentLeafFalse2.default)(app, schema, parentId).then(() => node)).catch((0, _errors.internalError)(app, ERROR_INFO));
+  return app.act(_extends({}, _pins.PIN_LIST_CREATE, { schema, params: _extends({}, params, { parentId }), options })).then(node => (0, _setParentLeafFalse2.default)(app, schema, parentId).then(() => node)).catch((0, _errors.internalError)(app, ERROR_INFO));
 }
 //# sourceMappingURL=create-node.js.map

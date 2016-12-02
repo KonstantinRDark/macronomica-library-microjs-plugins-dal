@@ -1,6 +1,5 @@
-import { ERROR_SCHEMA_NOT_INSTANCE_SCHEMA_CLASS } from './../constants';
-import error from './error';
+import error, { ERROR_SCHEMA_NOT_INSTANCE_SCHEMA_CLASS } from './error';
 
-export default ({ module, action }) => {
-  return error({ message: ERROR_SCHEMA_NOT_INSTANCE_SCHEMA_CLASS, module, action });
+export default (info = {}) => {
+  return error({ message: ERROR_SCHEMA_NOT_INSTANCE_SCHEMA_CLASS, ...info });
 };

@@ -18,7 +18,7 @@ var _setParentLeafTrue2 = _interopRequireDefault(_setParentLeafTrue);
 
 var _constants = require('./../constants');
 
-var _constants2 = require('./../../constants');
+var _pins = require('../../../pins');
 
 var _errors = require('../../../errors');
 
@@ -50,7 +50,7 @@ function buildRemoveTreeNode(app, middleware, _ref) {
   }
 
   // Сначала получить свои id и parentId
-  return app.act(_extends({}, _constants2.PIN_LIST_FIND_ONE, {
+  return app.act(_extends({}, _pins.PIN_LIST_FIND_ONE, {
     schema,
     criteria: { id },
     options: { fields: ['id', 'parentId', 'leaf'] }
@@ -65,7 +65,7 @@ function removeNode(app, id, schema, options) {
       return node;
     }
 
-    return app.act(_extends({}, _constants2.PIN_LIST_REMOVE, { schema, criteria: { id }, options })).then(updateParent(app, node, id, schema, options))
+    return app.act(_extends({}, _pins.PIN_LIST_REMOVE, { schema, criteria: { id }, options })).then(updateParent(app, node, id, schema, options))
     // Проверить остались ли у родителя дети если нет - заменить ему leaf на true
     .then(result => (0, _setParentLeafTrue2.default)(app, schema, node.parentId).then(() => result));
   };
@@ -75,7 +75,7 @@ function updateParent(app, node, id, schema, options) {
   return removedRows => {
     if (removedRows) {
       let params = { parentId: node.parentId };
-      return app.act(_extends({}, _constants2.PIN_LIST_UPDATE, { schema, criteria: { parentId: id }, params, options }));
+      return app.act(_extends({}, _pins.PIN_LIST_UPDATE, { schema, criteria: { parentId: id }, params, options }));
     }
 
     return removedRows;

@@ -22,7 +22,7 @@ var _setParentLeafFalse2 = _interopRequireDefault(_setParentLeafFalse);
 
 var _constants = require('./../constants');
 
-var _constants2 = require('./../../constants');
+var _pins = require('../../../pins');
 
 var _errors = require('../../../errors');
 
@@ -58,10 +58,10 @@ function buildUpdateTreeNode(app, middleware, _ref) {
 
   // Если не передали parentId - дальнейшая логика излишняя
   if (!parentId || !isFinite(+parentId)) {
-    return app.act(_extends({}, _constants2.PIN_LIST_UPDATE, { schema, criteria: { id }, params, options }));
+    return app.act(_extends({}, _pins.PIN_LIST_UPDATE, { schema, criteria: { id }, params, options }));
   }
 
-  return app.act(_extends({}, _constants2.PIN_LIST_FIND_ONE, {
+  return app.act(_extends({}, _pins.PIN_LIST_FIND_ONE, {
     schema,
     criteria: { id },
     options: { fields: ['id', 'parentId'] }
@@ -70,7 +70,7 @@ function buildUpdateTreeNode(app, middleware, _ref) {
       return node;
     }
 
-    return app.act(_extends({}, _constants2.PIN_LIST_UPDATE, { schema, criteria: { id }, params, options })).then(updated => {
+    return app.act(_extends({}, _pins.PIN_LIST_UPDATE, { schema, criteria: { id }, params, options })).then(updated => {
       // Если новый parentId не равен старому
       if (node.parentId !== +parentId) {
         return Promise.all([

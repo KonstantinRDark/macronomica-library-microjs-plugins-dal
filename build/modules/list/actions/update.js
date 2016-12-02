@@ -28,15 +28,15 @@ var _convertToResponse = require('./../../../utils/convert-to-response');
 
 var _convertToResponse2 = _interopRequireDefault(_convertToResponse);
 
-var _constants = require('../../constants');
+var _pins = require('../../../pins');
 
-var _constants2 = require('./../constants');
+var _constants = require('./../constants');
 
 var _errors = require('../../../errors');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const ERROR_INFO = { module: _constants2.MODULE_NAME, action: 'update' };
+const ERROR_INFO = { module: _constants.MODULE_NAME, action: 'update' };
 
 exports.default = (app, middleware, plugin) => msg => buildUpdate(app, middleware, msg);
 
@@ -75,7 +75,7 @@ function buildUpdate(app, middleware, _ref) {
     }
 
     // Узнаем кол-во обновляемых строк
-    app.act(_extends({}, _constants.PIN_LIST_COUNTS, { schema, criteria })).then((_ref2) => {
+    app.act(_extends({}, _pins.PIN_LIST_COUNTS, { schema, criteria })).then((_ref2) => {
       let count = _ref2.count;
 
       // Если равно 0 - то и обновлять не стоит
