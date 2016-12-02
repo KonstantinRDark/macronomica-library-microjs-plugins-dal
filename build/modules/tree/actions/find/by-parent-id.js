@@ -6,7 +6,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-exports.buildFindParentsTreeNodes = buildFindParentsTreeNodes;
+exports.buildFindByParentIdTreeNodes = buildFindByParentIdTreeNodes;
+
+var _lodash = require('lodash.isstring');
+
+var _lodash2 = _interopRequireDefault(_lodash);
 
 var _schema = require('./../../../../utils/schema');
 
@@ -20,11 +24,11 @@ var _errors = require('../../../../errors');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const ERROR_INFO = { module: _constants.MODULE_NAME, action: 'find-parents' };
+const ERROR_INFO = { module: _constants.MODULE_NAME, action: 'find-parent-id' };
 
-exports.default = (app, middleware, plugin) => msg => buildFindParentsTreeNodes(app, middleware, msg);
+exports.default = (app, middleware, plugin) => msg => buildFindByParentIdTreeNodes(app, middleware, msg);
 
-function buildFindParentsTreeNodes(app, middleware, _ref) {
+function buildFindByParentIdTreeNodes(app, middleware, _ref) {
   let schema = _ref.schema;
   var _ref$criteria = _ref.criteria;
   let criteria = _ref$criteria === undefined ? {} : _ref$criteria;
@@ -41,7 +45,7 @@ function buildFindParentsTreeNodes(app, middleware, _ref) {
     return Promise.reject((0, _errors.schemaNotInstanceSchemaClassError)(ERROR_INFO));
   }
 
-  if (!parentId || parentId === '' || parentId.toLowerCase() === 'null') {
+  if (!parentId || parentId === '' || (0, _lodash2.default)(parentId) && parentId.toLowerCase() === 'null') {
     parentId = null;
   }
 
@@ -52,4 +56,4 @@ function buildFindParentsTreeNodes(app, middleware, _ref) {
     criteria: { parentId }
   })).catch((0, _errors.internalError)(app, ERROR_INFO));
 }
-//# sourceMappingURL=parents.js.map
+//# sourceMappingURL=by-parent-id.js.map

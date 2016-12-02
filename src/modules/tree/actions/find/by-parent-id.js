@@ -1,3 +1,4 @@
+import isString from 'lodash.isstring';
 import Schema from './../../../../utils/schema';
 import { PIN_LIST_FIND_LIST } from '../../../../pins';
 import { MODULE_NAME } from './../../constants';
@@ -7,11 +8,11 @@ import {
   schemaNotInstanceSchemaClassError
 } from '../../../../errors';
 
-const ERROR_INFO = { module: MODULE_NAME, action: 'find-parents' };
+const ERROR_INFO = { module: MODULE_NAME, action: 'find-parent-id' };
 
-export default (app, middleware, plugin) => (msg) => buildFindParentsTreeNodes(app, middleware, msg);
+export default (app, middleware, plugin) => (msg) => buildFindByParentIdTreeNodes(app, middleware, msg);
 
-export function buildFindParentsTreeNodes(app, middleware, { schema, criteria = {}, options = {} }) {
+export function buildFindByParentIdTreeNodes(app, middleware, { schema, criteria = {}, options = {} }) {
   let { parentId } = criteria;
 
   if (!schema) {
@@ -22,7 +23,7 @@ export function buildFindParentsTreeNodes(app, middleware, { schema, criteria = 
     return Promise.reject(schemaNotInstanceSchemaClassError(ERROR_INFO));
   }
 
-  if (!parentId || parentId === '' || parentId.toLowerCase() === 'null') {
+  if (!parentId || parentId === '' || (isString(parentId) && parentId.toLowerCase() === 'null')) {
     parentId = null;
   }
 

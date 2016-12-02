@@ -18,9 +18,9 @@ var _schema = require('./../../../../utils/schema');
 
 var _schema2 = _interopRequireDefault(_schema);
 
-var _isNumber = require('./../../../../utils/is-number');
+var _lodash3 = require('lodash.isnumber');
 
-var _isNumber2 = _interopRequireDefault(_isNumber);
+var _lodash4 = _interopRequireDefault(_lodash3);
 
 var _setCriteria = require('./../../../../utils/set-criteria');
 
@@ -91,11 +91,11 @@ function buildFindList(app, middleware, _ref) {
       }
     }
 
-    if (limit && (0, _isNumber2.default)(limit)) {
+    if (limit && (0, _lodash4.default)(limit)) {
       builder = builder.limit(limit);
     }
 
-    if (offset && (0, _isNumber2.default)(offset)) {
+    if (offset && (0, _lodash4.default)(offset)) {
       builder = builder.offset(offset);
     }
     /*

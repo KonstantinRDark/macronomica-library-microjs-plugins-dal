@@ -60,11 +60,13 @@ function buildCount(app, middleware, _ref) {
       return resolve(builder);
     }
 
-    return builder.then((_ref2) => {
+    return builder
+    // Заглушка count(*) для sqllite3
+    .then((_ref2) => {
       var _ref3 = _slicedToArray(_ref2, 1);
 
-      let count = _ref3[0].count;
-      return { count: +count };
+      let result = _ref3[0];
+      return { count: result.count || result['count(*)'] };
     }).then(resolve).catch((0, _errors.internalError)(app, ERROR_INFO)).catch(reject);
   });
 }

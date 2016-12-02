@@ -4,7 +4,7 @@ import isString from 'lodash.isstring';
 import applyValidators from '../utils/apply-validators';
 import setDefault from '../utils/validators/set-default';
 import setRequired from '../utils/validators/set-required';
-import isNumber from '../../../utils/is-number';
+import isNumber from 'lodash.isnumber';
 
 export default {
   value : 'array',

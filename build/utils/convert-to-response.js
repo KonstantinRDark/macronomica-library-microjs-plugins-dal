@@ -30,7 +30,7 @@ function convertToResponse(schema, fields) {
       return result;
     } else {
       let key = fields[0];
-      let value = result[0];
+      let value = result[0] || result;
 
       for (let _ref2 of convertOuts) {
         let name = _ref2.name;

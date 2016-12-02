@@ -4,7 +4,7 @@ import applyValidators from '../utils/apply-validators';
 import setDefault from '../utils/validators/set-default';
 import setMinMax from '../utils/validators/set-min-max';
 import setRequired from '../utils/validators/set-required';
-import isNumber from '../../../utils/is-number';
+import isNumber from 'lodash.isnumber';
 
 export default {
   value : 'string',

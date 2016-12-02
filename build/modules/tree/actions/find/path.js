@@ -47,7 +47,11 @@ function buildFindPathTreeNodes(app, middleware, _ref) {
   }
 
   // Загружаем себя
-  return app.act(_extends({}, _pins.PIN_LIST_FIND_ONE, { schema, criteria: { id }, options: { fields: ['id', 'parentId'] } })).then(parent => {
+  return app.act(_extends({}, _pins.PIN_LIST_FIND_ONE, {
+    schema,
+    criteria: { id },
+    options: { fields: ['id', 'parentId', 'leaf'] }
+  })).then(parent => {
     const parentId = parent.parentId;
 
     // Если нет родителей - вернем пустой массив родителей
@@ -68,7 +72,11 @@ function childrenPath(app, schema) {
   let id = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
   let parents = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
 
-  return app.act(_extends({}, _pins.PIN_LIST_FIND_ONE, { schema, criteria: { id } })).then(parent => {
+  return app.act(_extends({}, _pins.PIN_LIST_FIND_ONE, {
+    schema,
+    criteria: { id },
+    options: { fields: ['id', 'parentId', 'leaf'] }
+  })).then(parent => {
     const parentId = parent.parentId;
 
 

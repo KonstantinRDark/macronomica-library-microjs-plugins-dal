@@ -5,9 +5,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = setMinMax;
 
-var _isNumber = require('./../../../is-number');
+var _lodash = require('lodash.isnumber');
 
-var _isNumber2 = _interopRequireDefault(_isNumber);
+var _lodash2 = _interopRequireDefault(_lodash);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22,8 +22,8 @@ function setMinMax() {
     var _options$max = options.max;
     let max = _options$max === undefined ? defaultMax : _options$max;
 
-    const hasMin = (0, _isNumber2.default)(min);
-    const hasMax = (0, _isNumber2.default)(max);
+    const hasMin = (0, _lodash2.default)(min);
+    const hasMax = (0, _lodash2.default)(max);
 
     if (hasMin) {
       if (min < defaultMin) {

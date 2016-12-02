@@ -1,6 +1,6 @@
 import isString from 'lodash.isstring';
 import Schema from './../../../../utils/schema';
-import isNumber from './../../../../utils/is-number';
+import isNumber from 'lodash.isnumber';
 import setCriteria from './../../../../utils/set-criteria';
 import checkConvertOut from './../../../../utils/check-convert-out';
 import { MODULE_NAME } from './../../constants';

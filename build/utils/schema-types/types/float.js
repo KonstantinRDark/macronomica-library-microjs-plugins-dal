@@ -30,9 +30,9 @@ var _setRequired = require('../utils/validators/set-required');
 
 var _setRequired2 = _interopRequireDefault(_setRequired);
 
-var _isNumber = require('../../../utils/is-number');
+var _lodash3 = require('lodash.isnumber');
 
-var _isNumber2 = _interopRequireDefault(_isNumber);
+var _lodash4 = _interopRequireDefault(_lodash3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -52,7 +52,7 @@ function schemaValidate() {
   let limit = _options$limit === undefined ? defaultLimit : _options$limit;
 
 
-  if (!(0, _isNumber2.default)(limit)) {
+  if (!(0, _lodash4.default)(limit)) {
     limit = defaultLimit;
   } else {
     if (limit < defaultLimitMin) {

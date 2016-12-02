@@ -1,4 +1,4 @@
-import isNumber from './../../../is-number';
+import isNumber from 'lodash.isnumber';
 
 export default function setMinMax(defaults = {}) {
   return (options, schema) => {

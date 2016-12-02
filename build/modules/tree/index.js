@@ -20,9 +20,9 @@ var _path = require('./actions/find/path');
 
 var _path2 = _interopRequireDefault(_path);
 
-var _parents = require('./actions/find/parents');
+var _byParentId = require('./actions/find/by-parent-id');
 
-var _parents2 = _interopRequireDefault(_parents);
+var _byParentId2 = _interopRequireDefault(_byParentId);
 
 var _pins = require('../../pins');
 
@@ -32,7 +32,7 @@ exports.default = (app, plugin, _ref) => {
   let middleware = _ref.middleware,
       onClose = _ref.onClose;
 
-  app.add(_pins.PIN_TREE_FIND_PARENTS, (0, _parents2.default)(app, middleware, plugin));
+  app.add(_pins.PIN_TREE_FIND_PARENT_id, (0, _byParentId2.default)(app, middleware, plugin));
   app.add(_pins.PIN_TREE_FIND_PATH, (0, _path2.default)(app, middleware, plugin));
   app.add(_pins.PIN_TREE_CREATE, (0, _createNode2.default)(app, middleware, plugin));
   app.add(_pins.PIN_TREE_UPDATE, (0, _updateNode2.default)(app, middleware, plugin));
@@ -46,6 +46,6 @@ function handlerOnClose(app) {
   app.del(_pins.PIN_TREE_UPDATE);
   app.del(_pins.PIN_TREE_CREATE);
   app.del(_pins.PIN_TREE_FIND_PATH);
-  app.del(_pins.PIN_TREE_FIND_PARENTS);
+  app.del(_pins.PIN_TREE_FIND_PARENT_id);
 }
 //# sourceMappingURL=index.js.map

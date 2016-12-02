@@ -1,4 +1,4 @@
-import isNumber from './is-number';
+import isNumber from 'lodash.isnumber';
 
 export default function isRange(value) {
   return Array.isArray(value)

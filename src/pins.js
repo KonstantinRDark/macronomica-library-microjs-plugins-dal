@@ -13,7 +13,7 @@ export const PIN_LIST_UPDATE = { ...PIN_LIST, action: 'update', criteria: '*', p
 export const PIN_LIST_REMOVE = { ...PIN_LIST, action: 'remove', criteria: '*' };
 
 export const PIN_TREE_FIND_PATH = { ...PIN_TREE, action: 'find-path', criteria: '*' };
-export const PIN_TREE_FIND_PARENTS = { ...PIN_TREE, action: 'find-parents', criteria: '*' };
+export const PIN_TREE_FIND_PARENT_id = { ...PIN_TREE, action: 'find-parent-id', criteria: '*' };
 export const PIN_TREE_CREATE = { ...PIN_TREE, action: 'create', params: '*' };
 export const PIN_TREE_UPDATE = { ...PIN_TREE, action: 'update', criteria: '*', params: '*' };
 export const PIN_TREE_REMOVE = { ...PIN_TREE, action: 'remove', criteria: '*' };

@@ -29,7 +29,12 @@ export function buildFindPathTreeNodes(app, middleware, { schema, criteria = {},
 
   // Загружаем себя
   return app
-    .act({ ...PIN_LIST_FIND_ONE, schema, criteria: { id }, options: { fields: [ 'id', 'parentId' ] } })
+    .act({
+      ...PIN_LIST_FIND_ONE,
+      schema,
+      criteria: { id },
+      options : { fields: [ 'id', 'parentId', 'leaf' ] }
+    })
     .then(parent => {
       const { parentId } = parent;
 
@@ -50,7 +55,12 @@ export function buildFindPathTreeNodes(app, middleware, { schema, criteria = {},
 // Иначе вызовем этот метод с id == parentId
 function childrenPath(app, schema, id = null, parents = []) {
   return app
-    .act({ ...PIN_LIST_FIND_ONE, schema, criteria: { id } })
+    .act({
+      ...PIN_LIST_FIND_ONE,
+      schema,
+      criteria: { id },
+      options : { fields: [ 'id', 'parentId', 'leaf' ] }
+    })
     .then(parent => {
       const { parentId } = parent;
 

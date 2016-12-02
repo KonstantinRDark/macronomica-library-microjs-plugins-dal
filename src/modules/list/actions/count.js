@@ -41,7 +41,8 @@ export function buildCount (app, middleware, { schema, criteria = {}, options = 
     }
 
     return builder
-      .then(([ { count } ]) => ({ count: +count }))
+      // Заглушка count(*) для sqllite3
+      .then(([ result ]) => ({ count: result.count || result[ 'count(*)' ] }))
       .then(resolve)
       .catch(internalError(app, ERROR_INFO))
       .catch(reject);

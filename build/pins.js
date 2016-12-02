@@ -21,7 +21,7 @@ const PIN_LIST_UPDATE = exports.PIN_LIST_UPDATE = _extends({}, PIN_LIST, { actio
 const PIN_LIST_REMOVE = exports.PIN_LIST_REMOVE = _extends({}, PIN_LIST, { action: 'remove', criteria: '*' });
 
 const PIN_TREE_FIND_PATH = exports.PIN_TREE_FIND_PATH = _extends({}, PIN_TREE, { action: 'find-path', criteria: '*' });
-const PIN_TREE_FIND_PARENTS = exports.PIN_TREE_FIND_PARENTS = _extends({}, PIN_TREE, { action: 'find-parents', criteria: '*' });
+const PIN_TREE_FIND_PARENT_id = exports.PIN_TREE_FIND_PARENT_id = _extends({}, PIN_TREE, { action: 'find-parent-id', criteria: '*' });
 const PIN_TREE_CREATE = exports.PIN_TREE_CREATE = _extends({}, PIN_TREE, { action: 'create', params: '*' });
 const PIN_TREE_UPDATE = exports.PIN_TREE_UPDATE = _extends({}, PIN_TREE, { action: 'update', criteria: '*', params: '*' });
 const PIN_TREE_REMOVE = exports.PIN_TREE_REMOVE = _extends({}, PIN_TREE, { action: 'remove', criteria: '*' });

@@ -28,9 +28,9 @@ var _setRequired = require('../utils/validators/set-required');
 
 var _setRequired2 = _interopRequireDefault(_setRequired);
 
-var _isNumber = require('../../../utils/is-number');
+var _lodash3 = require('lodash.isnumber');
 
-var _isNumber2 = _interopRequireDefault(_isNumber);
+var _lodash4 = _interopRequireDefault(_lodash3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -50,12 +50,12 @@ function schemaValidate() {
         max = options.max;
 
 
-  if ('length' in options && (0, _isNumber2.default)(length) && length >= 0) {
+  if ('length' in options && (0, _lodash4.default)(length) && length >= 0) {
     schema = schema.length(+length, 'utf8');
   } else {
     schema = (0, _setMinMax2.default)()(options, schema);
 
-    if ('max' in options && (0, _isNumber2.default)(max)) {
+    if ('max' in options && (0, _lodash4.default)(max)) {
       if ('truncate' in options && truncate === true) {
         schema = schema.truncate();
       }

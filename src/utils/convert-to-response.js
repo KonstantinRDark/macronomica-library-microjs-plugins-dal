@@ -13,7 +13,7 @@ export default function convertToResponse(schema, fields) {
       return result;
     } else {
       let key = fields[ 0 ];
-      let value = result[ 0 ];
+      let value = result[ 0 ] || result;
 
       for (let { name, callback } of convertOuts) {
         if (key === name) {

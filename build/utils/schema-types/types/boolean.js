@@ -12,6 +12,18 @@ var _lodash = require('lodash.memoize');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
+var _lodash3 = require('lodash.isstring');
+
+var _lodash4 = _interopRequireDefault(_lodash3);
+
+var _lodash5 = require('lodash.isboolean');
+
+var _lodash6 = _interopRequireDefault(_lodash5);
+
+var _lodash7 = require('lodash.isnumber');
+
+var _lodash8 = _interopRequireDefault(_lodash7);
+
 var _applyValidators = require('../utils/apply-validators');
 
 var _applyValidators2 = _interopRequireDefault(_applyValidators);
@@ -28,7 +40,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = {
   value: 'boolean',
-  schema: (0, _lodash2.default)(schemaValidate)
+  schema: (0, _lodash2.default)(schemaValidate),
+  convertIn,
+  convertOut
 };
 
 
@@ -36,5 +50,25 @@ function schemaValidate() {
   let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Object.create(null);
 
   return (0, _applyValidators2.default)(options, _joi2.default.boolean(), [_setDefault2.default, _setRequired2.default]);
+}
+
+function convertIn(value, options) {
+  if ((0, _lodash4.default)(value)) {
+    value = value.toLowerCase() === 'true' ? true : options.default;
+  }
+
+  if ((0, _lodash6.default)(value)) {
+    value = !!value ? 1 : 0;
+  }
+
+  return value;
+}
+
+function convertOut(value) {
+  if ((0, _lodash8.default)(value)) {
+    value = value === 1;
+  }
+
+  return value;
 }
 //# sourceMappingURL=boolean.js.map

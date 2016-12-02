@@ -28,9 +28,9 @@ var _setRequired = require('../utils/validators/set-required');
 
 var _setRequired2 = _interopRequireDefault(_setRequired);
 
-var _isNumber = require('../../../utils/is-number');
+var _lodash5 = require('lodash.isnumber');
 
-var _isNumber2 = _interopRequireDefault(_isNumber);
+var _lodash6 = _interopRequireDefault(_lodash5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -52,7 +52,7 @@ function schemaValidate() {
 
 function convertIn(value) {
   if (Array.isArray(value)) {
-    return value.filter(id => (0, _isNumber2.default)(id)).join(',');
+    return value.filter(id => (0, _lodash6.default)(id)).join(',');
   }
 
   return value;

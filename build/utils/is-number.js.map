@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../src/utils/is-number.js"],"names":["isNumber","value","isFinite","isNaN"],"mappings":";;;;;kBACwBA,Q;AAAT,SAASA,QAAT,CAAkBC,KAAlB,EAAyB;AACtC,SAAOC,SAAS,CAACD,KAAV,KAAoB,CAACE,MAAM,CAACF,KAAP,CAA5B;AACD","file":"is-number.js","sourcesContent":["\nexport default function isNumber(value) {\n  return isFinite(+value) && !isNaN(+value);\n}"]}
