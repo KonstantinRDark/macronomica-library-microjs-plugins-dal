@@ -3,6 +3,14 @@ import Schema from './utils/schema';
 import SchemaTypes from './utils/schema-types';
 import isRange from './utils/is-range';
 import {
+  schemaNotFoundError,
+  internalErrorPromise,
+  propertyIsRequiredError,
+  detectedSqlInjectionError,
+  schemaNotInstanceSchemaClassError
+} from './errors';
+
+import {
   PIN_OPTIONS, PIN_CONNECTION,
 
   PIN_LIST_FIND_ONE,
@@ -41,5 +49,11 @@ export {
   PIN_TREE_FIND_PATH,
   PIN_TREE_CREATE,
   PIN_TREE_UPDATE,
-  PIN_TREE_REMOVE
+  PIN_TREE_REMOVE,
+  
+  schemaNotFoundError,
+  internalErrorPromise,
+  propertyIsRequiredError,
+  detectedSqlInjectionError,
+  schemaNotInstanceSchemaClassError
 }

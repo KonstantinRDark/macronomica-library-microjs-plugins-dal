@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.PIN_TREE_REMOVE = exports.PIN_TREE_UPDATE = exports.PIN_TREE_CREATE = exports.PIN_TREE_FIND_PATH = exports.PIN_TREE_FIND_PARENT_id = exports.PIN_LIST_REMOVE = exports.PIN_LIST_UPDATE = exports.PIN_LIST_CREATE = exports.PIN_LIST_COUNTS = exports.PIN_LIST_FIND_LIST = exports.PIN_LIST_FIND_ONE = exports.PIN_CONNECTION = exports.PIN_OPTIONS = exports.isRange = exports.SchemaTypes = exports.Types = exports.Schema = undefined;
+exports.schemaNotInstanceSchemaClassError = exports.detectedSqlInjectionError = exports.propertyIsRequiredError = exports.internalErrorPromise = exports.schemaNotFoundError = exports.PIN_TREE_REMOVE = exports.PIN_TREE_UPDATE = exports.PIN_TREE_CREATE = exports.PIN_TREE_FIND_PATH = exports.PIN_TREE_FIND_PARENT_id = exports.PIN_LIST_REMOVE = exports.PIN_LIST_UPDATE = exports.PIN_LIST_CREATE = exports.PIN_LIST_COUNTS = exports.PIN_LIST_FIND_LIST = exports.PIN_LIST_FIND_ONE = exports.PIN_CONNECTION = exports.PIN_OPTIONS = exports.isRange = exports.SchemaTypes = exports.Types = exports.Schema = undefined;
 
 var _plugin = require('./plugin');
 
@@ -20,6 +20,8 @@ var _schemaTypes2 = _interopRequireDefault(_schemaTypes);
 var _isRange = require('./utils/is-range');
 
 var _isRange2 = _interopRequireDefault(_isRange);
+
+var _errors = require('./errors');
 
 var _pins = require('./pins');
 
@@ -45,4 +47,9 @@ exports.PIN_TREE_FIND_PATH = _pins.PIN_TREE_FIND_PATH;
 exports.PIN_TREE_CREATE = _pins.PIN_TREE_CREATE;
 exports.PIN_TREE_UPDATE = _pins.PIN_TREE_UPDATE;
 exports.PIN_TREE_REMOVE = _pins.PIN_TREE_REMOVE;
+exports.schemaNotFoundError = _errors.schemaNotFoundError;
+exports.internalErrorPromise = _errors.internalErrorPromise;
+exports.propertyIsRequiredError = _errors.propertyIsRequiredError;
+exports.detectedSqlInjectionError = _errors.detectedSqlInjectionError;
+exports.schemaNotInstanceSchemaClassError = _errors.schemaNotInstanceSchemaClassError;
 //# sourceMappingURL=index.js.map

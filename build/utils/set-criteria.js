@@ -22,7 +22,9 @@ var _sqlStringProtector = require('./sql-string-protector');
 
 var _sqlStringProtector2 = _interopRequireDefault(_sqlStringProtector);
 
-var _errors = require('./../errors');
+var _detectedSqlInjectionError = require('./../errors/detected-sql-injection-error');
+
+var _detectedSqlInjectionError2 = _interopRequireDefault(_detectedSqlInjectionError);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -66,7 +68,7 @@ function setWhere(app, builder, params, reject) {
     } else {
 
       if (!(0, _sqlStringProtector2.default)(value)) {
-        reject((0, _errors.detectedSqlInjectionError)(app, _extends({}, ERROR_INFO, { property, value })));
+        reject((0, _detectedSqlInjectionError2.default)(app, _extends({}, ERROR_INFO, { property, value })));
         break;
       }
 

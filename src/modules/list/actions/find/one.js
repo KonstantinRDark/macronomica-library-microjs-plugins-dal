@@ -4,7 +4,7 @@ import setCriteria from './../../../../utils/set-criteria';
 import checkConvertOut from './../../../../utils/check-convert-out';
 import { MODULE_NAME } from './../../constants';
 import {
-  internalError,
+  internalErrorPromise,
   schemaNotFoundError,
   schemaNotInstanceSchemaClassError
 } from '../../../../errors';
@@ -59,7 +59,7 @@ export function buildFindOne(app, middleware, { schema, criteria = {}, options =
 
         resolve({ ...result });
       })
-      .catch(internalError(app, ERROR_INFO))
+      .catch(internalErrorPromise(app, ERROR_INFO))
       .catch(reject);
   });
 }

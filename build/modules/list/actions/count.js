@@ -67,7 +67,7 @@ function buildCount(app, middleware, _ref) {
 
       let result = _ref3[0];
       return { count: result.count || result['count(*)'] };
-    }).then(resolve).catch((0, _errors.internalError)(app, ERROR_INFO)).catch(reject);
+    }).then(resolve).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO)).catch(reject);
   });
 }
 //# sourceMappingURL=count.js.map

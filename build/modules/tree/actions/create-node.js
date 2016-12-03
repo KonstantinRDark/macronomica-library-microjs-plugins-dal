@@ -46,6 +46,6 @@ function buildCreateTreeNode(app, middleware, _ref) {
     return Promise.reject((0, _errors.schemaNotInstanceSchemaClassError)(ERROR_INFO));
   }
 
-  return app.act(_extends({}, _pins.PIN_LIST_CREATE, { schema, params: _extends({}, params, { parentId }), options })).then(node => (0, _setParentLeafFalse2.default)(app, schema, parentId).then(() => node)).catch((0, _errors.internalError)(app, ERROR_INFO));
+  return app.act(_extends({}, _pins.PIN_LIST_CREATE, { schema, params: _extends({}, params, { parentId }), options })).then(node => (0, _setParentLeafFalse2.default)(app, schema, parentId).then(() => node)).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO));
 }
 //# sourceMappingURL=create-node.js.map

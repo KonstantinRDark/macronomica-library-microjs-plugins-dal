@@ -1,6 +1,15 @@
-import error, { ERROR_DETECTED_SQL_INJECTION } from './error';
+import { error } from '@microjs/microjs';
+import { PLUGIN_SHORT_NAME } from './../constants';
+
+export const ERROR_DETECTED_SQL_INJECTION = `detected.sql.injection`;
 
 export default (app, { property, value, ...info }) => {
-  app.log.error(ERROR_DETECTED_SQL_INJECTION, { property, value, ...info });
-  return error({ message: ERROR_DETECTED_SQL_INJECTION, ...info });
+  const e = error({
+    plugin : PLUGIN_SHORT_NAME,
+    message: ERROR_DETECTED_SQL_INJECTION,
+    ...info
+  });
+  
+  app.log.error(e.message, { property, value, ...info });
+  return e;
 };

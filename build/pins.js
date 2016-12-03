@@ -6,12 +6,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-const PIN_PLUGIN = exports.PIN_PLUGIN = { role: 'plugin' };
+const PIN_PLUGIN = exports.PIN_PLUGIN = { role: 'plugin', module: 'dal-common' };
 const PIN_OPTIONS = exports.PIN_OPTIONS = _extends({}, PIN_PLUGIN, { cmd: 'options' });
 const PIN_CONNECTION = exports.PIN_CONNECTION = _extends({}, PIN_PLUGIN, { cmd: 'connection' });
 
-const PIN_LIST = exports.PIN_LIST = _extends({}, PIN_PLUGIN, { module: 'dal-actions-list', schema: '*' });
-const PIN_TREE = exports.PIN_TREE = _extends({}, PIN_PLUGIN, { module: 'dal-actions-tree', schema: '*' });
+const PIN_LIST = exports.PIN_LIST = _extends({}, PIN_PLUGIN, { module: 'dal-list', schema: '*' });
+const PIN_TREE = exports.PIN_TREE = _extends({}, PIN_PLUGIN, { module: 'dal-tree', schema: '*' });
 
 const PIN_LIST_FIND_ONE = exports.PIN_LIST_FIND_ONE = _extends({}, PIN_LIST, { action: 'find-one', criteria: '*' });
 const PIN_LIST_FIND_LIST = exports.PIN_LIST_FIND_LIST = _extends({}, PIN_LIST, { action: 'find-list' });

@@ -2,7 +2,7 @@ import Schema from './../../../utils/schema';
 import setCriteria from './../../../utils/set-criteria';
 import { MODULE_NAME } from './../constants';
 import {
-  internalError,
+  internalErrorPromise,
   schemaNotFoundError,
   schemaNotInstanceSchemaClassError
 } from '../../../errors';
@@ -44,7 +44,7 @@ export function buildCount (app, middleware, { schema, criteria = {}, options = 
       // Заглушка count(*) для sqllite3
       .then(([ result ]) => ({ count: result.count || result[ 'count(*)' ] }))
       .then(resolve)
-      .catch(internalError(app, ERROR_INFO))
+      .catch(internalErrorPromise(app, ERROR_INFO))
       .catch(reject);
   });
 }

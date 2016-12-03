@@ -6,7 +6,7 @@ import convertToResponse from './../../../utils/convert-to-response';
 import { PIN_LIST_COUNTS } from '../../../pins';
 import { MODULE_NAME } from './../constants';
 import {
-  internalError,
+  internalErrorPromise,
   schemaNotFoundError,
   schemaNotInstanceSchemaClassError
 } from '../../../errors';
@@ -73,7 +73,7 @@ export function buildUpdate (app, middleware, { schema, criteria = {}, params = 
 
             return convertToResponse(schema, __fields)(result);
           })
-          .catch(internalError(app, ERROR_INFO));
+          .catch(internalErrorPromise(app, ERROR_INFO));
       })
       .then(resolve)
       .catch(reject);

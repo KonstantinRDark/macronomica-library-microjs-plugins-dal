@@ -1,0 +1,1 @@
+export const PLUGIN_SHORT_NAME = 'dal';

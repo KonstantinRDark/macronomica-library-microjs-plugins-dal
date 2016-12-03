@@ -3,7 +3,7 @@ import convertToResponse from './../../../utils/convert-to-response';
 import Schema from './../../../utils/schema';
 import { MODULE_NAME } from './../constants';
 import {
-  internalError,
+  internalErrorPromise,
   schemaNotFoundError,
   schemaNotInstanceSchemaClassError
 } from '../../../errors';
@@ -81,7 +81,7 @@ export function buildCreate (app, middleware, { schema, params = {}, options = {
         return convertToResponse(schema, __fields)(result);
       })
       .then(resolve)
-      .catch(internalError(app, ERROR_INFO))
+      .catch(internalErrorPromise(app, ERROR_INFO))
       .catch(reject);
   });
 }

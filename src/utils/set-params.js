@@ -1,5 +1,5 @@
 import sqlStringProtector from './sql-string-protector';
-import { detectedSqlInjectionError } from './../errors';
+import detectedSqlInjectionError from './../errors/detected-sql-injection-error';
 
 const ERROR_INFO = { module: 'utils', action: 'set-params' };
 

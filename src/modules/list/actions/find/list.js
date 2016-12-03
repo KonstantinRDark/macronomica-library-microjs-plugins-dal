@@ -5,7 +5,7 @@ import setCriteria from './../../../../utils/set-criteria';
 import checkConvertOut from './../../../../utils/check-convert-out';
 import { MODULE_NAME } from './../../constants';
 import {
-  internalError,
+  internalErrorPromise,
   schemaNotFoundError,
   schemaNotInstanceSchemaClassError
 } from '../../../../errors';
@@ -92,7 +92,7 @@ export function buildFindList(app, middleware, { schema, criteria = {}, options 
 
         resolve(result.map(row => ({ ...row })));
       })
-      .catch(internalError(app, ERROR_INFO))
+      .catch(internalErrorPromise(app, ERROR_INFO))
       .catch(reject);
   });
 }

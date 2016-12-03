@@ -4,7 +4,7 @@ import setCriteria from './../../../utils/set-criteria';
 import convertToResponse from './../../../utils/convert-to-response';
 import { MODULE_NAME } from './../constants';
 import {
-  internalError,
+  internalErrorPromise,
   schemaNotFoundError,
   schemaNotInstanceSchemaClassError
 } from '../../../errors';
@@ -59,7 +59,7 @@ export function buildRemove (app, middleware, { schema, criteria = {}, options =
         return convertToResponse(schema, __fields)([ result ]);
       })
       .then(resolve)
-      .catch(internalError(app, ERROR_INFO))
+      .catch(internalErrorPromise(app, ERROR_INFO))
       .catch(reject);
   });
 }

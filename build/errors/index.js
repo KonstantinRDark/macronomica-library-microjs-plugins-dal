@@ -3,11 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.propertyIsRequiredError = exports.schemaNotInstanceSchemaClassError = exports.detectedSqlInjectionError = exports.schemaNotFoundError = exports.internalError = undefined;
+exports.schemaNotInstanceSchemaClassError = exports.detectedSqlInjectionError = exports.propertyIsRequiredError = exports.internalErrorPromise = exports.schemaNotFoundError = undefined;
 
-var _internalError = require('./internal-error');
+var _internalErrorPromise = require('./internal-error-promise');
 
-var _internalError2 = _interopRequireDefault(_internalError);
+var _internalErrorPromise2 = _interopRequireDefault(_internalErrorPromise);
 
 var _detectedSqlInjectionError = require('./detected-sql-injection-error');
 
@@ -27,9 +27,9 @@ var _schemaNotInstanceSchemaClass2 = _interopRequireDefault(_schemaNotInstanceSc
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.internalError = _internalError2.default;
 exports.schemaNotFoundError = _schemaNotFoundError2.default;
+exports.internalErrorPromise = _internalErrorPromise2.default;
+exports.propertyIsRequiredError = _propertyIsRequiredError2.default;
 exports.detectedSqlInjectionError = _detectedSqlInjectionError2.default;
 exports.schemaNotInstanceSchemaClassError = _schemaNotInstanceSchemaClass2.default;
-exports.propertyIsRequiredError = _propertyIsRequiredError2.default;
 //# sourceMappingURL=index.js.map

@@ -54,6 +54,6 @@ function buildFindByParentIdTreeNodes(app, middleware, _ref) {
     schema,
     options,
     criteria: { parentId }
-  })).catch((0, _errors.internalError)(app, ERROR_INFO));
+  })).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO));
 }
 //# sourceMappingURL=by-parent-id.js.map

@@ -1,5 +1,6 @@
-import error, { ERROR_PROPERTY_IS_REQUIRED } from './error';
+import { propertyIsRequredError } from '@microjs/microjs';
+import { PLUGIN_SHORT_NAME } from './../constants';
 
-export default ({ property, ...info }) => {
-  return error({ message: `${ property }.${ ERROR_PROPERTY_IS_REQUIRED }`, ...info });
+export default (info = {}) => {
+  return propertyIsRequredError({ plugin: PLUGIN_SHORT_NAME, ...info });
 };

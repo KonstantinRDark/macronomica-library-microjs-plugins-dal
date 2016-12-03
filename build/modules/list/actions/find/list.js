@@ -127,7 +127,7 @@ function buildFindList(app, middleware, _ref) {
       }
 
       resolve(result.map(row => _extends({}, row)));
-    }).catch((0, _errors.internalError)(app, ERROR_INFO)).catch(reject);
+    }).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO)).catch(reject);
   });
 }
 //# sourceMappingURL=list.js.map

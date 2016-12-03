@@ -3,7 +3,7 @@ import { PIN_LIST_CREATE } from '../../../pins';
 import setParentLeafFalse from '../utils/set-parent-leaf-false';
 import { MODULE_NAME } from './../constants';
 import {
-  internalError,
+  internalErrorPromise,
   schemaNotFoundError,
   schemaNotInstanceSchemaClassError
 } from '../../../errors';
@@ -28,5 +28,5 @@ export function buildCreateTreeNode (app, middleware, { schema, params = {}, opt
     .then(node => setParentLeafFalse(app, schema, parentId)
       .then(() => node)
     )
-    .catch(internalError(app, ERROR_INFO));
+    .catch(internalErrorPromise(app, ERROR_INFO));
 }

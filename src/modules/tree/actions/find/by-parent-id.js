@@ -3,7 +3,7 @@ import Schema from './../../../../utils/schema';
 import { PIN_LIST_FIND_LIST } from '../../../../pins';
 import { MODULE_NAME } from './../../constants';
 import {
-  internalError,
+  internalErrorPromise,
   schemaNotFoundError,
   schemaNotInstanceSchemaClassError
 } from '../../../../errors';
@@ -34,5 +34,5 @@ export function buildFindByParentIdTreeNodes(app, middleware, { schema, criteria
     options,
     criteria: { parentId }
   })
-  .catch(internalError(app, ERROR_INFO));
+  .catch(internalErrorPromise(app, ERROR_INFO));
 }

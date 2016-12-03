@@ -56,7 +56,7 @@ function buildRemoveTreeNode(app, middleware, _ref) {
     options: { fields: ['id', 'parentId', 'leaf'] }
   }))
   // Удаляем себя
-  .then(removeNode(app, id, schema, options)).catch((0, _errors.internalError)(app, ERROR_INFO));
+  .then(removeNode(app, id, schema, options)).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO));
 }
 
 function removeNode(app, id, schema, options) {

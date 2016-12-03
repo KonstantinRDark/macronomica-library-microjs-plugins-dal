@@ -7,7 +7,7 @@ import {
   PIN_LIST_REMOVE
 } from '../../../pins';
 import {
-  internalError,
+  internalErrorPromise,
   propertyIsRequiredError,
   schemaNotFoundError,
   schemaNotInstanceSchemaClassError
@@ -42,7 +42,7 @@ export function buildRemoveTreeNode (app, middleware, { schema, criteria = {}, o
     })
     // Удаляем себя
     .then(removeNode(app, id, schema, options))
-    .catch(internalError(app, ERROR_INFO));
+    .catch(internalErrorPromise(app, ERROR_INFO));
 }
 
 function removeNode(app, id, schema, options) {

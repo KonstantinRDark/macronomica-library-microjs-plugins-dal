@@ -7,7 +7,7 @@ import {
   PIN_LIST_UPDATE
 } from '../../../pins';
 import {
-  internalError,
+  internalErrorPromise,
   propertyIsRequiredError,
   schemaNotFoundError,
   schemaNotInstanceSchemaClassError
@@ -66,5 +66,5 @@ export function buildUpdateTreeNode(app, middleware, { schema, criteria = {}, pa
           return updated;
         });
     })
-    .catch(internalError(app, ERROR_INFO));
+    .catch(internalErrorPromise(app, ERROR_INFO));
 }
