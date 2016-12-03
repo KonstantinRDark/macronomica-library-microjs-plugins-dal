@@ -13,6 +13,6 @@ var _constants = require('./../constants');
 exports.default = function (app) {
   let info = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-  return err => (0, _microjs.internalError)(_extends({ plugin: _constants.PLUGIN_SHORT_NAME }, info))(err);
+  return err => (0, _microjs.internalErrorPromise)(app, _extends({ plugin: _constants.PLUGIN_SHORT_NAME }, info))(err);
 };
 //# sourceMappingURL=internal-error-promise.js.map
