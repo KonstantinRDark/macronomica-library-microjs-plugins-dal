@@ -166,7 +166,6 @@ describe('actions-tree', function() {
           ])
           .then(([ list1, list2, list3, list4 ]) => Promise
             .all([
-              console.log([ list1, list2, list3, list4 ]),
               list1.should.with.length(1),
               list2.should.with.length(2),
               list3.should.with.length(0),

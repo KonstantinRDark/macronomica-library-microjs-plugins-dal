@@ -95,7 +95,7 @@ describe('actions-tree', function () {
         list2 = _ref8[1],
         list3 = _ref8[2],
         list4 = _ref8[3];
-    return Promise.all([console.log([list1, list2, list3, list4]), list1.should.with.length(1), list2.should.with.length(2), list3.should.with.length(0), list4.should.with.length(0)]).then(() => Promise.all([removeNode(root.id), removeNode(child1.id), removeNode(child2.id)]));
+    return Promise.all([list1.should.with.length(1), list2.should.with.length(2), list3.should.with.length(0), list4.should.with.length(0)]).then(() => Promise.all([removeNode(root.id), removeNode(child1.id), removeNode(child2.id)]));
   })))));
 
   it('remove', () => createNode({ name: 'node-root-1' }).then(root => removeNode(root.id)));
