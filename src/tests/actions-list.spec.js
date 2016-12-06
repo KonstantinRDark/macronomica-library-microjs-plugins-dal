@@ -1,6 +1,6 @@
 import chai from 'chai';
 import Micro, { LEVEL_ERROR } from '@microjs/microjs';
-import { CONNECT_OPTIONS } from './constants';
+import { CONNECT_OPTIONS, CONNECT_OPTIONS_PG } from './constants';
 import Plugin, {
   Schema,
   SchemaTypes,
@@ -12,11 +12,11 @@ import Plugin, {
   PIN_LIST_REMOVE
 } from '../index';
 
-const tableName = 'module-list-db';
+const tableName = 'module_list_db';
 const should = chai.should();
 const micro = Micro({
   level  : LEVEL_ERROR,
-  plugins: [ Plugin(CONNECT_OPTIONS) ]
+  plugins: [ Plugin(CONNECT_OPTIONS_PG) ]
 });
 
 const schema = new Schema('UserInfo', {
@@ -57,6 +57,22 @@ describe('actions-list', function() {
         result.should.be.a('object'),
         result.should.have.property('id'),
         result.id.should.be.a('number')
+      ])
+      .then(() => result)
+    )
+    .then(result => findFull(result.id).then(result => model = result))
+  );
+
+  it('#create return [{ id }, { id }]', () => micro
+    .act({ ...PIN_LIST_CREATE, schema, params: [
+      { userId: 111, login: 'test111' },
+      { userId: 2222, login: 'test2222' }
+    ] })
+    .then(result => Promise
+      .all([
+        console.log(result),
+        should.exist(result),
+        result.should.be.a('array').with.length(2)
       ])
       .then(() => result)
     )

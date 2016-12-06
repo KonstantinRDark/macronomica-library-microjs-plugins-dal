@@ -18,11 +18,11 @@ var _index2 = _interopRequireDefault(_index);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const tableName = 'module-list-db';
+const tableName = 'module_list_db';
 const should = _chai2.default.should();
 const micro = (0, _microjs2.default)({
   level: _microjs.LEVEL_ERROR,
-  plugins: [(0, _index2.default)(_constants.CONNECT_OPTIONS)]
+  plugins: [(0, _index2.default)(_constants.CONNECT_OPTIONS_PG)]
 });
 
 const schema = new _index.Schema('UserInfo', {
@@ -49,6 +49,8 @@ describe('actions-list', function () {
   it('#ping', () => micro.act('cmd:ping').then(result => should.equal(result, 'pong')));
 
   it('#create return { id }', () => micro.act(_extends({}, _index.PIN_LIST_CREATE, { schema, params: { userId: 1, login: 'test' } })).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id'), result.id.should.be.a('number')]).then(() => result)).then(result => findFull(result.id).then(result => model = result)));
+
+  it('#create return [{ id }, { id }]', () => micro.act(_extends({}, _index.PIN_LIST_CREATE, { schema, params: [{ userId: 111, login: 'test111' }, { userId: 2222, login: 'test2222' }] })).then(result => Promise.all([console.log(result), should.exist(result), result.should.be.a('array').with.length(2)]).then(() => result)).then(result => findFull(result.id).then(result => model = result)));
 
   it('#find-one return { id, userId, login }', () => findFull(model.id).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id').be.a('number').equal(model.id), result.should.have.property('userId').be.a('number').equal(model.userId), result.should.have.property('login').be.a('string').equal(model.login)])));
 
