@@ -12,14 +12,10 @@ const ERROR_INFO = { module: MODULE_NAME, action: 'create' };
 
 export default (app, middleware, plugin) => (msg) => buildCreate(app, middleware, msg);
 
-export function buildCreate (app, middleware, { schema, params = {}, options = {} }) {
+export function buildCreate (app, middleware, { schema, params, options = {} }) {
   const { transaction, outer = false, fields } = options;
   const isBulkInsert = Array.isArray(params);
   const __fields = schema.getMyFields(fields);
-
-  if (!params) {
-    return Promise.resolve(null);
-  }
 
   if (!schema) {
     return Promise.reject(schemaNotFoundError(ERROR_INFO));
@@ -86,15 +82,15 @@ export function buildCreate (app, middleware, { schema, params = {}, options = {
   });
 }
 
-function bulkCreate(app, middleware, schema, params, fields, trx, reject) {
+function bulkCreate(app, middleware, schema, params = [], fields, trx, reject) {
   return middleware(schema.tableName)
     .insert(params.map(params => setParams(app, schema, params, reject)))
     .returning(...fields)
     .transacting(trx)
-    .then(function(ids) {
+    .then(function(ids = []) {
       const max = ids.reduce((max, id) => max < id ? id : max, 0);
       return middleware
-        .raw(`ALTER SEQUENCE ${ schema.tableName }_id_seq RESTART WITH ${ max };`)
+        .raw(`ALTER SEQUENCE "${ schema.tableName }_id_seq" RESTART WITH ${ max };`)
         .then(() => ids);
     });
 }

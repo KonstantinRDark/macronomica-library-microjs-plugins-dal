@@ -18,7 +18,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const ERROR_INFO = { module: 'utils', action: 'set-params' };
 
-exports.default = (app, schema, params, reject) => {
+exports.default = function (app, schema) {
+  let params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  let reject = arguments[3];
+
   const keys = Object.keys(params);
   const result = {};
 

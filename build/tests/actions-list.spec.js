@@ -41,7 +41,7 @@ const schema = new _index.Schema('UserInfo', {
 }, { tableName });
 
 before(() => micro.run().then(() => micro.act(_index.PIN_CONNECTION)).then(createTable));
-after(() => micro.end());
+after(() => micro.act(_index.PIN_CONNECTION).then(dropTable).then(() => micro.end()));
 
 describe('actions-list', function () {
   let model;
@@ -50,7 +50,11 @@ describe('actions-list', function () {
 
   it('#create return { id }', () => micro.act(_extends({}, _index.PIN_LIST_CREATE, { schema, params: { userId: 1, login: 'test' } })).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id'), result.id.should.be.a('number')]).then(() => result)).then(result => findFull(result.id).then(result => model = result)));
 
-  it('#create return [{ id }, { id }]', () => micro.act(_extends({}, _index.PIN_LIST_CREATE, { schema, params: [{ userId: 111, login: 'test111' }, { userId: 2222, login: 'test2222' }] })).then(result => Promise.all([console.log(result), should.exist(result), result.should.be.a('array').with.length(2)]).then(() => result)).then(result => findFull(result.id).then(result => model = result)));
+  it('#create return [{ id }, { id }]', () => micro.act(_extends({}, _index.PIN_LIST_CREATE, { schema, params: [{ userId: 111, login: 'test111' }, { userId: 2222, login: 'test2222' }] })).then(result => Promise.all([should.exist(result), result.should.be.a('array').with.length(2)]).then(() => result).then(result => micro.act(_extends({}, _index.PIN_LIST_REMOVE, { schema,
+    criteria: {
+      id: { in: result.map(model => model.id) }
+    }
+  })))));
 
   it('#find-one return { id, userId, login }', () => findFull(model.id).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id').be.a('number').equal(model.id), result.should.have.property('userId').be.a('number').equal(model.userId), result.should.have.property('login').be.a('string').equal(model.login)])));
 
@@ -70,7 +74,7 @@ describe('actions-list', function () {
     params: { login: 'login3', userId: 2 }
   })).then(() => findFull(model.id)).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id').equal(model.id), result.should.have.property('login').not.equal(model.login), result.should.have.property('login').equal('login3'), result.should.have.property('userId').not.equal(model.userId), result.should.have.property('userId').equal(2)]).then(() => model = result)));
 
-  it('#remove return { id }', () => micro.act(_extends({}, _index.PIN_LIST_REMOVE, { schema, criteria: { id: model.id } })).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id').be.a('number').equal(model.id)])));
+  it('#remove return { id }', () => micro.act(_extends({}, _index.PIN_LIST_REMOVE, { schema, criteria: { id: model.id } })).then(result => Promise.all([should.exist(result[0]), result[0].should.be.a('object'), result[0].should.have.property('id').be.a('number').equal(model.id)])));
 
   it('#find-one should return null', () => micro.act(_extends({}, _index.PIN_LIST_FIND_ONE, { schema, criteria: { id: model.id } })).then(result => should.not.exist(result)));
 });
@@ -82,6 +86,10 @@ function createTable(connection) {
     table.string('login');
     table.unique(['userId', 'login']);
   });
+}
+
+function dropTable(connection) {
+  return connection.schema.dropTableIfExists(tableName);
 }
 
 function findFull(id) {

@@ -3,6 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 exports.default = convertToResponse;
 
 var _lodash = require('lodash.isplainobject');
@@ -19,7 +22,7 @@ function convertToResponse(schema, fields) {
   const convertOuts = (0, _checkConvertOut2.default)(schema.properties);
 
   return result => {
-    if ((0, _lodash2.default)(result)) {
+    if ((0, _lodash2.default)(result) || result.constructor.name === 'anonymous') {
       for (let _ref of convertOuts) {
         let name = _ref.name;
         let callback = _ref.callback;
@@ -27,7 +30,7 @@ function convertToResponse(schema, fields) {
         result[name] = callback(result[name], schema.properties[name]);
       }
 
-      return result;
+      return _extends({}, result);
     } else {
       let key = fields[0];
       let value = result[0] || result;

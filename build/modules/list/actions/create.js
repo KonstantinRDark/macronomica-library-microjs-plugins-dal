@@ -28,9 +28,8 @@ const ERROR_INFO = { module: _constants.MODULE_NAME, action: 'create' };
 exports.default = (app, middleware, plugin) => msg => buildCreate(app, middleware, msg);
 
 function buildCreate(app, middleware, _ref) {
-  let schema = _ref.schema;
-  var _ref$params = _ref.params;
-  let params = _ref$params === undefined ? {} : _ref$params;
+  let schema = _ref.schema,
+      params = _ref.params;
   var _ref$options = _ref.options;
   let options = _ref$options === undefined ? {} : _ref$options;
   const transaction = options.transaction;
@@ -40,10 +39,6 @@ function buildCreate(app, middleware, _ref) {
 
   const isBulkInsert = Array.isArray(params);
   const __fields = schema.getMyFields(fields);
-
-  if (!params) {
-    return Promise.resolve(null);
-  }
 
   if (!schema) {
     return Promise.reject((0, _errors.schemaNotFoundError)(ERROR_INFO));
@@ -101,10 +96,17 @@ function buildCreate(app, middleware, _ref) {
   });
 }
 
-function bulkCreate(app, middleware, schema, params, fields, trx, reject) {
-  return middleware(schema.tableName).insert(params.map(params => (0, _setParams2.default)(app, schema, params, reject))).returning(...fields).transacting(trx).then(function (ids) {
+function bulkCreate(app, middleware, schema) {
+  let params = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
+  let fields = arguments[4];
+  let trx = arguments[5];
+  let reject = arguments[6];
+
+  return middleware(schema.tableName).insert(params.map(params => (0, _setParams2.default)(app, schema, params, reject))).returning(...fields).transacting(trx).then(function () {
+    let ids = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
     const max = ids.reduce((max, id) => max < id ? id : max, 0);
-    return middleware.raw(`ALTER SEQUENCE ${ schema.tableName }_id_seq RESTART WITH ${ max };`).then(() => ids);
+    return middleware.raw(`ALTER SEQUENCE "${ schema.tableName }_id_seq" RESTART WITH ${ max };`).then(() => ids);
   });
 }
 //# sourceMappingURL=create.js.map

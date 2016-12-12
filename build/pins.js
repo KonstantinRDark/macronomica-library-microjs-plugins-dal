@@ -16,13 +16,13 @@ const PIN_TREE = exports.PIN_TREE = _extends({}, PIN_PLUGIN, { module: 'dal-tree
 const PIN_LIST_FIND_ONE = exports.PIN_LIST_FIND_ONE = _extends({}, PIN_LIST, { action: 'find-one', criteria: '*' });
 const PIN_LIST_FIND_LIST = exports.PIN_LIST_FIND_LIST = _extends({}, PIN_LIST, { action: 'find-list' });
 const PIN_LIST_COUNTS = exports.PIN_LIST_COUNTS = _extends({}, PIN_LIST, { action: 'count', criteria: '*' });
-const PIN_LIST_CREATE = exports.PIN_LIST_CREATE = _extends({}, PIN_LIST, { action: 'create', params: '*' });
+const PIN_LIST_CREATE = exports.PIN_LIST_CREATE = _extends({}, PIN_LIST, { action: 'create' });
 const PIN_LIST_UPDATE = exports.PIN_LIST_UPDATE = _extends({}, PIN_LIST, { action: 'update', criteria: '*', params: '*' });
 const PIN_LIST_REMOVE = exports.PIN_LIST_REMOVE = _extends({}, PIN_LIST, { action: 'remove', criteria: '*' });
 
 const PIN_TREE_FIND_PATH = exports.PIN_TREE_FIND_PATH = _extends({}, PIN_TREE, { action: 'find-path', criteria: '*' });
 const PIN_TREE_FIND_PARENT_id = exports.PIN_TREE_FIND_PARENT_id = _extends({}, PIN_TREE, { action: 'find-parent-id', criteria: '*' });
-const PIN_TREE_CREATE = exports.PIN_TREE_CREATE = _extends({}, PIN_TREE, { action: 'create', params: '*' });
+const PIN_TREE_CREATE = exports.PIN_TREE_CREATE = _extends({}, PIN_TREE, { action: 'create' });
 const PIN_TREE_UPDATE = exports.PIN_TREE_UPDATE = _extends({}, PIN_TREE, { action: 'update', criteria: '*', params: '*' });
 const PIN_TREE_REMOVE = exports.PIN_TREE_REMOVE = _extends({}, PIN_TREE, { action: 'remove', criteria: '*' });
 //# sourceMappingURL=pins.js.map

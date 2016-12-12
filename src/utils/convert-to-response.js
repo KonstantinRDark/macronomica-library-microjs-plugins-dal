@@ -5,12 +5,12 @@ export default function convertToResponse(schema, fields) {
   const convertOuts = checkConvertOut(schema.properties);
 
   return result => {
-    if (isPlainObject(result)) {
+    if (isPlainObject(result) || result.constructor.name === 'anonymous') {
       for (let { name, callback } of convertOuts) {
         result[ name ] = callback(result[ name ], schema.properties[ name ]);
       }
 
-      return result;
+      return { ...result };
     } else {
       let key = fields[ 0 ];
       let value = result[ 0 ] || result;

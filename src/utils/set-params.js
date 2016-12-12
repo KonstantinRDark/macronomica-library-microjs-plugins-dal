@@ -3,7 +3,7 @@ import detectedSqlInjectionError from './../errors/detected-sql-injection-error'
 
 const ERROR_INFO = { module: 'utils', action: 'set-params' };
 
-export default (app, schema, params, reject) => {
+export default (app, schema, params = {}, reject) => {
   const keys = Object.keys(params);
   const result = {};
   

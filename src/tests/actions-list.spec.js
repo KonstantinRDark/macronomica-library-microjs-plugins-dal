@@ -39,7 +39,9 @@ before(() => micro
   .then(() => micro.act(PIN_CONNECTION))
   .then(createTable)
 );
-after(() => micro.end());
+after(() => micro.act(PIN_CONNECTION)
+  .then(dropTable)
+  .then(() => micro.end()));
 
 describe('actions-list', function() {
   let model;
@@ -70,13 +72,17 @@ describe('actions-list', function() {
     ] })
     .then(result => Promise
       .all([
-        console.log(result),
         should.exist(result),
         result.should.be.a('array').with.length(2)
       ])
       .then(() => result)
+      .then(result => micro.act({
+        ...PIN_LIST_REMOVE, schema,
+        criteria: {
+          id: { in: result.map(model => model.id) }
+        }
+      }))
     )
-    .then(result => findFull(result.id).then(result => model = result))
   );
 
   it('#find-one return { id, userId, login }', () => findFull(model.id)
@@ -152,9 +158,9 @@ describe('actions-list', function() {
   it('#remove return { id }', () => micro
     .act({ ...PIN_LIST_REMOVE, schema, criteria: { id: model.id } })
     .then(result => Promise.all([
-      should.exist(result),
-      result.should.be.a('object'),
-      result.should.have.property('id').be.a('number').equal(model.id)
+      should.exist(result[ 0 ]),
+      result[ 0 ].should.be.a('object'),
+      result[ 0 ].should.have.property('id').be.a('number').equal(model.id)
     ]))
   );
 
@@ -172,6 +178,10 @@ function createTable(connection) {
     table.string('login');
     table.unique([ 'userId', 'login' ]);
   });
+}
+
+function dropTable(connection) {
+  return connection.schema.dropTableIfExists(tableName);
 }
 
 function findFull(id) {
