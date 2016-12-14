@@ -29,13 +29,13 @@ export function buildCount (app, middleware, { schema, criteria = {}, options = 
     criteria = schema.getMyParams(criteria);
 
     let builder = setCriteria(app, middleware(schema.tableName), criteria, reject).count();
-
+    /*
     if (transaction) {
       // Если передали внешнюю транзакцию - привяжемся к ней
       builder = builder.transacting(transaction);
     }
-
-    if (transaction || outer) {
+    */
+    if (/*transaction || */outer) {
       // Если передали внешнюю транзакцию или кто-то сам хочет запускать запрос - вернем builder
       // Возвращаем как объект - иначе происходит исполнение данного builder'a
       return resolve({ builder });
