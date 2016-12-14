@@ -37,7 +37,8 @@ export function buildCount (app, middleware, { schema, criteria = {}, options = 
 
     if (transaction || outer) {
       // Если передали внешнюю транзакцию или кто-то сам хочет запускать запрос - вернем builder
-      return resolve(builder);
+      // Возвращаем как объект - иначе происходит исполнение данного builder'a
+      return resolve({ builder });
     }
 
     return builder

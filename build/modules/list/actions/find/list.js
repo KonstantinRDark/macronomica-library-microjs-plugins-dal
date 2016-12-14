@@ -106,7 +106,8 @@ function buildFindList(app, middleware, _ref) {
     */
     if ( /*transaction || */outer) {
       // Если передали внешнюю транзакцию или кто-то сам хочет запускать запрос - вернем builder
-      return resolve(builder);
+      // Возвращаем как объект - иначе происходит исполнение данного builder'a
+      return resolve({ builder });
     }
 
     builder.then(function () {
