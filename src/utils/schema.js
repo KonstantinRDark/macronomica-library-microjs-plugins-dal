@@ -1,13 +1,43 @@
 import Joi from 'joi';
+import TypedError from 'error/typed';
+import isString from 'lodash.isstring';
+import isPlainObject from 'lodash.isplainobject';
+import isBoolean from 'lodash.isboolean';
+import uniq from 'lodash.uniq';
 import SchemaTypes from './schema-types';
 
+const PropertyMustBeType = TypedError({
+  message     : '{name} - свойство "{propertyName}" должно быть "{propertyType}"',
+  type        : 'micro.plugins.dal.property.must.be.type',
+  code        : 400,
+  propertyName: null,
+  propertyType: null
+});
+
 export const Types = SchemaTypes;
+export const FIELDS_MASK = [ 'full' ];
 
 export default class Schema {
   tableName = undefined;
 
-  constructor(modelName, properties = { }, { tableName } = { }) {
-    this.tableName = tableName || getTableName(modelName);
+  constructor(modelName, properties = { }, { tableName, fieldsMask } = { }) {
+    if (!isString(modelName)) {
+      throw PropertyMustBeType({ propertyName: 'modelName', propertyType: 'string' });
+    }
+
+    if (fieldsMask !== undefined
+      && (!Array.isArray(fieldsMask) || fieldsMask.some(name => !isString(name)))
+    ) {
+      throw PropertyMustBeType({ propertyName: 'fieldsMask', propertyType: 'array<string>' });
+    }
+
+    if (!isString(tableName)) {
+      throw PropertyMustBeType({ propertyName: 'tableName', propertyType: 'string' });
+    }
+
+    this.fieldsMask = uniq([ ...FIELDS_MASK, ...(fieldsMask || []) ]);
+    this.tableName = (tableName || getTableName(modelName)).replace('-', '_');
+
     this.properties = {
       id: {
         type         : SchemaTypes.number,
@@ -15,14 +45,34 @@ export default class Schema {
       },
       ...properties
     };
+
+    this.__propertiyNames = Object.keys(this.properties);
+    this.__masks = getFieldsMask(this.__propertiyNames, this.properties, this.fieldsMask);
   }
 
-  getMyFields = (fields = [ 'id' ]) => fields.reduce((fields, name) => {
-    if (this.has(name)) {
-      fields.push(name);
+  getMyFields = (fields) => {
+    // Если в свойстве fields строка - берем заранее заготовленный список пло маске
+    if (isString(fields)) {
+      if (!!this.__masks[ fields ]) {
+        return this.__masks[ fields ];
+      }
+
+      fields = undefined;
     }
-    return fields;
-  }, []);
+
+    if (fields === undefined) {
+      fields = [ 'id' ];
+    }
+
+    if (Array.isArray(fields)) {
+      return fields.reduce((fields, name) => {
+        if (this.has(name)) {
+          fields.push(name);
+        }
+        return fields;
+      }, []);
+    }
+  };
 
   getMyParams = (params = {}) => Object.keys(params).reduce((result, name) => {
     if (this.has(name)) {
@@ -32,7 +82,7 @@ export default class Schema {
   }, {});
 
   has = (property) => {
-    return !!this.properties[ property ];
+    return isString(property) && !!this.properties[ property ];
   };
 
   validate = (property, value) => {
@@ -108,6 +158,55 @@ export default class Schema {
 
     return result;
   }
+}
+
+function getFieldsMask(names, properties, fieldsMask) {
+  return names.reduce((result, propertyName) => {
+    const property = properties[ propertyName ];
+
+    let propertyMasks = property.fieldsMask;
+
+    if (propertyMasks === undefined) {
+      propertyMasks = true;
+    }
+
+    if (isBoolean(propertyMasks)) {
+      propertyMasks = fieldsMask.reduce((result, fieldMask) => {
+        result[ fieldMask ] = propertyMasks;
+        return result;
+      }, {});
+    }
+
+    // Если указали в формате строки - разобьем ее по сепаратору и преобразуем к объекту
+    // Если указали в формате массива - преобразуем к объекту
+    if (isString(propertyMasks) || Array.isArray(propertyMasks)) {
+      let list = isString(propertyMasks) ? propertyMasks.split(':') : propertyMasks;
+      propertyMasks = list.reduce((result, name) => {
+        let hasNot = !!~name.indexOf('!');
+        result[ hasNot ? name.replace('!', '') : name ] = !hasNot;
+        return result;
+      }, {});
+    }
+
+    if (!isPlainObject(propertyMasks)) {
+      throw PropertyMustBeType({
+        propertyName: `${ propertyName }.fieldsMask`,
+        propertyType: 'string | array<string> | object'
+      });
+    }
+
+    return fieldsMask.reduce((result, fieldMask) => {
+      result[ fieldMask ] = result[ fieldMask ] || [];
+
+      // Если в описании свойства не указали fieldsMask
+      // Или если указанное значение не равно false - добавим его во все маски
+      if (!(fieldMask in propertyMasks) || propertyMasks[ fieldMask ] !== false) {
+        result[ fieldMask ].push(propertyName);
+      }
+
+      return result;
+    }, result);
+  }, { full: [] });
 }
 
 /**

@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@microjs/microjs": "git+ssh://git@github.com:macronomica/macronomica-library-microjs.git#1.x.x",
+    "error": "^7.0.2",
     "html-entities": "^1.2.0",
     "joi": "^9.2.0",
     "knex": "^0.12.6",
@@ -39,6 +40,7 @@
     "lodash.isplainobject": "^4.0.6",
     "lodash.isstring": "^4.0.1",
     "lodash.memoize": "^4.1.2",
+    "lodash.uniq": "^4.5.0",
     "pg": "^6.1.0",
     "striptags": "^2.1.1"
   },
