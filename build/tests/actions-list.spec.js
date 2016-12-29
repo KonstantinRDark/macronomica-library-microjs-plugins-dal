@@ -26,14 +26,6 @@ const micro = (0, _microjs2.default)({
 });
 
 const schema = new _index.Schema('UserInfo', {
-  'dot.property1': {
-    type: _index.SchemaTypes.number,
-    description: 'Свойство записанное через точку'
-  },
-  'dot.property2': {
-    type: _index.SchemaTypes.number,
-    description: 'Свойство записанное через точку'
-  },
   userId: {
     type: _index.SchemaTypes.number,
     unique: true,
@@ -58,7 +50,6 @@ describe('actions-list', function () {
 
   it('#create return { id }', () => micro.act(_extends({}, _index.PIN_LIST_CREATE, { schema, params: {
       userId: 1,
-      dot: { property: 1, property1: 1, property2: 2 },
       customProp: true,
       login: 'test'
     } })).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id'), result.id.should.be.a('number')]).then(() => result)).then(result => findFull(result.id).then(result => model = result)));
@@ -69,19 +60,19 @@ describe('actions-list', function () {
     }
   })))));
 
-  it('#find-one return { id, dot: { property1, property2 }, userId, login }', () => findFull(model.id).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id').be.a('number').equal(model.id), result.should.have.property('dot').property('property1').be.a('number').equal(model.dot.property1), result.should.have.property('dot').property('property2').be.a('number').equal(model.dot.property2), result.should.have.property('userId').be.a('number').equal(model.userId), result.should.have.property('login').be.a('string').equal(model.login)])));
+  it('#find-one return { id, userId, login }', () => findFull(model.id).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id').be.a('number').equal(model.id), result.should.have.property('userId').be.a('number').equal(model.userId), result.should.have.property('login').be.a('string').equal(model.login)])));
 
   it('#find-one return { id }', () => micro.act(_extends({}, _index.PIN_LIST_FIND_ONE, { schema, criteria: { id: model.id } })).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id').be.a('number').equal(model.id), result.should.not.have.property('userId'), result.should.not.have.property('login')])));
 
   it('#find-list return [{ id }]', () => micro.act(_extends({}, _index.PIN_LIST_FIND_LIST, { schema })).then(result => Promise.all([should.exist(result), result.should.be.a('array').with.length(1), result[0].should.be.a('object'), result[0].should.have.property('id').be.a('number').equal(model.id), result[0].should.not.have.property('userId'), result[0].should.not.have.property('login')])));
 
-  it('#update update property login', () => micro.act(_extends({}, _index.PIN_LIST_UPDATE, {
+  it('#update one property login', () => micro.act(_extends({}, _index.PIN_LIST_UPDATE, {
     schema,
     criteria: { id: model.id },
     params: { login: 'login2' }
   })).then(() => findFull(model.id)).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id').equal(model.id), result.should.have.property('login').not.equal(model.login), result.should.have.property('login').equal('login2'), result.should.have.property('userId').equal(model.userId)]).then(() => model = result)));
 
-  it('#update update property login, userId', () => micro.act(_extends({}, _index.PIN_LIST_UPDATE, {
+  it('#update property login, userId', () => micro.act(_extends({}, _index.PIN_LIST_UPDATE, {
     schema,
     criteria: { id: model.id },
     params: { login: 'login3', userId: 2 }
@@ -93,10 +84,8 @@ describe('actions-list', function () {
 });
 
 function createTable(connection) {
-  return connection.schema.createTableIfNotExists(tableName, function (table) {
+  return connection.schema.createTableIfNotExists(schema.tableName, function (table) {
     table.increments();
-    table.integer(schema.properties['dot.property1'].dbName);
-    table.integer(schema.properties['dot.property2'].dbName);
     table.integer(schema.properties['userId'].dbName);
     table.string(schema.properties['login'].dbName);
     table.unique([schema.properties['userId'].dbName, schema.properties['login'].dbName]);
@@ -104,7 +93,7 @@ function createTable(connection) {
 }
 
 function dropTable(connection) {
-  return connection.schema.dropTableIfExists(tableName);
+  return connection.schema.dropTableIfExists(schema.tableName);
 }
 
 function findFull(id) {

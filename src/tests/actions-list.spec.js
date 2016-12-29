@@ -20,14 +20,6 @@ const micro = Micro({
 });
 
 const schema = new Schema('UserInfo', {
-  'dot.property1': {
-    type       : SchemaTypes.number,
-    description: 'Свойство записанное через точку'
-  },
-  'dot.property2': {
-    type       : SchemaTypes.number,
-    description: 'Свойство записанное через точку'
-  },
   userId: {
     type       : SchemaTypes.number,
     unique     : true,
@@ -62,7 +54,6 @@ describe('actions-list', function() {
   it('#create return { id }', () => micro
     .act({ ...PIN_LIST_CREATE, schema, params: {
       userId    : 1,
-      dot       : { property: 1, property1: 1, property2: 2 },
       customProp: true,
       login     : 'test'
     } })
@@ -98,15 +89,11 @@ describe('actions-list', function() {
     )
   );
 
-  it('#find-one return { id, dot: { property1, property2 }, userId, login }', () => findFull(model.id)
+  it('#find-one return { id, userId, login }', () => findFull(model.id)
     .then(result => Promise.all([
       should.exist(result),
       result.should.be.a('object'),
       result.should.have.property('id').be.a('number').equal(model.id),
-      result.should.have.property('dot')
-        .property('property1').be.a('number').equal(model.dot.property1),
-      result.should.have.property('dot')
-        .property('property2').be.a('number').equal(model.dot.property2),
       result.should.have.property('userId').be.a('number').equal(model.userId),
       result.should.have.property('login').be.a('string').equal(model.login)
     ]))
@@ -135,7 +122,7 @@ describe('actions-list', function() {
     ]))
   );
 
-  it('#update update property login', () => micro
+  it('#update one property login', () => micro
     .act({
       ...PIN_LIST_UPDATE,
       schema,
@@ -153,7 +140,7 @@ describe('actions-list', function() {
     ]).then(() => model = result))
   );
 
-  it('#update update property login, userId', () => micro
+  it('#update property login, userId', () => micro
     .act({
       ...PIN_LIST_UPDATE,
       schema,
@@ -189,10 +176,8 @@ describe('actions-list', function() {
 });
 
 function createTable(connection) {
-  return connection.schema.createTableIfNotExists(tableName, function (table) {
+  return connection.schema.createTableIfNotExists(schema.tableName, function (table) {
     table.increments();
-    table.integer(schema.properties[ 'dot.property1' ].dbName);
-    table.integer(schema.properties[ 'dot.property2' ].dbName);
     table.integer(schema.properties[ 'userId' ].dbName);
     table.string(schema.properties[ 'login' ].dbName);
     table.unique([
@@ -203,7 +188,7 @@ function createTable(connection) {
 }
 
 function dropTable(connection) {
-  return connection.schema.dropTableIfExists(tableName);
+  return connection.schema.dropTableIfExists(schema.tableName);
 }
 
 function findFull(id) {

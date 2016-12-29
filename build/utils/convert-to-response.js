@@ -32,7 +32,7 @@ function convertToResponse(schema, fields) {
         let value = resultData[dbName];
 
         if (dbName in convertOuts) {
-          value = callback(value, schema.properties[name]);
+          value = convertOuts[dbName](value, schema.properties[name]);
         }
 
         result = _dotObject2.default.str(name, value, result);
@@ -46,7 +46,7 @@ function convertToResponse(schema, fields) {
       let value = resultData[0] || resultData;
 
       if (key in convertOuts) {
-        value = callback(value, schema.dbProperties[key].name);
+        value = convertOuts[key](value, schema.dbProperties[key].name);
       }
 
       result = _dotObject2.default.str(key, value, result);

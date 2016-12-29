@@ -44,9 +44,7 @@ const schema = new _index.Schema('TreeNode', {
 }, { tableName });
 
 before(() => micro.run().then(() => micro.act(_index.PIN_CONNECTION)).then(createTable));
-after(() => micro.act(_index.PIN_CONNECTION)
-// .then(dropTable)
-.then(() => micro.end()));
+after(() => micro.act(_index.PIN_CONNECTION).then(dropTable).then(() => micro.end()));
 
 describe('actions-tree', function () {
 
@@ -102,7 +100,7 @@ describe('actions-tree', function () {
 });
 
 function createTable(connection) {
-  return connection.schema.createTableIfNotExists(tableName, function (table) {
+  return connection.schema.createTableIfNotExists(schema.tableName, function (table) {
     table.increments();
     table.integer('parentId').nullable();
     table.boolean('leaf').defaultTo(schema.properties.leaf.default);
@@ -111,7 +109,7 @@ function createTable(connection) {
 }
 
 function dropTable(connection) {
-  return connection.schema.dropTableIfExists(tableName);
+  return connection.schema.dropTableIfExists(schema.tableName);
 }
 
 function removeNode(id) {

@@ -41,7 +41,6 @@ describe('schema', function() {
         fieldsMask: { full: false },      // будет в link, edit
       }
     }, { tableName, fieldsMask: mask });
-    console.log(schema.__masks);
 
     return Promise.all([
       schema.getMyFields().should.eql([ 'id' ]).with.length(1),

@@ -48,7 +48,6 @@ describe('schema', function () {
         type: _index.SchemaTypes.string,
         fieldsMask: { full: false } }
     }, { tableName, fieldsMask: mask });
-    console.log(schema.__masks);
 
     return Promise.all([schema.getMyFields().should.eql(['id']).with.length(1), schema.getMyFields(['id', 'prop0']).should.eql(['id', 'prop0']).with.length(2), schema.getMyFields('full').should.eql(['id', 'prop1', 'prop2']).with.length(3), schema.getMyFields('link').should.eql(['id', 'prop2', 'prop3']).with.length(3), schema.getMyFields('edit').should.eql(['id', 'prop1', 'prop3']).with.length(3)]);
   });

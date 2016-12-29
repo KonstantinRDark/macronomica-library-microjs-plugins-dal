@@ -55,7 +55,7 @@ export default class Schema {
     }
 
     this.fieldsMask = uniq([ ...FIELDS_MASK, ...(fieldsMask || []) ]);
-    this.tableName = (tableName || getTableName(modelName)).replace('-', '_');
+    this.tableName = (tableName || getTableName(modelName)).replace(/-/g, '_');
     this.dbProperties = {};
 
     this.properties = {

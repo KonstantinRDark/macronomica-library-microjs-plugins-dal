@@ -282,7 +282,7 @@ class Schema {
     }
 
     this.fieldsMask = (0, _lodash8.default)([...FIELDS_MASK, ...(fieldsMask || [])]);
-    this.tableName = (tableName || getTableName(modelName)).replace('-', '_');
+    this.tableName = (tableName || getTableName(modelName)).replace(/-/g, '_');
     this.dbProperties = {};
 
     this.properties = _extends({
