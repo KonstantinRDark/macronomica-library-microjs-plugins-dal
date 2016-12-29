@@ -5,9 +5,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.buildCreate = buildCreate;
 
-var _setParams = require('./../../../utils/set-params');
+var _typed = require('error/typed');
 
-var _setParams2 = _interopRequireDefault(_setParams);
+var _typed2 = _interopRequireDefault(_typed);
 
 var _convertToResponse = require('./../../../utils/convert-to-response');
 
@@ -24,6 +24,11 @@ var _errors = require('../../../errors');
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const ERROR_INFO = { module: _constants.MODULE_NAME, action: 'create' };
+const SetParamsInternalError = (0, _typed2.default)({
+  message: '{name} - параметры для создания записи не корректны',
+  type: 'micro.plugins.dal.schema.set-params.params.not.correct',
+  code: 500
+});
 
 exports.default = (app, middleware, plugin) => msg => buildCreate(app, middleware, msg);
 
@@ -32,7 +37,6 @@ function buildCreate(app, middleware, _ref) {
       params = _ref.params;
   var _ref$options = _ref.options;
   let options = _ref$options === undefined ? {} : _ref$options;
-  const transaction = options.transaction;
   var _options$outer = options.outer;
   const outer = _options$outer === undefined ? false : _options$outer,
         fields = options.fields;
@@ -50,34 +54,31 @@ function buildCreate(app, middleware, _ref) {
 
   return new Promise((resolve, reject) => {
     let builder;
+    let __params;
+
+    try {
+      __params = isBulkInsert ? params.map(params => schema.setParams(params)) : schema.setParams(params);
+    } catch (e) {
+      if (e.type === 'micro.plugins.dal.schema.validate.error') {
+        return reject(e);
+      }
+
+      app.log.error(e);
+      return reject(SetParamsInternalError());
+    }
 
     // Создание множества записей
     if (isBulkInsert) {
-      /*
-      if (transaction) {
-        // Если передали внешнюю транзакцию - привяжемся к ней
-        builder = bulkCreate(app, middleware, schema, params, __fields, transaction, reject);
-      } else {
-      */
-      // Создаем свою
-      builder = middleware.transaction(trx => bulkCreate(app, middleware, schema, params, __fields, trx, reject).then(trx.commit).catch(trx.rollback));
-      /*
-      }
-      */
+      // Создаем свою transaction
+      builder = middleware.transaction(trx => bulkCreate(middleware, schema.tableName, __params, __fields, trx, reject).then(trx.commit).catch(trx.rollback));
     }
     // Создание одной записи
     else {
-        builder = middleware(schema.tableName).insert((0, _setParams2.default)(app, schema, params, reject)).returning(...__fields);
-        /*
-        if (transaction) {
-          // Если передали внешнюю транзакцию - привяжемся к ней
-          builder = builder.transacting(transaction);
-        }
-        */
+        builder = middleware(schema.tableName).insert(__params).returning(...__fields);
       }
 
-    if ( /*transaction ||*/outer) {
-      // Если передали внешнюю транзакцию или кто-то сам хочет запускать запрос - вернем builder
+    if (outer) {
+      // Если кто-то сам хочет запускать запрос - вернем builder
       // Возвращаем как объект - иначе происходит исполнение данного builder'a
       return resolve({ builder });
     }
@@ -97,17 +98,16 @@ function buildCreate(app, middleware, _ref) {
   });
 }
 
-function bulkCreate(app, middleware, schema) {
-  let params = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
-  let fields = arguments[4];
-  let trx = arguments[5];
-  let reject = arguments[6];
+function bulkCreate(middleware, tableName) {
+  let params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+  let fields = arguments[3];
+  let trx = arguments[4];
 
-  return middleware(schema.tableName).insert(params.map(params => (0, _setParams2.default)(app, schema, params, reject))).returning(...fields).transacting(trx).then(function () {
+  return middleware(tableName).insert(params).returning(...fields).transacting(trx).then(function () {
     let ids = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
     const max = ids.reduce((max, id) => max < id ? id : max, 0);
-    return middleware.raw(`ALTER SEQUENCE "${ schema.tableName }_id_seq" RESTART WITH ${ max };`).then(() => ids);
+    return middleware.raw(`ALTER SEQUENCE "${ tableName }_id_seq" RESTART WITH ${ max };`).then(() => ids);
   });
 }
 //# sourceMappingURL=create.js.map

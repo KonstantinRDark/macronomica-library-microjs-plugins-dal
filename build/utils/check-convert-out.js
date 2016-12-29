@@ -16,13 +16,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = (0, _lodash2.default)(properties => {
   const keys = Object.keys(properties);
-  const result = [];
+  const result = {};
 
   for (let key of keys) {
     let convertOut = properties[key].type.convertOut;
 
     if ((0, _lodash4.default)(convertOut)) {
-      result.push({ name: key, callback: convertOut });
+      result[properties[key].dbName] = convertOut;
     }
   }
 

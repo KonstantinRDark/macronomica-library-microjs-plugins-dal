@@ -26,7 +26,7 @@ export function buildRemove (app, middleware, { schema, criteria = {}, options =
   }
 
   return new Promise((resolve, reject) => {
-    criteria = schema.getMyParams(criteria);
+    criteria = schema.getMyCriteriaParams(criteria);
 
     if (isEmpty(criteria)) {
       return resolve(null);

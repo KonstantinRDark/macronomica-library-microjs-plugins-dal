@@ -26,7 +26,7 @@ export function buildCount (app, middleware, { schema, criteria = {}, options = 
   }
 
   return new Promise((resolve, reject) => {
-    criteria = schema.getMyParams(criteria);
+    criteria = schema.getMyCriteriaParams(criteria);
 
     let builder = setCriteria(app, middleware(schema.tableName), criteria, reject).count();
     /*

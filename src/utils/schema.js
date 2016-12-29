@@ -1,17 +1,36 @@
 import Joi from 'joi';
+import WrappedError from 'error/wrapped';
 import TypedError from 'error/typed';
+import dot from 'dot-object';
 import isString from 'lodash.isstring';
 import isPlainObject from 'lodash.isplainobject';
 import isBoolean from 'lodash.isboolean';
 import uniq from 'lodash.uniq';
 import SchemaTypes from './schema-types';
+import sqlStringProtector from './sql-string-protector';
 
 const PropertyMustBeType = TypedError({
   message     : '{name} - свойство "{propertyName}" должно быть "{propertyType}"',
-  type        : 'micro.plugins.dal.property.must.be.type',
+  type        : 'micro.plugins.dal.schema.property.must.be.type',
   code        : 400,
   propertyName: null,
   propertyType: null
+});
+
+const DetectedSqlInjectionError = TypedError({
+  message      : '{name} - обнаружена потенциальная SQL инъекция в свойстве "{propertyName}"',
+  type         : 'micro.plugins.dal.schema.detected.sql.injection',
+  code         : 500,
+  propertyName : null,
+  propertyValue: null
+});
+
+const ValidateError = WrappedError({
+  message      : '{name} - {origMessage}',
+  type         : 'micro.plugins.dal.schema.validate.error',
+  code         : 400,
+  propertyName : null,
+  propertyValue: null
 });
 
 export const Types = SchemaTypes;
@@ -37,15 +56,24 @@ export default class Schema {
 
     this.fieldsMask = uniq([ ...FIELDS_MASK, ...(fieldsMask || []) ]);
     this.tableName = (tableName || getTableName(modelName)).replace('-', '_');
+    this.dbProperties = {};
 
     this.properties = {
       id: {
         type         : SchemaTypes.number,
+        name         : 'id',
+        dbName       : 'id',
         autoincrement: true
       },
-      ...properties
+      ...(Object
+        .keys(properties)
+        .reduce((properties, name) => {
+          let dbName = nameToDbName(name);
+          this.dbProperties[ dbName ] = Object.assign(properties[ name ], { name, dbName });
+          return properties;
+        }, properties))
     };
-
+    this.dbProperties.id = this.properties.id;
     this.__propertiyNames = Object.keys(this.properties);
     this.__masks = getFieldsMask(this.__propertiyNames, this.properties, this.fieldsMask);
   }
@@ -74,24 +102,59 @@ export default class Schema {
     }
   };
 
-  getMyParams = (params = {}) => Object.keys(params).reduce((result, name) => {
-    if (this.has(name)) {
-      result[ name ] = params[ name ];
+  setParams = (params) => {
+    let schema = this;
+    let names = Object.keys(schema.properties);
+    let result = {};
+
+    for(let propertyName of names) {
+      let property = schema.properties[ propertyName ];
+      let value = dot.pick(propertyName, params) || dot.pick(property.dbName, params);
+
+      if (value === undefined) {
+        continue;
+      }
+
+      if (!sqlStringProtector(value)) {
+        throw DetectedSqlInjectionError({ propertyName, propertyValue: value });
+      }
+
+      let valid = schema.validate(propertyName, value);
+
+      if (valid.error) {
+        throw ValidateError(valid.error, { propertyName, propertyValue: value });
+      }
+
+      result[ property.dbName ] = valid.value;
     }
-    return params;
-  }, {});
+
+    return result;
+  };
+
+  getMyCriteriaParams = (params = {}) => {
+    let schema = this;
+    let result = Object.keys(schema.properties).reduce(reduce, {});
+    return result;
+
+    function reduce(result, propertyName) {
+      let property = schema.properties[ propertyName ];
+      let value = dot.pick(propertyName, params) || dot.pick(property.dbName, params);
+
+      if (value !== undefined) {
+        result[ property.dbName ] = value;
+      }
+
+      return result;
+    }
+  };
 
   has = (property) => {
     return isString(property) && !!this.properties[ property ];
   };
 
-  validate = (property, value) => {
-    const props = this.properties[ property ];
+  validate = (propertyName, value) => {
+    const props = this.properties[ propertyName ];
     if (!props) { return false }
-
-    if ('convertIn' in props.type) {
-      value = props.type.convertIn(value, props);
-    }
 
     if ('null' in props && Boolean(props.null) === true && value === null) {
       return {
@@ -107,7 +170,7 @@ export default class Schema {
         value: valid.value,
         error: {
           code   : 'error.dal.params',
-          message: `${ property }: ${ valid.error.message }`
+          message: `${ propertyName }: ${ valid.error.message }`
         }
       };
     }
@@ -153,11 +216,19 @@ export default class Schema {
         params.unique = options.unique === true;
       }
 
-      result[ name ] = params;
+      result[ options.dbName ] = params;
     }
 
     return result;
   }
+}
+
+function nameToDbName(name) {
+  if (!~name.indexOf('.')) {
+    return name;
+  }
+
+  return name.replace(/\.\w{1}/gi, match => match.slice(1).toUpperCase());
 }
 
 function getFieldsMask(names, properties, fieldsMask) {
@@ -201,7 +272,7 @@ function getFieldsMask(names, properties, fieldsMask) {
       // Если в описании свойства не указали fieldsMask
       // Или если указанное значение не равно false - добавим его во все маски
       if (!(fieldMask in propertyMasks) || propertyMasks[ fieldMask ] !== false) {
-        result[ fieldMask ].push(propertyName);
+        result[ fieldMask ].push(property.dbName);
       }
 
       return result;

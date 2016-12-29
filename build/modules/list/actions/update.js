@@ -8,6 +8,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 exports.buildUpdate = buildUpdate;
 
+var _typed = require('error/typed');
+
+var _typed2 = _interopRequireDefault(_typed);
+
 var _lodash = require('lodash.isempty');
 
 var _lodash2 = _interopRequireDefault(_lodash);
@@ -19,10 +23,6 @@ var _schema2 = _interopRequireDefault(_schema);
 var _setCriteria = require('./../../../utils/set-criteria');
 
 var _setCriteria2 = _interopRequireDefault(_setCriteria);
-
-var _setParams = require('./../../../utils/set-params');
-
-var _setParams2 = _interopRequireDefault(_setParams);
 
 var _convertToResponse = require('./../../../utils/convert-to-response');
 
@@ -37,6 +37,11 @@ var _errors = require('../../../errors');
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const ERROR_INFO = { module: _constants.MODULE_NAME, action: 'update' };
+const SetParamsInternalError = (0, _typed2.default)({
+  message: '{name} - параметры для создания записи не корректны',
+  type: 'micro.plugins.dal.schema.set-params.params.not.correct',
+  code: 500
+});
 
 exports.default = (app, middleware, plugin) => msg => buildUpdate(app, middleware, msg);
 
@@ -68,7 +73,7 @@ function buildUpdate(app, middleware, _ref) {
   }
 
   return new Promise((resolve, reject) => {
-    criteria = schema.getMyParams(criteria);
+    criteria = schema.getMyCriteriaParams(criteria);
 
     if ((0, _lodash2.default)(criteria)) {
       return resolve(null);
@@ -83,15 +88,23 @@ function buildUpdate(app, middleware, _ref) {
         return null;
       }
 
-      let builder = (0, _setCriteria2.default)(app, middleware(schema.tableName), criteria, reject).update((0, _setParams2.default)(app, schema, params, reject)).returning(...__fields);
-      /*
-      if (transaction) {
-        // Если передали внешнюю транзакцию - привяжемся к ней
-        builder = builder.transacting(transaction);
+      let __params;
+
+      try {
+        __params = schema.setParams(params);
+      } catch (e) {
+        if (e.type === 'micro.plugins.dal.schema.validate.error') {
+          return reject(e);
+        }
+
+        app.log.error(e);
+        return reject(SetParamsInternalError());
       }
-      */
-      if ( /*transaction || */outer) {
-        // Если передали внешнюю транзакцию или кто-то сам хочет запускать запрос - вернем builder
+
+      let builder = (0, _setCriteria2.default)(app, middleware(schema.tableName), criteria, reject).update(__params).returning(...__fields);
+
+      if (outer) {
+        // Если кто-то сам хочет запускать запрос - вернем builder
         // Возвращаем как объект - иначе происходит исполнение данного builder'a
         return resolve({ builder });
       }

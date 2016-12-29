@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@microjs/microjs": "git+ssh://git@github.com:macronomica/macronomica-library-microjs.git#1.x.x",
+    "dot-object": "^1.5.4",
     "error": "^7.0.2",
     "html-entities": "^1.2.0",
     "joi": "^9.2.0",

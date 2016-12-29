@@ -26,6 +26,14 @@ const micro = (0, _microjs2.default)({
 });
 
 const schema = new _index.Schema('UserInfo', {
+  'dot.property1': {
+    type: _index.SchemaTypes.number,
+    description: 'Свойство записанное через точку'
+  },
+  'dot.property2': {
+    type: _index.SchemaTypes.number,
+    description: 'Свойство записанное через точку'
+  },
   userId: {
     type: _index.SchemaTypes.number,
     unique: true,
@@ -48,7 +56,12 @@ describe('actions-list', function () {
 
   it('#ping', () => micro.act('cmd:ping').then(result => should.equal(result, 'pong')));
 
-  it('#create return { id }', () => micro.act(_extends({}, _index.PIN_LIST_CREATE, { schema, params: { userId: 1, login: 'test' } })).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id'), result.id.should.be.a('number')]).then(() => result)).then(result => findFull(result.id).then(result => model = result)));
+  it('#create return { id }', () => micro.act(_extends({}, _index.PIN_LIST_CREATE, { schema, params: {
+      userId: 1,
+      dot: { property: 1, property1: 1, property2: 2 },
+      customProp: true,
+      login: 'test'
+    } })).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id'), result.id.should.be.a('number')]).then(() => result)).then(result => findFull(result.id).then(result => model = result)));
 
   it('#create return [{ id }, { id }]', () => micro.act(_extends({}, _index.PIN_LIST_CREATE, { schema, params: [{ userId: 111, login: 'test111' }, { userId: 2222, login: 'test2222' }] })).then(result => Promise.all([should.exist(result), result.should.be.a('array').with.length(2)]).then(() => result).then(result => micro.act(_extends({}, _index.PIN_LIST_REMOVE, { schema,
     criteria: {
@@ -56,7 +69,7 @@ describe('actions-list', function () {
     }
   })))));
 
-  it('#find-one return { id, userId, login }', () => findFull(model.id).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id').be.a('number').equal(model.id), result.should.have.property('userId').be.a('number').equal(model.userId), result.should.have.property('login').be.a('string').equal(model.login)])));
+  it('#find-one return { id, dot: { property1, property2 }, userId, login }', () => findFull(model.id).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id').be.a('number').equal(model.id), result.should.have.property('dot').property('property1').be.a('number').equal(model.dot.property1), result.should.have.property('dot').property('property2').be.a('number').equal(model.dot.property2), result.should.have.property('userId').be.a('number').equal(model.userId), result.should.have.property('login').be.a('string').equal(model.login)])));
 
   it('#find-one return { id }', () => micro.act(_extends({}, _index.PIN_LIST_FIND_ONE, { schema, criteria: { id: model.id } })).then(result => Promise.all([should.exist(result), result.should.be.a('object'), result.should.have.property('id').be.a('number').equal(model.id), result.should.not.have.property('userId'), result.should.not.have.property('login')])));
 
@@ -82,9 +95,11 @@ describe('actions-list', function () {
 function createTable(connection) {
   return connection.schema.createTableIfNotExists(tableName, function (table) {
     table.increments();
-    table.integer('userId');
-    table.string('login');
-    table.unique(['userId', 'login']);
+    table.integer(schema.properties['dot.property1'].dbName);
+    table.integer(schema.properties['dot.property2'].dbName);
+    table.integer(schema.properties['userId'].dbName);
+    table.string(schema.properties['login'].dbName);
+    table.unique([schema.properties['userId'].dbName, schema.properties['login'].dbName]);
   });
 }
 
@@ -96,7 +111,7 @@ function findFull(id) {
   return micro.act(_extends({}, _index.PIN_LIST_FIND_ONE, {
     schema,
     criteria: { id },
-    options: { fields: ['id', 'userId', 'login'] }
+    options: { fields: 'full' }
   }));
 }
 //# sourceMappingURL=actions-list.spec.js.map

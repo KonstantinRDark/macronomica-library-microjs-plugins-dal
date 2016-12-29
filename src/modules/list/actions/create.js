@@ -1,4 +1,4 @@
-import setParams from './../../../utils/set-params';
+import TypedError from 'error/typed';
 import convertToResponse from './../../../utils/convert-to-response';
 import Schema from './../../../utils/schema';
 import { MODULE_NAME } from './../constants';
@@ -9,11 +9,16 @@ import {
 } from '../../../errors';
 
 const ERROR_INFO = { module: MODULE_NAME, action: 'create' };
+const SetParamsInternalError = TypedError({
+  message: '{name} - параметры для создания записи не корректны',
+  type   : 'micro.plugins.dal.schema.set-params.params.not.correct',
+  code   : 500
+});
 
 export default (app, middleware, plugin) => (msg) => buildCreate(app, middleware, msg);
 
 export function buildCreate (app, middleware, { schema, params, options = {} }) {
-  const { transaction, outer = false, fields } = options;
+  const { outer = false, fields } = options;
   const isBulkInsert = Array.isArray(params);
   const __fields = schema.getMyFields(fields);
 
@@ -27,39 +32,39 @@ export function buildCreate (app, middleware, { schema, params, options = {} }) 
 
   return new Promise((resolve, reject) => {
     let builder;
+    let __params;
+
+    try {
+      __params = isBulkInsert
+        ? params.map(params => schema.setParams(params))
+        : schema.setParams(params);
+    } catch (e) {
+      if (e.type === 'micro.plugins.dal.schema.validate.error') {
+        return reject(e);
+      }
+
+      app.log.error(e);
+      return reject(SetParamsInternalError());
+    }
 
     // Создание множества записей
     if (isBulkInsert) {
-      /*
-      if (transaction) {
-        // Если передали внешнюю транзакцию - привяжемся к ней
-        builder = bulkCreate(app, middleware, schema, params, __fields, transaction, reject);
-      } else {
-      */
-        // Создаем свою
-        builder = middleware.transaction(trx => bulkCreate(app, middleware, schema, params, __fields, trx, reject)
-          .then(trx.commit)
-          .catch(trx.rollback)
+        // Создаем свою transaction
+        builder = middleware.transaction(trx =>
+          bulkCreate(middleware, schema.tableName, __params, __fields, trx, reject)
+            .then(trx.commit)
+            .catch(trx.rollback)
         );
-      /*
-      }
-      */
     }
     // Создание одной записи
     else {
       builder = middleware(schema.tableName)
-        .insert(setParams(app, schema, params, reject))
+        .insert(__params)
         .returning(...__fields);
-      /*
-      if (transaction) {
-        // Если передали внешнюю транзакцию - привяжемся к ней
-        builder = builder.transacting(transaction);
-      }
-      */
     }
 
-    if (/*transaction ||*/ outer) {
-      // Если передали внешнюю транзакцию или кто-то сам хочет запускать запрос - вернем builder
+    if (outer) {
+      // Если кто-то сам хочет запускать запрос - вернем builder
       // Возвращаем как объект - иначе происходит исполнение данного builder'a
       return resolve({ builder });
     }
@@ -83,15 +88,15 @@ export function buildCreate (app, middleware, { schema, params, options = {} }) 
   });
 }
 
-function bulkCreate(app, middleware, schema, params = [], fields, trx, reject) {
-  return middleware(schema.tableName)
-    .insert(params.map(params => setParams(app, schema, params, reject)))
+function bulkCreate(middleware, tableName, params = [], fields, trx) {
+  return middleware(tableName)
+    .insert(params)
     .returning(...fields)
     .transacting(trx)
     .then(function(ids = []) {
       const max = ids.reduce((max, id) => max < id ? id : max, 0);
       return middleware
-        .raw(`ALTER SEQUENCE "${ schema.tableName }_id_seq" RESTART WITH ${ max };`)
+        .raw(`ALTER SEQUENCE "${ tableName }_id_seq" RESTART WITH ${ max };`)
         .then(() => ids);
     });
 }

@@ -53,7 +53,7 @@ function buildRemove(app, middleware, _ref) {
   }
 
   return new Promise((resolve, reject) => {
-    criteria = schema.getMyParams(criteria);
+    criteria = schema.getMyCriteriaParams(criteria);
 
     if ((0, _lodash2.default)(criteria)) {
       return resolve(null);

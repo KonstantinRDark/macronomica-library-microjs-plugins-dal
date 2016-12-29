@@ -1,28 +1,39 @@
+import dot from 'dot-object';
 import isPlainObject from 'lodash.isplainobject';
 import checkConvertOut from './check-convert-out';
 
 export default function convertToResponse(schema, fields) {
   const convertOuts = checkConvertOut(schema.properties);
 
-  return result => {
-    if (isPlainObject(result) || result.constructor.name === 'anonymous') {
-      for (let { name, callback } of convertOuts) {
-        result[ name ] = callback(result[ name ], schema.properties[ name ]);
-      }
+  return resultData => {
+    if (isPlainObject(resultData) || resultData.constructor.name === 'anonymous') {
+      let result = {};
+      let names = Object.keys(resultData);
 
-      return { ...result };
-    } else {
-      let key = fields[ 0 ];
-      let value = result[ 0 ] || result;
+      for (let dbName of names) {
+        let name = schema.dbProperties[ dbName ].name;
+        let value = resultData[ dbName ];
 
-      for (let { name, callback } of convertOuts) {
-        if (key === name) {
+        if (dbName in convertOuts) {
           value = callback(value, schema.properties[ name ]);
-          break;
         }
+
+        result = dot.str(name, value, result);
       }
 
-      return { [ key ]: value };
+      return result;
+    } else {
+      let result = {};
+      // Берем первое указанное имя в fields, по идее оно там одно
+      let key = fields[ 0 ];
+      let value = resultData[ 0 ] || resultData;
+
+      if (key in convertOuts) {
+        value = callback(value, schema.dbProperties[ key ].name);
+      }
+
+      result = dot.str(key, value, result);
+      return result;
     }
   };
 }

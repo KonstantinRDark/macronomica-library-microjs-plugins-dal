@@ -3,10 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 exports.default = convertToResponse;
+
+var _dotObject = require('dot-object');
+
+var _dotObject2 = _interopRequireDefault(_dotObject);
 
 var _lodash = require('lodash.isplainobject');
 
@@ -21,31 +22,35 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function convertToResponse(schema, fields) {
   const convertOuts = (0, _checkConvertOut2.default)(schema.properties);
 
-  return result => {
-    if ((0, _lodash2.default)(result) || result.constructor.name === 'anonymous') {
-      for (let _ref of convertOuts) {
-        let name = _ref.name;
-        let callback = _ref.callback;
+  return resultData => {
+    if ((0, _lodash2.default)(resultData) || resultData.constructor.name === 'anonymous') {
+      let result = {};
+      let names = Object.keys(resultData);
 
-        result[name] = callback(result[name], schema.properties[name]);
-      }
+      for (let dbName of names) {
+        let name = schema.dbProperties[dbName].name;
+        let value = resultData[dbName];
 
-      return _extends({}, result);
-    } else {
-      let key = fields[0];
-      let value = result[0] || result;
-
-      for (let _ref2 of convertOuts) {
-        let name = _ref2.name;
-        let callback = _ref2.callback;
-
-        if (key === name) {
+        if (dbName in convertOuts) {
           value = callback(value, schema.properties[name]);
-          break;
         }
+
+        result = _dotObject2.default.str(name, value, result);
       }
 
-      return { [key]: value };
+      return result;
+    } else {
+      let result = {};
+      // Берем первое указанное имя в fields, по идее оно там одно
+      let key = fields[0];
+      let value = resultData[0] || resultData;
+
+      if (key in convertOuts) {
+        value = callback(value, schema.dbProperties[key].name);
+      }
+
+      result = _dotObject2.default.str(key, value, result);
+      return result;
     }
   };
 }

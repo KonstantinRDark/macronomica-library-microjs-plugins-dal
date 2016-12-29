@@ -2,7 +2,7 @@ import isString from 'lodash.isstring';
 import Schema from './../../../../utils/schema';
 import isNumber from 'lodash.isnumber';
 import setCriteria from './../../../../utils/set-criteria';
-import checkConvertOut from './../../../../utils/check-convert-out';
+import convertToResponse from './../../../../utils/convert-to-response';
 import { MODULE_NAME } from './../../constants';
 import {
   internalErrorPromise,
@@ -16,15 +16,12 @@ export default (app, middleware, plugin) => (msg) => buildFindList(app, middlewa
 
 export function buildFindList(app, middleware, { schema, criteria = {}, options = {} }) {
   const {
-    transaction,
     outer = false,
     fields,
     sort = 'id',
     limit,
     offset,
   } = options;
-
-  const convertOuts = checkConvertOut(schema.properties);
 
   if (!schema) {
     return Promise.reject(schemaNotFoundError(ERROR_INFO));
@@ -35,12 +32,13 @@ export function buildFindList(app, middleware, { schema, criteria = {}, options 
   }
 
   return new Promise((resolve, reject) => {
+    let __fields = schema.getMyFields(fields);
     let builder = setCriteria(
       app,
       middleware(schema.tableName),
-      schema.getMyParams(criteria),
+      schema.getMyCriteriaParams(criteria),
       reject
-    ).select(...schema.getMyFields(fields));
+    ).select(...__fields);
 
     if (sort) {
       let orderKey;
@@ -66,32 +64,20 @@ export function buildFindList(app, middleware, { schema, criteria = {}, options 
     if (offset && isNumber(offset)) {
       builder = builder.offset(offset);
     }
-    /*
-    if (transaction) {
-      // Если передали внешнюю транзакцию - привяжемся к ней
-      builder = builder.transacting(transaction);
-    }
-    */
-    if (/*transaction || */outer) {
-      // Если передали внешнюю транзакцию или кто-то сам хочет запускать запрос - вернем builder
+
+    if (outer) {
+      // Если кто-то сам хочет запускать запрос - вернем builder
       // Возвращаем как объект - иначе происходит исполнение данного builder'a
       return resolve({ builder });
     }
 
     builder
       .then((result = []) => {
-        if (convertOuts.length > 0) {
-          result = result.map(item => {
-
-            for (let { name, callback } of convertOuts) {
-              item[ name ] = callback(item[ name ], schema.properties[ name ]);
-            }
-
-            return item;
-          });
+        if (!result || !Array.isArray(result)) {
+          return (result);
         }
 
-        resolve(result.map(row => ({ ...row })));
+        resolve(result.map(convertToResponse(schema, __fields)));
       })
       .catch(internalErrorPromise(app, ERROR_INFO))
       .catch(reject);
