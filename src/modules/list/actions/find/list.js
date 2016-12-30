@@ -1,7 +1,9 @@
+import dot from 'dot-object';
 import isString from 'lodash.isstring';
 import Schema from './../../../../utils/schema';
 import isNumber from 'lodash.isnumber';
 import setCriteria from './../../../../utils/set-criteria';
+import checkLinks from './../../../../utils/check-links';
 import convertToResponse from './../../../../utils/convert-to-response';
 import { MODULE_NAME } from './../../constants';
 import {
@@ -14,7 +16,8 @@ const ERROR_INFO = { module: MODULE_NAME, action: 'find-list' };
 
 export default (app, middleware, plugin) => (msg) => buildFindList(app, middleware, msg);
 
-export function buildFindList(app, middleware, { schema, criteria = {}, options = {} }) {
+export function buildFindList(app, middleware, msg) {
+  let { schema, criteria = {}, options = {} } = msg;
   const {
     outer = false,
     fields,
@@ -72,14 +75,67 @@ export function buildFindList(app, middleware, { schema, criteria = {}, options 
     }
 
     builder
-      .then((result = []) => {
+      .then((result = []) => new Promise(async resolve => {
         if (!result || !Array.isArray(result)) {
           return (result);
         }
 
-        resolve(result.map(convertToResponse(schema, __fields)));
-      })
+        const records = result.map(convertToResponse(schema, __fields));
+
+        resolve(await loadAndAssignLinks(msg, schema, records));
+      }))
+      .then(resolve)
       .catch(internalErrorPromise(app, ERROR_INFO))
       .catch(reject);
   });
+}
+
+function loadAndAssignLinks(msg, schema, records) {
+  const links = checkLinks('list', schema.properties);
+
+  if (!links.keys.length) {
+    return Promise.resolve(records);
+  }
+
+  const criteria = reduceCriteria(records, links);
+
+  return Promise
+    .all(Object.keys(criteria).map(propertyName => {
+      let list = criteria[ propertyName ].list;
+      let map = criteria[ propertyName ].map;
+
+      if (!list.length) {
+        return Promise.resolve();
+      }
+
+      return msg
+        .act({ ...links[ propertyName ], criteria: { id: { in: list } } })
+        .then(recordsLinks => recordsLinks.map(link => map[ link.id ].map(record =>
+          Object.assign(record[ propertyName.slice(0, propertyName.lastIndexOf('.')) ], link)
+        )));
+    }))
+    .then(() => records);
+}
+
+function reduceCriteria(records, links) {
+  return records.reduce((result, record) => {
+
+    for(let propertyName of links.keys) {
+      let value = dot.pick(propertyName, record);
+
+      let data = result[ propertyName ] = result[ propertyName ] || {
+          list: [],
+          map : {},
+        };
+
+      if (!(value in data.map)) {
+        data.list.push(value);
+      }
+
+      data.map[ value ] = data.map[ value ] || [];
+      data.map[ value ].push(record);
+    }
+
+    return result;
+  }, {});
 }

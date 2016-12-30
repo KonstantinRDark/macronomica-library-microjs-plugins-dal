@@ -1,3 +1,4 @@
+import os from 'os';
 import Joi from 'joi';
 import WrappedError from 'error/wrapped';
 import TypedError from 'error/typed';
@@ -26,7 +27,7 @@ const DetectedSqlInjectionError = TypedError({
 });
 
 const ValidateError = WrappedError({
-  message      : '{name} - {origMessage}',
+  message      : '{name} - ошибка валидации свойства {propertyName} - {origMessage}',
   type         : 'micro.plugins.dal.schema.validate.error',
   code         : 400,
   propertyName : null,
@@ -122,7 +123,7 @@ export default class Schema {
       let valid = schema.validate(propertyName, value);
 
       if (valid.error) {
-        throw ValidateError(valid.error, { propertyName, propertyValue: value });
+        throw valid.error;
       }
 
       result[ property.dbName ] = valid.value;
@@ -166,13 +167,7 @@ export default class Schema {
     const valid = Joi.validate(value, props.type.schema(props));
 
     if (valid.error) {
-      return {
-        value: valid.value,
-        error: {
-          code   : 'error.dal.params',
-          message: `${ propertyName }: ${ valid.error.message }`
-        }
-      };
+      valid.error = ValidateError(valid.error, { propertyName, propertyValue: value });
     }
 
     return valid;

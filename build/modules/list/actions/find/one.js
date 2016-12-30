@@ -4,9 +4,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 exports.buildFindOne = buildFindOne;
+
+var _dotObject = require('dot-object');
+
+var _dotObject2 = _interopRequireDefault(_dotObject);
 
 var _lodash = require('lodash.isempty');
 
@@ -20,6 +26,10 @@ var _setCriteria = require('./../../../../utils/set-criteria');
 
 var _setCriteria2 = _interopRequireDefault(_setCriteria);
 
+var _checkLinks = require('./../../../../utils/check-links');
+
+var _checkLinks2 = _interopRequireDefault(_checkLinks);
+
 var _convertToResponse = require('./../../../../utils/convert-to-response');
 
 var _convertToResponse2 = _interopRequireDefault(_convertToResponse);
@@ -30,16 +40,18 @@ var _errors = require('../../../../errors');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 const ERROR_INFO = { module: _constants.MODULE_NAME, action: 'find-one' };
 
 exports.default = (app, middleware, plugin) => msg => buildFindOne(app, middleware, msg);
 
-function buildFindOne(app, middleware, _ref) {
-  let schema = _ref.schema;
-  var _ref$criteria = _ref.criteria;
-  let criteria = _ref$criteria === undefined ? {} : _ref$criteria;
-  var _ref$options = _ref.options;
-  let options = _ref$options === undefined ? {} : _ref$options;
+function buildFindOne(app, middleware, msg) {
+  let schema = msg.schema;
+  var _msg$criteria = msg.criteria;
+  let criteria = _msg$criteria === undefined ? {} : _msg$criteria;
+  var _msg$options = msg.options;
+  let options = _msg$options === undefined ? {} : _msg$options;
   const transaction = options.transaction;
   var _options$outer = options.outer;
   const outer = _options$outer === undefined ? false : _options$outer,
@@ -71,17 +83,37 @@ function buildFindOne(app, middleware, _ref) {
     }
 
     // Иначе вызовем его выполнение
-    builder.then((_ref2) => {
-      var _ref3 = _slicedToArray(_ref2, 1);
+    builder.then((_ref) => {
+      var _ref2 = _slicedToArray(_ref, 1);
 
-      let result = _ref3[0];
+      let result = _ref2[0];
+      return new Promise((() => {
+        var _ref3 = _asyncToGenerator(function* (resolve) {
+          if (!result) {
+            return resolve(result);
+          }
 
-      if (!result) {
-        return resolve(result);
-      }
+          const record = (0, _convertToResponse2.default)(schema, __fields)(result);
 
-      resolve((0, _convertToResponse2.default)(schema, __fields)(result));
-    }).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO)).catch(reject);
+          resolve((yield loadAndAssignLink(msg, schema, record)));
+        });
+
+        return function (_x) {
+          return _ref3.apply(this, arguments);
+        };
+      })());
+    }).then(resolve).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO)).catch(reject);
   });
+}
+
+function loadAndAssignLink(msg, schema, record) {
+  const links = (0, _checkLinks2.default)('one', schema.properties);
+
+  if (!links.keys.length) {
+    return Promise.resolve(record);
+  }
+
+  // Получаем все связанные объекты и сетим их себе
+  return Promise.all(links.keys.map(propertyName => msg.act(_extends({}, links[propertyName], { criteria: { id: _dotObject2.default.pick(propertyName, record) } })).then(link => Object.assign(record[propertyName.slice(0, propertyName.lastIndexOf('.'))], link)))).then(() => record);
 }
 //# sourceMappingURL=one.js.map

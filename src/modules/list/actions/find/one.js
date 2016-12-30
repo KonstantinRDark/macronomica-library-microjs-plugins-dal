@@ -1,6 +1,8 @@
+import dot from 'dot-object';
 import isEmpty from 'lodash.isempty';
 import Schema from './../../../../utils/schema';
 import setCriteria from './../../../../utils/set-criteria';
+import checkLinks from './../../../../utils/check-links';
 import convertToResponse from './../../../../utils/convert-to-response';
 import { MODULE_NAME } from './../../constants';
 import {
@@ -13,7 +15,8 @@ const ERROR_INFO = { module: MODULE_NAME, action: 'find-one' };
 
 export default (app, middleware, plugin) => (msg) => buildFindOne(app, middleware, msg);
 
-export function buildFindOne(app, middleware, { schema, criteria = {}, options = {} }) {
+export function buildFindOne(app, middleware, msg) {
+  let { schema, criteria = {}, options = {} } = msg;
   const { transaction, outer = false, fields } = options;
 
   if (!schema) {
@@ -44,14 +47,35 @@ export function buildFindOne(app, middleware, { schema, criteria = {}, options =
 
     // Иначе вызовем его выполнение
     builder
-      .then(([ result ]) => {
+      .then(([ result ]) => new Promise(async resolve => {
         if (!result) {
           return resolve(result);
         }
 
-        resolve(convertToResponse(schema, __fields)(result));
-      })
+        const record = convertToResponse(schema, __fields)(result);
+
+        resolve(await loadAndAssignLink(msg, schema, record));
+      }))
+      .then(resolve)
       .catch(internalErrorPromise(app, ERROR_INFO))
       .catch(reject);
   });
+}
+
+function loadAndAssignLink(msg, schema, record) {
+  const links = checkLinks('one', schema.properties);
+
+  if (!links.keys.length) {
+    return Promise.resolve(record);
+  }
+
+  // Получаем все связанные объекты и сетим их себе
+  return Promise
+    .all(links.keys.map(propertyName => msg
+      .act({ ...links[ propertyName ], criteria: { id: dot.pick(propertyName, record) } })
+      .then(link =>
+        Object.assign(record[ propertyName.slice(0, propertyName.lastIndexOf('.')) ], link)
+      ))
+    )
+    .then(() => record);
 }

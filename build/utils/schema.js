@@ -7,6 +7,10 @@ exports.FIELDS_MASK = exports.Types = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+var _os = require('os');
+
+var _os2 = _interopRequireDefault(_os);
+
 var _joi = require('joi');
 
 var _joi2 = _interopRequireDefault(_joi);
@@ -66,7 +70,7 @@ const DetectedSqlInjectionError = (0, _typed2.default)({
 });
 
 const ValidateError = (0, _wrapped2.default)({
-  message: '{name} - {origMessage}',
+  message: '{name} - ошибка валидации свойства {propertyName} - {origMessage}',
   type: 'micro.plugins.dal.schema.validate.error',
   code: 400,
   propertyName: null,
@@ -133,7 +137,7 @@ class Schema {
         let valid = schema.validate(propertyName, value);
 
         if (valid.error) {
-          throw ValidateError(valid.error, { propertyName, propertyValue: value });
+          throw valid.error;
         }
 
         result[property.dbName] = valid.value;
@@ -181,13 +185,7 @@ class Schema {
       const valid = _joi2.default.validate(value, props.type.schema(props));
 
       if (valid.error) {
-        return {
-          value: valid.value,
-          error: {
-            code: 'error.dal.params',
-            message: `${ propertyName }: ${ valid.error.message }`
-          }
-        };
+        valid.error = ValidateError(valid.error, { propertyName, propertyValue: value });
       }
 
       return valid;

@@ -4,9 +4,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 exports.buildFindList = buildFindList;
+
+var _dotObject = require('dot-object');
+
+var _dotObject2 = _interopRequireDefault(_dotObject);
 
 var _lodash = require('lodash.isstring');
 
@@ -24,6 +30,10 @@ var _setCriteria = require('./../../../../utils/set-criteria');
 
 var _setCriteria2 = _interopRequireDefault(_setCriteria);
 
+var _checkLinks = require('./../../../../utils/check-links');
+
+var _checkLinks2 = _interopRequireDefault(_checkLinks);
+
 var _convertToResponse = require('./../../../../utils/convert-to-response');
 
 var _convertToResponse2 = _interopRequireDefault(_convertToResponse);
@@ -34,16 +44,18 @@ var _errors = require('../../../../errors');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 const ERROR_INFO = { module: _constants.MODULE_NAME, action: 'find-list' };
 
 exports.default = (app, middleware, plugin) => msg => buildFindList(app, middleware, msg);
 
-function buildFindList(app, middleware, _ref) {
-  let schema = _ref.schema;
-  var _ref$criteria = _ref.criteria;
-  let criteria = _ref$criteria === undefined ? {} : _ref$criteria;
-  var _ref$options = _ref.options;
-  let options = _ref$options === undefined ? {} : _ref$options;
+function buildFindList(app, middleware, msg) {
+  let schema = msg.schema;
+  var _msg$criteria = msg.criteria;
+  let criteria = _msg$criteria === undefined ? {} : _msg$criteria;
+  var _msg$options = msg.options;
+  let options = _msg$options === undefined ? {} : _msg$options;
   var _options$outer = options.outer;
   const outer = _options$outer === undefined ? false : _options$outer,
         fields = options.fields;
@@ -103,13 +115,66 @@ function buildFindList(app, middleware, _ref) {
 
     builder.then(function () {
       let result = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+      return new Promise((() => {
+        var _ref = _asyncToGenerator(function* (resolve) {
+          if (!result || !Array.isArray(result)) {
+            return result;
+          }
 
-      if (!result || !Array.isArray(result)) {
-        return result;
+          const records = result.map((0, _convertToResponse2.default)(schema, __fields));
+
+          resolve((yield loadAndAssignLinks(msg, schema, records)));
+        });
+
+        return function (_x2) {
+          return _ref.apply(this, arguments);
+        };
+      })());
+    }).then(resolve).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO)).catch(reject);
+  });
+}
+
+function loadAndAssignLinks(msg, schema, records) {
+  const links = (0, _checkLinks2.default)('list', schema.properties);
+
+  if (!links.keys.length) {
+    return Promise.resolve(records);
+  }
+
+  const criteria = reduceCriteria(records, links);
+
+  return Promise.all(Object.keys(criteria).map(propertyName => {
+    let list = criteria[propertyName].list;
+    let map = criteria[propertyName].map;
+
+    if (!list.length) {
+      return Promise.resolve();
+    }
+
+    return msg.act(_extends({}, links[propertyName], { criteria: { id: { in: list } } })).then(recordsLinks => recordsLinks.map(link => map[link.id].map(record => Object.assign(record[propertyName.slice(0, propertyName.lastIndexOf('.'))], link))));
+  })).then(() => records);
+}
+
+function reduceCriteria(records, links) {
+  return records.reduce((result, record) => {
+
+    for (let propertyName of links.keys) {
+      let value = _dotObject2.default.pick(propertyName, record);
+
+      let data = result[propertyName] = result[propertyName] || {
+        list: [],
+        map: {}
+      };
+
+      if (!(value in data.map)) {
+        data.list.push(value);
       }
 
-      resolve(result.map((0, _convertToResponse2.default)(schema, __fields)));
-    }).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO)).catch(reject);
-  });
+      data.map[value] = data.map[value] || [];
+      data.map[value].push(record);
+    }
+
+    return result;
+  }, {});
 }
 //# sourceMappingURL=list.js.map
