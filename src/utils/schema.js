@@ -249,7 +249,11 @@ function getFieldsMask(names, properties, fieldsMask) {
       let list = isString(propertyMasks) ? propertyMasks.split(':') : propertyMasks;
       propertyMasks = list.reduce((result, name) => {
         let hasNot = !!~name.indexOf('!');
-        result[ hasNot ? name.replace('!', '') : name ] = !hasNot;
+        
+        if (!~name.indexOf('!')) {
+          result[ name ] = true;
+        }
+        
         return result;
       }, {});
     }
@@ -263,10 +267,13 @@ function getFieldsMask(names, properties, fieldsMask) {
 
     return fieldsMask.reduce((result, fieldMask) => {
       result[ fieldMask ] = result[ fieldMask ] || [];
-
-      // Если в описании свойства не указали fieldsMask
-      // Или если указанное значение не равно false - добавим его во все маски
-      if (!(fieldMask in propertyMasks) || propertyMasks[ fieldMask ] !== false) {
+      
+      // Если в описании свойства указали fieldsMask
+      // И указанное значение равно true - добавим его во все маски
+      if (
+        fieldMask === 'full' && (!(fieldMask in propertyMasks) || propertyMasks[ fieldMask ] !== false)
+        || fieldMask in propertyMasks && propertyMasks[ fieldMask ] === true
+      ) {
         result[ fieldMask ].push(property.dbName);
       }
 
