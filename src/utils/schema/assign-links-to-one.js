@@ -30,6 +30,10 @@ export default (schema) => (record, exec) => {
     const criteria = {};
     const value = dot.pick(propertyName, record);
     
+    if (hasMany && !value.length || value === undefined) {
+      return Promise.resolve(record);
+    }
+    
     if (hasMany) {
       criteria.id = { in: value };
     } else {

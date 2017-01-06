@@ -16,6 +16,10 @@ export default (schema) => (records, exec) => {
       let hasMany = property.type === SchemaTypes.array;
       let value = dot.pick(propertyName, record);
       
+      if (hasMany && !value.length || value === undefined) {
+        continue;
+      }
+      
       let data = result[ propertyName ] = result[ propertyName ] || {
           list: [],
           map : hasMany ? new WeakMap() : new Map(),
