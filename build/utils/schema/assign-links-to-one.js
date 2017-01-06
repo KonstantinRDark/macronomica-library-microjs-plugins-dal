@@ -43,7 +43,7 @@ exports.default = schema => (record, exec) => {
     const criteria = {};
     const value = _dotObject2.default.pick(propertyName, record);
 
-    if (hasMany && !value.length || value === undefined) {
+    if (value === undefined || hasMany && Array.isArray(value) && !value.length) {
       return Promise.resolve(record);
     }
 

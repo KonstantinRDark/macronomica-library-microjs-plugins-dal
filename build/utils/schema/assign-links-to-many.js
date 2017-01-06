@@ -31,7 +31,7 @@ exports.default = schema => (records, exec) => {
       let hasMany = property.type === _schemaTypes2.default.array;
       let value = _dotObject2.default.pick(propertyName, record);
 
-      if (hasMany && !value.length || value === undefined) {
+      if (value === undefined || hasMany && Array.isArray(value) && !value.length) {
         continue;
       }
 
