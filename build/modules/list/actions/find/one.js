@@ -4,8 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 exports.buildFindOne = buildFindOne;
@@ -95,7 +93,9 @@ function buildFindOne(app, middleware, msg) {
 
           const record = (0, _convertToResponse2.default)(schema, __fields)(result);
 
-          resolve((yield loadAndAssignLink(msg, schema, record)));
+          resolve((yield schema.assignLinksToOne(record, function (pin) {
+            return msg.act(pin);
+          })));
         });
 
         return function (_x) {
@@ -104,16 +104,5 @@ function buildFindOne(app, middleware, msg) {
       })());
     }).then(resolve).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO)).catch(reject);
   });
-}
-
-function loadAndAssignLink(msg, schema, record) {
-  const links = (0, _checkLinks2.default)('one', schema.properties);
-
-  if (!links.keys.length) {
-    return Promise.resolve(record);
-  }
-
-  // Получаем все связанные объекты и сетим их себе
-  return Promise.all(links.keys.map(propertyName => msg.act(_extends({}, links[propertyName], { criteria: { id: _dotObject2.default.pick(propertyName, record) } })).then(link => Object.assign(record[propertyName.slice(0, propertyName.lastIndexOf('.'))], link)))).then(() => record);
 }
 //# sourceMappingURL=one.js.map

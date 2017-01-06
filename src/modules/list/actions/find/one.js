@@ -54,28 +54,10 @@ export function buildFindOne(app, middleware, msg) {
 
         const record = convertToResponse(schema, __fields)(result);
 
-        resolve(await loadAndAssignLink(msg, schema, record));
+        resolve(await schema.assignLinksToOne(record, pin => msg.act(pin)));
       }))
       .then(resolve)
       .catch(internalErrorPromise(app, ERROR_INFO))
       .catch(reject);
   });
-}
-
-function loadAndAssignLink(msg, schema, record) {
-  const links = checkLinks('one', schema.properties);
-
-  if (!links.keys.length) {
-    return Promise.resolve(record);
-  }
-
-  // Получаем все связанные объекты и сетим их себе
-  return Promise
-    .all(links.keys.map(propertyName => msg
-      .act({ ...links[ propertyName ], criteria: { id: dot.pick(propertyName, record) } })
-      .then(link =>
-        Object.assign(record[ propertyName.slice(0, propertyName.lastIndexOf('.')) ], link)
-      ))
-    )
-    .then(() => record);
 }
