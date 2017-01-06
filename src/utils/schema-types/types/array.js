@@ -32,7 +32,7 @@ function convertIn(value) {
 
 function convertOut(value) {
   if (isString(value)) {
-    return value === '' ? undefined : value.split(',');
+    return value === '' ? undefined : value.split(',').map(id => +id);
   }
 
   return value;

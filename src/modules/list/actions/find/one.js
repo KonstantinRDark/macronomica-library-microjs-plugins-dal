@@ -54,7 +54,8 @@ export function buildFindOne(app, middleware, msg) {
 
         const record = convertToResponse(schema, __fields)(result);
 
-        resolve(await schema.assignLinksToOne(record, pin => msg.act(pin)));
+        await schema.assignLinksToOne(record, pin => msg.act(pin));
+        resolve(record);
       }))
       .then(resolve)
       .catch(internalErrorPromise(app, ERROR_INFO))

@@ -93,9 +93,10 @@ function buildFindOne(app, middleware, msg) {
 
           const record = (0, _convertToResponse2.default)(schema, __fields)(result);
 
-          resolve((yield schema.assignLinksToOne(record, function (pin) {
+          yield schema.assignLinksToOne(record, function (pin) {
             return msg.act(pin);
-          })));
+          });
+          resolve(record);
         });
 
         return function (_x) {

@@ -7,10 +7,6 @@ exports.FIELDS_MASK = exports.Types = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _os = require('os');
-
-var _os2 = _interopRequireDefault(_os);
-
 var _joi = require('joi');
 
 var _joi2 = _interopRequireDefault(_joi);
@@ -43,11 +39,19 @@ var _lodash7 = require('lodash.uniq');
 
 var _lodash8 = _interopRequireDefault(_lodash7);
 
-var _schemaTypes = require('./schema-types');
+var _schemaTypes = require('./../schema-types');
 
 var _schemaTypes2 = _interopRequireDefault(_schemaTypes);
 
-var _sqlStringProtector = require('./sql-string-protector');
+var _assignLinksToOne = require('./assign-links-to-one');
+
+var _assignLinksToOne2 = _interopRequireDefault(_assignLinksToOne);
+
+var _assignLinksToMany = require('./assign-links-to-many');
+
+var _assignLinksToMany2 = _interopRequireDefault(_assignLinksToMany);
+
+var _sqlStringProtector = require('./../sql-string-protector');
 
 var _sqlStringProtector2 = _interopRequireDefault(_sqlStringProtector);
 
@@ -104,11 +108,12 @@ class Schema {
       throw PropertyMustBeType({ propertyName: 'tableName', propertyType: 'string' });
     }
 
-    this.fieldsMask = (0, _lodash8.default)([...FIELDS_MASK, ...(fieldsMask || [])]);
-    this.tableName = (tableName || getTableName(modelName)).replace(/-/g, '_');
-    this.dbProperties = {};
+    let schema = this;
+    schema.fieldsMask = (0, _lodash8.default)([...FIELDS_MASK, ...(fieldsMask || [])]);
+    schema.tableName = (tableName || getTableName(modelName)).replace(/-/g, '_');
+    schema.dbProperties = {};
 
-    this.properties = _extends({
+    schema.properties = _extends({
       id: {
         type: _schemaTypes2.default.number,
         name: 'id',
@@ -120,9 +125,21 @@ class Schema {
       this.dbProperties[dbName] = Object.assign(properties[name], { name, dbName });
       return properties;
     }, properties));
-    this.dbProperties.id = this.properties.id;
-    this.__propertiesNames = Object.keys(this.properties);
-    this.__masks = getFieldsMask(this.__propertiesNames, this.properties, this.fieldsMask);
+    schema.dbProperties.id = schema.properties.id;
+    schema.__propertiesNames = Object.keys(schema.properties);
+    schema.__masks = getFieldsMask(schema.__propertiesNames, schema.properties, schema.fieldsMask);
+
+    schema.__assignLinksMany = schema.__propertiesNames.reduce((result, propertyName) => {
+      let property = schema.properties[propertyName];
+      let name = 'list';
+
+      if ('link' in property && name in property.link) {
+        result.keys.push(propertyName);
+        result[propertyName] = property.link[name];
+      }
+
+      return result;
+    }, { keys: [] });
   }
 
 }
@@ -312,50 +329,8 @@ var _initialiseProps = function () {
     return result;
   };
 
-  this.assignLinksToOne = (record, exec) => {
-    const properties = this.properties;
-    const propertiesNames = this.__propertiesNames;
-    const promises = [];
-
-    for (let propertyName of propertiesNames) {
-      let property = properties[propertyName];
-      let hasMany = property.type === _schemaTypes2.default.array;
-      let name = hasMany ? 'list' : 'one';
-
-      if (!!property.link && name in property.link) {
-        promises.push(__assignLink(propertyName, hasMany, property.link[name]));
-      }
-    }
-
-    if (!promises.length) {
-      return Promise.resolve(record);
-    }
-
-    // Получаем все связанные объекты и сетим их себе
-    return Promise.all(promises).then(() => record);
-
-    function __assignLink(propertyName, hasMany, pin) {
-      const name = propertyName.slice(0, propertyName.lastIndexOf('.'));
-      const criteria = {};
-      const value = _dotObject2.default.pick(propertyName, record);
-
-      if (hasMany) {
-        criteria.id = { in: value };
-      } else {
-        criteria.id = value;
-      }
-
-      return exec(_extends({}, pin, { criteria })).then(link => {
-        if (hasMany) {
-          return record[name] = link;
-        } else {
-          return Object.assign(record[name], link);
-        }
-      });
-    }
-  };
-
-  this.assignLinksToMany = records => {};
+  this.assignLinksToOne = (0, _assignLinksToOne2.default)(this);
+  this.assignLinksToMany = (0, _assignLinksToMany2.default)(this);
 };
 
 function nameToDbName(name) {
@@ -426,4 +401,4 @@ function getFieldsMask(names, properties, fieldsMask) {
 function getTableName(name) {
   return name.toLocaleLowerCase();
 }
-//# sourceMappingURL=schema.js.map
+//# sourceMappingURL=index.js.map

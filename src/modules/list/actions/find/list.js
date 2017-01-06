@@ -81,61 +81,12 @@ export function buildFindList(app, middleware, msg) {
         }
 
         const records = result.map(convertToResponse(schema, __fields));
-
-        resolve(await loadAndAssignLinks(msg, schema, records));
+        
+        await schema.assignLinksToMany(records, pin => msg.act(pin));
+        resolve(records);
       }))
       .then(resolve)
       .catch(internalErrorPromise(app, ERROR_INFO))
       .catch(reject);
   });
-}
-
-function loadAndAssignLinks(msg, schema, records) {
-  const links = checkLinks('list', schema.properties);
-
-  if (!links.keys.length) {
-    return Promise.resolve(records);
-  }
-
-  const criteria = reduceCriteria(records, links);
-
-  return Promise
-    .all(Object.keys(criteria).map(propertyName => {
-      let list = criteria[ propertyName ].list;
-      let map = criteria[ propertyName ].map;
-
-      if (!list.length) {
-        return Promise.resolve();
-      }
-
-      return msg
-        .act({ ...links[ propertyName ], criteria: { id: { in: list } } })
-        .then(recordsLinks => recordsLinks.map(link => map[ link.id ].map(record =>
-          Object.assign(record[ propertyName.slice(0, propertyName.lastIndexOf('.')) ], link)
-        )));
-    }))
-    .then(() => records);
-}
-
-function reduceCriteria(records, links) {
-  return records.reduce((result, record) => {
-
-    for(let propertyName of links.keys) {
-      let value = dot.pick(propertyName, record);
-
-      let data = result[ propertyName ] = result[ propertyName ] || {
-          list: [],
-          map : {},
-        };
-
-      if (!(value in data.map)) {
-        data.list.push(value);
-      }
-
-      data.map[ value ] = data.map[ value ] || [];
-      data.map[ value ].push(record);
-    }
-
-    return result;
-  }, {});
 }

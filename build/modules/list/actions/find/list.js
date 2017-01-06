@@ -4,8 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 exports.buildFindList = buildFindList;
@@ -123,7 +121,10 @@ function buildFindList(app, middleware, msg) {
 
           const records = result.map((0, _convertToResponse2.default)(schema, __fields));
 
-          resolve((yield loadAndAssignLinks(msg, schema, records)));
+          yield schema.assignLinksToMany(records, function (pin) {
+            return msg.act(pin);
+          });
+          resolve(records);
         });
 
         return function (_x2) {
@@ -132,49 +133,5 @@ function buildFindList(app, middleware, msg) {
       })());
     }).then(resolve).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO)).catch(reject);
   });
-}
-
-function loadAndAssignLinks(msg, schema, records) {
-  const links = (0, _checkLinks2.default)('list', schema.properties);
-
-  if (!links.keys.length) {
-    return Promise.resolve(records);
-  }
-
-  const criteria = reduceCriteria(records, links);
-
-  return Promise.all(Object.keys(criteria).map(propertyName => {
-    let list = criteria[propertyName].list;
-    let map = criteria[propertyName].map;
-
-    if (!list.length) {
-      return Promise.resolve();
-    }
-
-    return msg.act(_extends({}, links[propertyName], { criteria: { id: { in: list } } })).then(recordsLinks => recordsLinks.map(link => map[link.id].map(record => Object.assign(record[propertyName.slice(0, propertyName.lastIndexOf('.'))], link))));
-  })).then(() => records);
-}
-
-function reduceCriteria(records, links) {
-  return records.reduce((result, record) => {
-
-    for (let propertyName of links.keys) {
-      let value = _dotObject2.default.pick(propertyName, record);
-
-      let data = result[propertyName] = result[propertyName] || {
-        list: [],
-        map: {}
-      };
-
-      if (!(value in data.map)) {
-        data.list.push(value);
-      }
-
-      data.map[value] = data.map[value] || [];
-      data.map[value].push(record);
-    }
-
-    return result;
-  }, {});
 }
 //# sourceMappingURL=list.js.map
