@@ -111,7 +111,7 @@ export default class Schema {
     for(let propertyName of names) {
       let property = schema.properties[ propertyName ];
       let value = dot.pick(propertyName, params) || dot.pick(property.dbName, params);
-
+      
       if (value === undefined) {
         continue;
       }
@@ -120,6 +120,10 @@ export default class Schema {
         throw DetectedSqlInjectionError({ propertyName, propertyValue: value });
       }
 
+      if ('convertIn' in property.type) {
+        value = property.type.convertIn(value);
+      }
+      
       let valid = schema.validate(propertyName, value);
 
       if (valid.error) {

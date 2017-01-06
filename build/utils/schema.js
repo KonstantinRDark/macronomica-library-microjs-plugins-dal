@@ -134,6 +134,10 @@ class Schema {
           throw DetectedSqlInjectionError({ propertyName, propertyValue: value });
         }
 
+        if ('convertIn' in property.type) {
+          value = property.type.convertIn(value);
+        }
+
         let valid = schema.validate(propertyName, value);
 
         if (valid.error) {

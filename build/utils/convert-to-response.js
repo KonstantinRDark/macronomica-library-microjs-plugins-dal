@@ -20,8 +20,6 @@ var _checkConvertOut2 = _interopRequireDefault(_checkConvertOut);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function convertToResponse(schema, fields) {
-  const convertOuts = (0, _checkConvertOut2.default)(schema.properties);
-
   return resultData => {
     if ((0, _lodash2.default)(resultData) || resultData.constructor.name === 'anonymous') {
       let result = {};
@@ -29,10 +27,11 @@ function convertToResponse(schema, fields) {
 
       for (let dbName of names) {
         let name = schema.dbProperties[dbName].name;
+        let property = schema.properties[name];
         let value = resultData[dbName];
 
-        if (dbName in convertOuts) {
-          value = convertOuts[dbName](value, schema.properties[name]);
+        if ('convertOut' in property.type) {
+          value = property.type.convertOut(value, property);
         }
 
         result = _dotObject2.default.str(name, value, result);
@@ -42,14 +41,16 @@ function convertToResponse(schema, fields) {
     } else {
       let result = {};
       // Берем первое указанное имя в fields, по идее оно там одно
-      let key = fields[0];
+      let dbName = fields[0];
       let value = resultData[0] || resultData;
+      let name = schema.dbProperties[dbName].name;
+      let property = schema.properties[name];
 
-      if (key in convertOuts) {
-        value = convertOuts[key](value, schema.dbProperties[key].name);
+      if ('convertOut' in property.type) {
+        value = property.type.convertOut(value, property);
       }
 
-      result = _dotObject2.default.str(key, value, result);
+      result = _dotObject2.default.str(name, value, result);
       return result;
     }
   };

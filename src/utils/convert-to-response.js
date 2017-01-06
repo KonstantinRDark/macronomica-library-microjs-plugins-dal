@@ -3,8 +3,6 @@ import isPlainObject from 'lodash.isplainobject';
 import checkConvertOut from './check-convert-out';
 
 export default function convertToResponse(schema, fields) {
-  const convertOuts = checkConvertOut(schema.properties);
-
   return resultData => {
     if (isPlainObject(resultData) || resultData.constructor.name === 'anonymous') {
       let result = {};
@@ -12,10 +10,11 @@ export default function convertToResponse(schema, fields) {
 
       for (let dbName of names) {
         let name = schema.dbProperties[ dbName ].name;
+        let property = schema.properties[ name ];
         let value = resultData[ dbName ];
 
-        if (dbName in convertOuts) {
-          value = convertOuts[ dbName ](value, schema.properties[ name ]);
+        if ('convertOut' in property.type) {
+          value = property.type.convertOut(value, property);
         }
 
         result = dot.str(name, value, result);
@@ -25,14 +24,16 @@ export default function convertToResponse(schema, fields) {
     } else {
       let result = {};
       // Берем первое указанное имя в fields, по идее оно там одно
-      let key = fields[ 0 ];
+      let dbName = fields[ 0 ];
       let value = resultData[ 0 ] || resultData;
-
-      if (key in convertOuts) {
-        value = convertOuts[ key ](value, schema.dbProperties[ key ].name);
+      let name = schema.dbProperties[ dbName ].name;
+      let property = schema.properties[ name ];
+      
+      if ('convertOut' in property.type) {
+        value = property.type.convertOut(value, property);
       }
 
-      result = dot.str(key, value, result);
+      result = dot.str(name, value, result);
       return result;
     }
   };
