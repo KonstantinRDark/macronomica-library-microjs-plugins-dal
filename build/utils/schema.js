@@ -179,7 +179,7 @@ class Schema {
         return false;
       }
 
-      if ('null' in props && Boolean(props.null) === true && value === null) {
+      if ('null' in props && props.null === true && (value === null || value === '')) {
         return {
           value,
           error: undefined
