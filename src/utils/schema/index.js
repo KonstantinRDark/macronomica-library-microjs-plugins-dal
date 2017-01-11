@@ -136,7 +136,7 @@ export default class Schema {
       }
       
       if ('convertIn' in property.type) {
-        value = property.type.convertIn(value);
+        value = property.type.convertIn(value, property);
       }
       
       let valid = schema.validate(propertyName, value);
