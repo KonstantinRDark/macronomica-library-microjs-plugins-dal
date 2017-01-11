@@ -44,7 +44,7 @@ function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in ob
 
 // Можно посмотреть на: https://github.com/punkave/sanitize-html
 
-const entities = new _htmlEntities.Html5Entities();
+const entities = new _htmlEntities.XmlEntities();
 
 exports.default = {
   value: 'text',

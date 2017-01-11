@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import memoize from 'lodash.memoize';
 import isString from 'lodash.isstring';
-import { Html5Entities } from 'html-entities';
+import { XmlEntities } from 'html-entities';
 import striptags from 'striptags';
 import applyValidators from '../utils/apply-validators';
 import setDefault from '../utils/validators/set-default';
@@ -9,7 +9,7 @@ import setMinMax from '../utils/validators/set-min-max';
 import setRequired from '../utils/validators/set-required';
 // Можно посмотреть на: https://github.com/punkave/sanitize-html
 
-const entities = new Html5Entities();
+const entities = new XmlEntities();
 
 export default {
   value : 'text',
