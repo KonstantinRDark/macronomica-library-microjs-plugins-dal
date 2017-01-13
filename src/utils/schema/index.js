@@ -111,7 +111,7 @@ export default class Schema {
     if (Array.isArray(fields)) {
       return fields.reduce((fields, name) => {
         if (this.has(name)) {
-          fields.push(name);
+          fields.push(this.properties[name].dbName);
         }
         return fields;
       }, []);

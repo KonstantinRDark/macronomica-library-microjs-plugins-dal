@@ -58,10 +58,15 @@ export default (schema) => (records, exec) => {
         return exec({ ...pin, criteria: { id: { in: list } } })
           .then(recordsLinks => recordsLinks.map(link => map.get(hasMany ? list : link.id).map(record => {
             if (hasMany) {
-              record[ name ] = record[ name ].map(id => link.id === id ? link : id);
+              let innerList = dot.pick(name, record);
+              innerList.forEach((id, i) => {
+                if (link.id === id) {
+                  innerList[ i ] = link;
+                }
+              });
             }
             else {
-              Object.assign(record[ name ], link);
+              Object.assign(dot.pick(name, record), link);
             }
       
             return record;

@@ -69,9 +69,14 @@ exports.default = schema => (records, exec) => {
     function loadOne(list) {
       return exec(_extends({}, pin, { criteria: { id: { in: list } } })).then(recordsLinks => recordsLinks.map(link => map.get(hasMany ? list : link.id).map(record => {
         if (hasMany) {
-          record[name] = record[name].map(id => link.id === id ? link : id);
+          let innerList = _dotObject2.default.pick(name, record);
+          innerList.forEach((id, i) => {
+            if (link.id === id) {
+              innerList[i] = link;
+            }
+          });
         } else {
-          Object.assign(record[name], link);
+          Object.assign(_dotObject2.default.pick(name, record), link);
         }
 
         return record;

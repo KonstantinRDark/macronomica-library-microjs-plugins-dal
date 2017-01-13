@@ -57,7 +57,7 @@ exports.default = schema => (record, exec) => {
       if (hasMany) {
         record[name] = link;
       } else {
-        Object.assign(record[name], link);
+        Object.assign(_dotObject2.default.pick(name, record), link);
       }
 
       return record;
