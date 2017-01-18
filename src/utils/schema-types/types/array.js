@@ -1,6 +1,5 @@
 import Joi from 'joi';
 import memoize from 'lodash.memoize';
-import isPlainObject from 'lodash.isplainobject';
 import isString from 'lodash.isstring';
 import applyValidators from '../utils/apply-validators';
 import setDefault from '../utils/validators/set-default';
@@ -25,9 +24,7 @@ function schemaValidate(options = Object.create(null)) {
 
 function convertIn(value) {
   if (Array.isArray(value)) {
-    let result = value
-      .filter(filterIterator)
-      .join(',');
+    let result = value.reduce(filterIterator, []).join(',');
 
     if (isString(result) && result === '') {
       result = null;
@@ -47,14 +44,14 @@ function convertOut(value) {
   return value;
 }
 
-function filterIterator(raw) {
-  if (isPlainObject(raw)) {
+function filterIterator(result = [], raw) {
+  if (!!raw && typeof raw == 'object') {
     raw = raw.id;
   }
 
   if (isNumber(raw)) {
-    return raw;
+    result.push(raw);
   }
 
-  return false;
+  return result;
 }
