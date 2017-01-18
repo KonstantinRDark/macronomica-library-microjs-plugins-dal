@@ -30,7 +30,7 @@ export default (schema) => (record, exec) => {
     const criteria = {};
     const value = dot.pick(propertyName, record);
     
-    if (value === undefined || (hasMany && Array.isArray(value) && !value.length)) {
+    if (value === undefined || value === null || (hasMany && Array.isArray(value) && !value.length)) {
       return Promise.resolve(record);
     }
     
