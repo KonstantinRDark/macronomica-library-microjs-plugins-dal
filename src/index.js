@@ -24,7 +24,11 @@ import {
   PIN_TREE_FIND_PATH,
   PIN_TREE_CREATE,
   PIN_TREE_UPDATE,
-  PIN_TREE_REMOVE
+  PIN_TREE_REMOVE,
+
+  PIN_CASCADE_SAVE_ONE,
+  PIN_CASCADE_SAVE_MANY,
+  PIN_CASCADE_REMOVE
 } from './pins';
 
 const Types = SchemaTypes;
@@ -50,6 +54,10 @@ export {
   PIN_TREE_CREATE,
   PIN_TREE_UPDATE,
   PIN_TREE_REMOVE,
+
+  PIN_CASCADE_SAVE_ONE,
+  PIN_CASCADE_SAVE_MANY,
+  PIN_CASCADE_REMOVE,
   
   schemaNotFoundError,
   internalErrorPromise,

@@ -17,3 +17,33 @@ export const PIN_TREE_FIND_PARENT_id = { ...PIN_TREE, action: 'find-parent-id', 
 export const PIN_TREE_CREATE = { ...PIN_TREE, action: 'create' };
 export const PIN_TREE_UPDATE = { ...PIN_TREE, action: 'update', criteria: '*', params: '*' };
 export const PIN_TREE_REMOVE = { ...PIN_TREE, action: 'remove', criteria: '*' };
+
+export const PIN_CASCADE = { ...PIN_PLUGIN, module: 'cascade' };
+
+export const PIN_CASCADE_SAVE_ONE = {
+  ...PIN_CASCADE,
+  cmd         : 'save-one',
+  originalName: '*',
+  propertyName: '*',
+  required    : '*',
+  pins        : '*'
+};
+
+export const PIN_CASCADE_SAVE_MANY = {
+  ...PIN_CASCADE,
+  cmd         : 'save-many',
+  originalName: '*',
+  propertyName: '*',
+  required    : '*',
+  pins        : '*'
+};
+
+export const PIN_CASCADE_REMOVE = {
+  ...PIN_CASCADE,
+  cmd         : 'remove',
+  originalName: '*',
+  propertyName: '*',
+  required    : '*',
+  criteria    : '*',
+  pins        : '*'
+};

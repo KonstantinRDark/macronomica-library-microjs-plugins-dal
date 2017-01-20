@@ -375,7 +375,7 @@ function getFieldsMask(names, properties, fieldsMask) {
 
     if (!(0, _lodash4.default)(propertyMasks)) {
       throw PropertyMustBeType({
-        propertyName: `${ propertyName }.fieldsMask`,
+        propertyName: `${propertyName}.fieldsMask`,
         propertyType: 'string | array<string> | object'
       });
     }

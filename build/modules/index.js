@@ -12,6 +12,10 @@ var _tree = require('./tree');
 
 var _tree2 = _interopRequireDefault(_tree);
 
+var _cascade = require('./cascade');
+
+var _cascade2 = _interopRequireDefault(_cascade);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = (app, plugin, _ref) => {
@@ -20,5 +24,6 @@ exports.default = (app, plugin, _ref) => {
 
   (0, _list2.default)(app, plugin, { middleware, onClose });
   (0, _tree2.default)(app, plugin, { middleware, onClose });
+  (0, _cascade2.default)(app, plugin, { middleware, onClose });
 };
 //# sourceMappingURL=index.js.map

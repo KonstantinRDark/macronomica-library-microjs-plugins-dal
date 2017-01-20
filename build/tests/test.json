@@ -1,0 +1,210 @@
+{
+  "app": {
+    "id": "rl03iyo1y0",
+    "name": "microjs"
+  },
+  "request": {
+    "id": "mgf6szncmh",
+    "time": {
+      "hrtime": [
+        363663,
+        646302180
+      ],
+      "start": 1484922830943
+    }
+  },
+  "fields": {
+    "pin": {
+      "role": "plugin",
+      "module": "cascade",
+      "cmd": "save-one",
+      "originalName": "owner",
+      "propertyName": "preview",
+      "required": false,
+      "params": null,
+      "pins": {
+        "remove": {
+          "role": "plugin",
+          "module": "dal-list",
+          "schema": {
+            "tableName": "module_cascade_dependent_db",
+            "fieldsMask": [
+              "full"
+            ],
+            "dbProperties": {
+              "number": {
+                "type": {
+                  "value": "number"
+                },
+                "name": "number",
+                "dbName": "number"
+              },
+              "id": {
+                "type": {
+                  "value": "number"
+                },
+                "name": "id",
+                "dbName": "id",
+                "autoincrement": true
+              }
+            },
+            "properties": {
+              "id": {
+                "type": {
+                  "value": "number"
+                },
+                "name": "id",
+                "dbName": "id",
+                "autoincrement": true
+              },
+              "number": {
+                "type": {
+                  "value": "number"
+                },
+                "name": "number",
+                "dbName": "number"
+              }
+            },
+            "__propertiesNames": [
+              "id",
+              "number"
+            ],
+            "__masks": {
+              "full": [
+                "id",
+                "number"
+              ]
+            },
+            "__assignLinksMany": {
+              "keys": []
+            }
+          },
+          "action": "remove",
+          "criteria": "*"
+        },
+        "create": {
+          "role": "plugin",
+          "module": "dal-list",
+          "schema": {
+            "tableName": "module_cascade_dependent_db",
+            "fieldsMask": [
+              "full"
+            ],
+            "dbProperties": {
+              "number": {
+                "type": {
+                  "value": "number"
+                },
+                "name": "number",
+                "dbName": "number"
+              },
+              "id": {
+                "type": {
+                  "value": "number"
+                },
+                "name": "id",
+                "dbName": "id",
+                "autoincrement": true
+              }
+            },
+            "properties": {
+              "id": {
+                "type": {
+                  "value": "number"
+                },
+                "name": "id",
+                "dbName": "id",
+                "autoincrement": true
+              },
+              "number": {
+                "type": {
+                  "value": "number"
+                },
+                "name": "number",
+                "dbName": "number"
+              }
+            },
+            "__propertiesNames": [
+              "id",
+              "number"
+            ],
+            "__masks": {
+              "full": [
+                "id",
+                "number"
+              ]
+            },
+            "__assignLinksMany": {
+              "keys": []
+            }
+          },
+          "action": "create"
+        },
+        "update": {
+          "role": "plugin",
+          "module": "dal-list",
+          "schema": {
+            "tableName": "module_cascade_dependent_db",
+            "fieldsMask": [
+              "full"
+            ],
+            "dbProperties": {
+              "number": {
+                "type": {
+                  "value": "number"
+                },
+                "name": "number",
+                "dbName": "number"
+              },
+              "id": {
+                "type": {
+                  "value": "number"
+                },
+                "name": "id",
+                "dbName": "id",
+                "autoincrement": true
+              }
+            },
+            "properties": {
+              "id": {
+                "type": {
+                  "value": "number"
+                },
+                "name": "id",
+                "dbName": "id",
+                "autoincrement": true
+              },
+              "number": {
+                "type": {
+                  "value": "number"
+                },
+                "name": "number",
+                "dbName": "number"
+              }
+            },
+            "__propertiesNames": [
+              "id",
+              "number"
+            ],
+            "__masks": {
+              "full": [
+                "id",
+                "number"
+              ]
+            },
+            "__assignLinksMany": {
+              "keys": []
+            }
+          },
+          "action": "update",
+          "criteria": "*",
+          "params": "*"
+        }
+      },
+      "original": {
+        "id": 1,
+        "number": 2
+      }
+    }
+  }
+}

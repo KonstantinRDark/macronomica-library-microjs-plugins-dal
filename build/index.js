@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.schemaNotInstanceSchemaClassError = exports.detectedSqlInjectionError = exports.propertyIsRequiredError = exports.internalErrorPromise = exports.schemaNotFoundError = exports.PIN_TREE_REMOVE = exports.PIN_TREE_UPDATE = exports.PIN_TREE_CREATE = exports.PIN_TREE_FIND_PATH = exports.PIN_TREE_FIND_PARENT_id = exports.PIN_LIST_REMOVE = exports.PIN_LIST_UPDATE = exports.PIN_LIST_CREATE = exports.PIN_LIST_COUNTS = exports.PIN_LIST_FIND_LIST = exports.PIN_LIST_FIND_ONE = exports.PIN_CONNECTION = exports.PIN_OPTIONS = exports.isRange = exports.SchemaTypes = exports.Types = exports.Schema = undefined;
+exports.schemaNotInstanceSchemaClassError = exports.detectedSqlInjectionError = exports.propertyIsRequiredError = exports.internalErrorPromise = exports.schemaNotFoundError = exports.PIN_CASCADE_REMOVE = exports.PIN_CASCADE_SAVE_MANY = exports.PIN_CASCADE_SAVE_ONE = exports.PIN_TREE_REMOVE = exports.PIN_TREE_UPDATE = exports.PIN_TREE_CREATE = exports.PIN_TREE_FIND_PATH = exports.PIN_TREE_FIND_PARENT_id = exports.PIN_LIST_REMOVE = exports.PIN_LIST_UPDATE = exports.PIN_LIST_CREATE = exports.PIN_LIST_COUNTS = exports.PIN_LIST_FIND_LIST = exports.PIN_LIST_FIND_ONE = exports.PIN_CONNECTION = exports.PIN_OPTIONS = exports.isRange = exports.SchemaTypes = exports.Types = exports.Schema = undefined;
 
 var _plugin = require('./plugin');
 
@@ -47,6 +47,9 @@ exports.PIN_TREE_FIND_PATH = _pins.PIN_TREE_FIND_PATH;
 exports.PIN_TREE_CREATE = _pins.PIN_TREE_CREATE;
 exports.PIN_TREE_UPDATE = _pins.PIN_TREE_UPDATE;
 exports.PIN_TREE_REMOVE = _pins.PIN_TREE_REMOVE;
+exports.PIN_CASCADE_SAVE_ONE = _pins.PIN_CASCADE_SAVE_ONE;
+exports.PIN_CASCADE_SAVE_MANY = _pins.PIN_CASCADE_SAVE_MANY;
+exports.PIN_CASCADE_REMOVE = _pins.PIN_CASCADE_REMOVE;
 exports.schemaNotFoundError = _errors.schemaNotFoundError;
 exports.internalErrorPromise = _errors.internalErrorPromise;
 exports.propertyIsRequiredError = _errors.propertyIsRequiredError;

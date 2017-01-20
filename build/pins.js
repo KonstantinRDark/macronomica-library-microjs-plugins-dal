@@ -25,4 +25,31 @@ const PIN_TREE_FIND_PARENT_id = exports.PIN_TREE_FIND_PARENT_id = _extends({}, P
 const PIN_TREE_CREATE = exports.PIN_TREE_CREATE = _extends({}, PIN_TREE, { action: 'create' });
 const PIN_TREE_UPDATE = exports.PIN_TREE_UPDATE = _extends({}, PIN_TREE, { action: 'update', criteria: '*', params: '*' });
 const PIN_TREE_REMOVE = exports.PIN_TREE_REMOVE = _extends({}, PIN_TREE, { action: 'remove', criteria: '*' });
+
+const PIN_CASCADE = exports.PIN_CASCADE = _extends({}, PIN_PLUGIN, { module: 'cascade' });
+
+const PIN_CASCADE_SAVE_ONE = exports.PIN_CASCADE_SAVE_ONE = _extends({}, PIN_CASCADE, {
+  cmd: 'save-one',
+  originalName: '*',
+  propertyName: '*',
+  required: '*',
+  pins: '*'
+});
+
+const PIN_CASCADE_SAVE_MANY = exports.PIN_CASCADE_SAVE_MANY = _extends({}, PIN_CASCADE, {
+  cmd: 'save-many',
+  originalName: '*',
+  propertyName: '*',
+  required: '*',
+  pins: '*'
+});
+
+const PIN_CASCADE_REMOVE = exports.PIN_CASCADE_REMOVE = _extends({}, PIN_CASCADE, {
+  cmd: 'remove',
+  originalName: '*',
+  propertyName: '*',
+  required: '*',
+  criteria: '*',
+  pins: '*'
+});
 //# sourceMappingURL=pins.js.map

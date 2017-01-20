@@ -107,7 +107,7 @@ function bulkCreate(middleware, tableName) {
     let ids = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
     const max = ids.reduce((max, id) => max < id ? id : max, 0);
-    return middleware.raw(`ALTER SEQUENCE "${ tableName }_id_seq" RESTART WITH ${ max };`).then(() => ids);
+    return middleware.raw(`ALTER SEQUENCE "${tableName}_id_seq" RESTART WITH ${max};`).then(() => ids);
   });
 }
 //# sourceMappingURL=create.js.map
