@@ -34,6 +34,10 @@ function convertToResponse(schema, fields) {
           value = property.type.convertOut(value, property);
         }
 
+        if (value === undefined || value === null || value === '') {
+          continue;
+        }
+
         result = _dotObject2.default.str(name, value, result);
       }
 
@@ -48,6 +52,10 @@ function convertToResponse(schema, fields) {
 
       if ('convertOut' in property.type) {
         value = property.type.convertOut(value, property);
+      }
+
+      if (value === undefined || value === null || value === '') {
+        return result;
       }
 
       result = _dotObject2.default.str(name, value, result);

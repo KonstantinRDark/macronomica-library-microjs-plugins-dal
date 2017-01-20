@@ -17,6 +17,10 @@ export default function convertToResponse(schema, fields) {
           value = property.type.convertOut(value, property);
         }
 
+        if (value === undefined || value === null || value === '') {
+          continue;
+        }
+
         result = dot.str(name, value, result);
       }
 
@@ -31,6 +35,10 @@ export default function convertToResponse(schema, fields) {
       
       if ('convertOut' in property.type) {
         value = property.type.convertOut(value, property);
+      }
+
+      if (value === undefined || value === null || value === '') {
+        return result;
       }
 
       result = dot.str(name, value, result);
