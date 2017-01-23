@@ -4,6 +4,10 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _keys = require('babel-runtime/core-js/object/keys');
+
+var _keys2 = _interopRequireDefault(_keys);
+
 var _lodash = require('lodash.isstring');
 
 var _lodash2 = _interopRequireDefault(_lodash);
@@ -37,7 +41,7 @@ const SQL_ATTACKS = {
 
   ESCAPED_UNION: /\w*\s*((\%27)|(\'))\s*union/i
 };
-const SQL_ATTACKS_NAME = Object.keys(SQL_ATTACKS);
+const SQL_ATTACKS_NAME = (0, _keys2.default)(SQL_ATTACKS);
 
 exports.default = value => scan(value);
 

@@ -4,7 +4,17 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
+var _promise = require('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
 
 exports.default = cascadeRemove;
 
@@ -17,8 +27,6 @@ var _wrapped = require('error/wrapped');
 var _wrapped2 = _interopRequireDefault(_wrapped);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 const CascadeRemoveInternalError = (0, _wrapped2.default)({
   message: ['{name} - Ошибка каскадного удаления "{propertyName}"', '{name} - {origMessage}'].join(_os2.default.EOL),
@@ -42,8 +50,8 @@ function cascadeRemove(request) {
   const RemoveError = errors.remove;
 
 
-  return new Promise((() => {
-    var _ref = _asyncToGenerator(function* (resolve, reject) {
+  return new _promise2.default((() => {
+    var _ref = (0, _asyncToGenerator3.default)(function* (resolve, reject) {
       const meta = { request: request.request, required, propertyName, originalName, criteria };
       let name = originalName + '.' + propertyName;
       let result;
@@ -51,7 +59,7 @@ function cascadeRemove(request) {
       try {
         if (removePin) {
           request.log.trace(`Каскадное удаление "${name}"`, meta);
-          result = yield request.act(_extends({}, removePin, { criteria }));
+          result = yield request.act((0, _extends3.default)({}, removePin, { criteria }));
         } else {
           request.log[required ? 'warn' : 'info'](`Не передан пин для каскадного удаления свойства "${name}"`, meta);
         }

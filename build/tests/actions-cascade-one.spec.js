@@ -1,6 +1,12 @@
 'use strict';
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _promise = require('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
 
 var _chai = require('chai');
 
@@ -36,44 +42,44 @@ before(() => micro.run().then(() => micro.act(_index.PIN_CONNECTION)).then(creat
 after(() => micro.act(_index.PIN_CONNECTION).then(dropTable).then(() => micro.end()));
 
 describe('actions-cascade-one', function () {
-  const CASCADE_SAVE_ONE = _extends({}, _index.PIN_CASCADE_SAVE_ONE, {
+  const CASCADE_SAVE_ONE = (0, _extends3.default)({}, _index.PIN_CASCADE_SAVE_ONE, {
     required: false,
     originalName: 'owner',
     propertyName: 'preview',
     pins: {
-      remove: _extends({}, _index.PIN_LIST_REMOVE, { schema }),
-      create: _extends({}, _index.PIN_LIST_CREATE, { schema }),
-      update: _extends({}, _index.PIN_LIST_UPDATE, { schema })
+      remove: (0, _extends3.default)({}, _index.PIN_LIST_REMOVE, { schema }),
+      create: (0, _extends3.default)({}, _index.PIN_LIST_CREATE, { schema }),
+      update: (0, _extends3.default)({}, _index.PIN_LIST_UPDATE, { schema })
     }
   });
 
-  it('#save-one (create)', () => micro.act(_extends({}, CASCADE_SAVE_ONE, {
+  it('#save-one (create)', () => micro.act((0, _extends3.default)({}, CASCADE_SAVE_ONE, {
     params: { number: 1 }
   })).then((_ref) => {
     let id = _ref.id;
-    return micro.act(_extends({}, _index.PIN_LIST_FIND_LIST, { schema, options: { fields: 'full' } }));
-  }).then(result => Promise.all([should.exist(result), result.should.be.a('array').with.length(1), result[0].should.be.a('object'), result[0].should.have.property('number').be.a('number').equal(1)])));
+    return micro.act((0, _extends3.default)({}, _index.PIN_LIST_FIND_LIST, { schema, options: { fields: 'full' } }));
+  }).then(result => _promise2.default.all([should.exist(result), result.should.be.a('array').with.length(1), result[0].should.be.a('object'), result[0].should.have.property('number').be.a('number').equal(1)])));
 
-  it('#save-one (update)', () => micro.act(_extends({}, CASCADE_SAVE_ONE, {
+  it('#save-one (update)', () => micro.act((0, _extends3.default)({}, CASCADE_SAVE_ONE, {
     original: { id: 1, number: 1 },
     params: { id: 1, number: 2 }
   })).then((_ref2) => {
     let id = _ref2.id;
-    return micro.act(_extends({}, _index.PIN_LIST_FIND_LIST, { schema, options: { fields: 'full' } }));
-  }).then(result => Promise.all([should.exist(result), result.should.be.a('array').with.length(1), result[0].should.be.a('object'), result[0].should.have.property('number').be.a('number').equal(2)])));
+    return micro.act((0, _extends3.default)({}, _index.PIN_LIST_FIND_LIST, { schema, options: { fields: 'full' } }));
+  }).then(result => _promise2.default.all([should.exist(result), result.should.be.a('array').with.length(1), result[0].should.be.a('object'), result[0].should.have.property('number').be.a('number').equal(2)])));
 
-  it('#save-one (not save / not remove)', () => micro.act(_extends({}, CASCADE_SAVE_ONE, {
+  it('#save-one (not save / not remove)', () => micro.act((0, _extends3.default)({}, CASCADE_SAVE_ONE, {
     original: { id: 1, number: 2 },
     params: undefined
-  })).then(() => micro.act(_extends({}, _index.PIN_LIST_FIND_LIST, { schema, options: { fields: 'full' } }))).then(result => Promise.all([should.exist(result), result.should.be.a('array').with.length(1), result[0].should.be.a('object'), result[0].should.have.property('number').be.a('number').equal(2)])));
+  })).then(() => micro.act((0, _extends3.default)({}, _index.PIN_LIST_FIND_LIST, { schema, options: { fields: 'full' } }))).then(result => _promise2.default.all([should.exist(result), result.should.be.a('array').with.length(1), result[0].should.be.a('object'), result[0].should.have.property('number').be.a('number').equal(2)])));
 
-  it('#save-one (remove)', () => micro.act(_extends({}, CASCADE_SAVE_ONE, {
+  it('#save-one (remove)', () => micro.act((0, _extends3.default)({}, CASCADE_SAVE_ONE, {
     original: { id: 1, number: 2 },
     params: null
   })).then((_ref3) => {
     let id = _ref3.id;
-    return micro.act(_extends({}, _index.PIN_LIST_FIND_LIST, { schema, options: { fields: 'full' } }));
-  }).then(result => Promise.all([should.exist(result), result.should.be.a('array').with.length(0)])));
+    return micro.act((0, _extends3.default)({}, _index.PIN_LIST_FIND_LIST, { schema, options: { fields: 'full' } }));
+  }).then(result => _promise2.default.all([should.exist(result), result.should.be.a('array').with.length(0)])));
 });
 
 function createTable(connection) {

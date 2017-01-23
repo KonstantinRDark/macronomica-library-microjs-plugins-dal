@@ -3,6 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _keys = require('babel-runtime/core-js/object/keys');
+
+var _keys2 = _interopRequireDefault(_keys);
+
 exports.default = convertToResponse;
 
 var _dotObject = require('dot-object');
@@ -23,7 +28,7 @@ function convertToResponse(schema, fields) {
   return resultData => {
     if ((0, _lodash2.default)(resultData) || resultData.constructor.name === 'anonymous') {
       let result = {};
-      let names = Object.keys(resultData);
+      let names = (0, _keys2.default)(resultData);
 
       for (let dbName of names) {
         let name = schema.dbProperties[dbName].name;

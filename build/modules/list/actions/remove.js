@@ -3,6 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _promise = require('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
 exports.buildRemove = buildRemove;
 
 var _lodash = require('lodash.isempty');
@@ -45,14 +50,14 @@ function buildRemove(app, middleware, _ref) {
   const __fields = schema.getMyFields(fields);
 
   if (!schema) {
-    return Promise.reject((0, _errors.schemaNotFoundError)(ERROR_INFO));
+    return _promise2.default.reject((0, _errors.schemaNotFoundError)(ERROR_INFO));
   }
 
   if (!(schema instanceof _schema2.default)) {
-    return Promise.reject((0, _errors.schemaNotInstanceSchemaClassError)(ERROR_INFO));
+    return _promise2.default.reject((0, _errors.schemaNotInstanceSchemaClassError)(ERROR_INFO));
   }
 
-  return new Promise((resolve, reject) => {
+  return new _promise2.default((resolve, reject) => {
     criteria = schema.getMyCriteriaParams(criteria);
 
     if ((0, _lodash2.default)(criteria)) {

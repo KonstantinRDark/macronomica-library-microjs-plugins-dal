@@ -4,7 +4,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _promise = require('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
 
 exports.buildUpdateTreeNode = buildUpdateTreeNode;
 
@@ -45,23 +51,23 @@ function buildUpdateTreeNode(app, middleware, _ref) {
 
 
   if (!id) {
-    return Promise.reject((0, _errors.propertyIsRequiredError)(_extends({}, ERROR_INFO, { property: 'criteria.id' })));
+    return _promise2.default.reject((0, _errors.propertyIsRequiredError)((0, _extends3.default)({}, ERROR_INFO, { property: 'criteria.id' })));
   }
 
   if (!schema) {
-    return Promise.reject((0, _errors.schemaNotFoundError)(ERROR_INFO));
+    return _promise2.default.reject((0, _errors.schemaNotFoundError)(ERROR_INFO));
   }
 
   if (!(schema instanceof _schema2.default)) {
-    return Promise.reject((0, _errors.schemaNotInstanceSchemaClassError)(ERROR_INFO));
+    return _promise2.default.reject((0, _errors.schemaNotInstanceSchemaClassError)(ERROR_INFO));
   }
 
   // Если не передали parentId - дальнейшая логика излишняя
   if (!parentId || !isFinite(+parentId)) {
-    return app.act(_extends({}, _pins.PIN_LIST_UPDATE, { schema, criteria: { id }, params, options }));
+    return app.act((0, _extends3.default)({}, _pins.PIN_LIST_UPDATE, { schema, criteria: { id }, params, options }));
   }
 
-  return app.act(_extends({}, _pins.PIN_LIST_FIND_ONE, {
+  return app.act((0, _extends3.default)({}, _pins.PIN_LIST_FIND_ONE, {
     schema,
     criteria: { id },
     options: { fields: ['id', 'parentId'] }
@@ -70,10 +76,10 @@ function buildUpdateTreeNode(app, middleware, _ref) {
       return node;
     }
 
-    return app.act(_extends({}, _pins.PIN_LIST_UPDATE, { schema, criteria: { id }, params, options })).then(updated => {
+    return app.act((0, _extends3.default)({}, _pins.PIN_LIST_UPDATE, { schema, criteria: { id }, params, options })).then(updated => {
       // Если новый parentId не равен старому
       if (node.parentId !== +parentId) {
-        return Promise.all([
+        return _promise2.default.all([
         // Проверить остались ли у родителя дети, если нет - заменить ему leaf на true
         (0, _setParentLeafTrue2.default)(app, schema, node.parentId),
         // Заменить текущему родителю leaf на false если это первый его ребенок

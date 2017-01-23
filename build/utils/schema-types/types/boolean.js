@@ -4,6 +4,10 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _create = require('babel-runtime/core-js/object/create');
+
+var _create2 = _interopRequireDefault(_create);
+
 var _joi = require('joi');
 
 var _joi2 = _interopRequireDefault(_joi);
@@ -47,7 +51,7 @@ exports.default = {
 
 
 function schemaValidate() {
-  let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Object.create(null);
+  let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _create2.default)(null);
 
   return (0, _applyValidators2.default)(options, _joi2.default.boolean(), [_setDefault2.default, _setRequired2.default]);
 }

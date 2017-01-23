@@ -4,7 +4,17 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
+var _slicedToArray2 = require('babel-runtime/helpers/slicedToArray');
+
+var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
+
+var _promise = require('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
 
 exports.buildFindOne = buildFindOne;
 
@@ -38,8 +48,6 @@ var _errors = require('../../../../errors');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
-
 const ERROR_INFO = { module: _constants.MODULE_NAME, action: 'find-one' };
 
 exports.default = (app, middleware, plugin) => msg => buildFindOne(app, middleware, msg);
@@ -57,14 +65,14 @@ function buildFindOne(app, middleware, msg) {
 
 
   if (!schema) {
-    return Promise.reject((0, _errors.schemaNotFoundError)(ERROR_INFO));
+    return _promise2.default.reject((0, _errors.schemaNotFoundError)(ERROR_INFO));
   }
 
   if (!(schema instanceof _schema2.default)) {
-    return Promise.reject((0, _errors.schemaNotInstanceSchemaClassError)(ERROR_INFO));
+    return _promise2.default.reject((0, _errors.schemaNotInstanceSchemaClassError)(ERROR_INFO));
   }
 
-  return new Promise((resolve, reject) => {
+  return new _promise2.default((resolve, reject) => {
     let __fields = schema.getMyFields(fields);
     criteria = schema.getMyCriteriaParams(criteria);
 
@@ -82,11 +90,11 @@ function buildFindOne(app, middleware, msg) {
 
     // Иначе вызовем его выполнение
     builder.then((_ref) => {
-      var _ref2 = _slicedToArray(_ref, 1);
+      var _ref2 = (0, _slicedToArray3.default)(_ref, 1);
 
       let result = _ref2[0];
-      return new Promise((() => {
-        var _ref3 = _asyncToGenerator(function* (resolve) {
+      return new _promise2.default((() => {
+        var _ref3 = (0, _asyncToGenerator3.default)(function* (resolve) {
           if (!result) {
             return resolve(result);
           }

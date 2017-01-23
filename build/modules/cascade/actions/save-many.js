@@ -4,7 +4,29 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _keys = require('babel-runtime/core-js/object/keys');
+
+var _keys2 = _interopRequireDefault(_keys);
+
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _objectWithoutProperties2 = require('babel-runtime/helpers/objectWithoutProperties');
+
+var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
+
+var _assign = require('babel-runtime/core-js/object/assign');
+
+var _assign2 = _interopRequireDefault(_assign);
+
+var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
+var _promise = require('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
 
 exports.default = cascadeSaveMany;
 
@@ -19,10 +41,6 @@ var _wrapped2 = _interopRequireDefault(_wrapped);
 var _pins = require('../../../pins');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 const CascadeSaveInternalError = (0, _wrapped2.default)({
   message: ['{name} - Ошибка каскадного сохранения "{propertyName}"', '{name} - {origMessage}'].join(_os2.default.EOL),
@@ -55,20 +73,20 @@ function cascadeSaveMany(request) {
   const UpdateError = _errors$update === undefined ? SaveError : _errors$update;
 
 
-  return new Promise((() => {
-    var _ref = _asyncToGenerator(function* (resolve, reject) {
+  return new _promise2.default((() => {
+    var _ref = (0, _asyncToGenerator3.default)(function* (resolve, reject) {
       const meta = { request: request.request, required, propertyName, originalName, params };
       let name = originalName + '.' + propertyName;
       let result = [];
       // Сгруппируем по ID
       let groupedById = original.reduce(function (map, item) {
-        return Object.assign(map, { [item.id]: item });
+        return (0, _assign2.default)(map, { [item.id]: item });
       }, {});
 
       // Сохраним
       if (Array.isArray(params) && !!params.length) {
         try {
-          yield Promise.all(params.map(function (params) {
+          yield _promise2.default.all(params.map(function (params) {
             // Если прилша картинка для обновления и она присутвует в оригинальной галереи - удалим ее из группы
             if (!!params.id && params.id in groupedById) {
               delete groupedById[params.id];
@@ -78,21 +96,20 @@ function cascadeSaveMany(request) {
 
             if (updatePin && 'id' in params) {
               request.log.info(`Каскадное обновление "${name}"`, meta);
-
               let id = params.id,
-                  other = _objectWithoutProperties(params, ['id']);
+                  other = (0, _objectWithoutProperties3.default)(params, ['id']);
 
-              promise = request.act(_extends({}, updatePin, { params: other, criteria: { id } }));
+              promise = request.act((0, _extends3.default)({}, updatePin, { params: other, criteria: { id } }));
             } else if (createPin) {
               request.log.info(`Каскадное создание "${name}"`, meta);
-              promise = request.act(_extends({}, createPin, { params }));
+              promise = request.act((0, _extends3.default)({}, createPin, { params }));
             } else if (savePin) {
               request.log.info(`Каскадное сохранение "${name}"`, meta);
-              promise = request.act(_extends({}, savePin, { params }));
+              promise = request.act((0, _extends3.default)({}, savePin, { params }));
             } else {
               request.log[required ? 'warn' : 'info'](`Не передан пин для каскадного (создания && обновления) || сохранения свойства "${name}"`, meta);
 
-              return Promise.resolve();
+              return _promise2.default.resolve();
             }
 
             return promise.then(function (item) {
@@ -120,12 +137,12 @@ function cascadeSaveMany(request) {
         }
       }
 
-      let removeKeys = Object.keys(groupedById);
+      let removeKeys = (0, _keys2.default)(groupedById);
 
       // Если передали null или есть оригинал и его id не соответсвует переданной записи
       if (params === null && original.length || removeKeys.length) {
         try {
-          yield request.act(_extends({}, _pins.PIN_CASCADE_REMOVE, {
+          yield request.act((0, _extends3.default)({}, _pins.PIN_CASCADE_REMOVE, {
             originalName,
             propertyName,
             required,

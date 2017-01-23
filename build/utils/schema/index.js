@@ -5,7 +5,17 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.FIELDS_MASK = exports.Types = undefined;
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _assign = require('babel-runtime/core-js/object/assign');
+
+var _assign2 = _interopRequireDefault(_assign);
+
+var _keys = require('babel-runtime/core-js/object/keys');
+
+var _keys2 = _interopRequireDefault(_keys);
+
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
 
 var _joi = require('joi');
 
@@ -113,20 +123,20 @@ class Schema {
     schema.tableName = (tableName || getTableName(modelName)).replace(/-/g, '_');
     schema.dbProperties = {};
 
-    schema.properties = _extends({
+    schema.properties = (0, _extends3.default)({
       id: {
         type: _schemaTypes2.default.number,
         name: 'id',
         dbName: 'id',
         autoincrement: true
       }
-    }, Object.keys(properties).reduce((properties, name) => {
+    }, (0, _keys2.default)(properties).reduce((properties, name) => {
       let dbName = nameToDbName(name);
-      this.dbProperties[dbName] = Object.assign(properties[name], { name, dbName });
+      this.dbProperties[dbName] = (0, _assign2.default)(properties[name], { name, dbName });
       return properties;
     }, properties));
     schema.dbProperties.id = schema.properties.id;
-    schema.__propertiesNames = Object.keys(schema.properties);
+    schema.__propertiesNames = (0, _keys2.default)(schema.properties);
     schema.__masks = getFieldsMask(schema.__propertiesNames, schema.properties, schema.fieldsMask);
 
     schema.__assignLinksMany = schema.__propertiesNames.reduce((result, propertyName) => {
@@ -177,7 +187,7 @@ var _initialiseProps = function () {
 
   this.setParams = params => {
     let schema = this;
-    let names = Object.keys(schema.properties);
+    let names = (0, _keys2.default)(schema.properties);
     let result = {};
 
     for (let propertyName of names) {
@@ -212,7 +222,7 @@ var _initialiseProps = function () {
     let params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
     let schema = _this;
-    let result = Object.keys(schema.properties).reduce(reduce, {});
+    let result = (0, _keys2.default)(schema.properties).reduce(reduce, {});
     return result;
 
     function reduce(result, propertyName) {
@@ -254,7 +264,7 @@ var _initialiseProps = function () {
   };
 
   this.migrateCreateTableSchema = () => {
-    const fields = Object.keys(this.properties);
+    const fields = (0, _keys2.default)(this.properties);
     const result = {};
 
     for (let name of fields) {

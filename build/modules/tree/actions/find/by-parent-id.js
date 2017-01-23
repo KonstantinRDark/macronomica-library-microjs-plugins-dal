@@ -4,7 +4,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _promise = require('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
 
 exports.buildFindByParentIdTreeNodes = buildFindByParentIdTreeNodes;
 
@@ -38,11 +44,11 @@ function buildFindByParentIdTreeNodes(app, middleware, _ref) {
 
 
   if (!schema) {
-    return Promise.reject((0, _errors.schemaNotFoundError)(ERROR_INFO));
+    return _promise2.default.reject((0, _errors.schemaNotFoundError)(ERROR_INFO));
   }
 
   if (!(schema instanceof _schema2.default)) {
-    return Promise.reject((0, _errors.schemaNotInstanceSchemaClassError)(ERROR_INFO));
+    return _promise2.default.reject((0, _errors.schemaNotInstanceSchemaClassError)(ERROR_INFO));
   }
 
   if (!parentId || parentId === '' || (0, _lodash2.default)(parentId) && parentId.toLowerCase() === 'null') {
@@ -50,7 +56,7 @@ function buildFindByParentIdTreeNodes(app, middleware, _ref) {
   }
 
   // Загружаем себя
-  return app.act(_extends({}, _pins.PIN_LIST_FIND_LIST, {
+  return app.act((0, _extends3.default)({}, _pins.PIN_LIST_FIND_LIST, {
     schema,
     options,
     criteria: { parentId }

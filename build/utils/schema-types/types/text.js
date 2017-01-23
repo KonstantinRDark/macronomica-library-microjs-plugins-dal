@@ -4,6 +4,14 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _objectWithoutProperties2 = require('babel-runtime/helpers/objectWithoutProperties');
+
+var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
+
+var _create = require('babel-runtime/core-js/object/create');
+
+var _create2 = _interopRequireDefault(_create);
+
 var _joi = require('joi');
 
 var _joi2 = _interopRequireDefault(_joi);
@@ -40,8 +48,6 @@ var _setRequired2 = _interopRequireDefault(_setRequired);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
 // Можно посмотреть на: https://github.com/punkave/sanitize-html
 
 const entities = new _htmlEntities.XmlEntities();
@@ -55,7 +61,7 @@ exports.default = {
 
 
 function schemaValidate() {
-  let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Object.create(null);
+  let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _create2.default)(null);
 
   let schema = _joi2.default.string();
 
@@ -67,7 +73,7 @@ function convertIn(value) {
       _ref$format = _ref.format;
 
   let format = _ref$format === undefined ? 'text' : _ref$format,
-      other = _objectWithoutProperties(_ref, ['format']);
+      other = (0, _objectWithoutProperties3.default)(_ref, ['format']);
 
   if (!(0, _lodash4.default)(value)) {
     return value;
@@ -88,7 +94,7 @@ function convertOut(value) {
       _ref2$format = _ref2.format;
 
   let format = _ref2$format === undefined ? 'text' : _ref2$format,
-      other = _objectWithoutProperties(_ref2, ['format']);
+      other = (0, _objectWithoutProperties3.default)(_ref2, ['format']);
 
   if (!(0, _lodash4.default)(value)) {
     return value;

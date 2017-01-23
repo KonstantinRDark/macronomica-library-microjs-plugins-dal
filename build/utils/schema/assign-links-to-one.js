@@ -4,7 +4,17 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _assign = require('babel-runtime/core-js/object/assign');
+
+var _assign2 = _interopRequireDefault(_assign);
+
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _promise = require('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
 
 var _dotObject = require('dot-object');
 
@@ -32,11 +42,11 @@ exports.default = schema => (record, exec) => {
   }
 
   if (!promises.length) {
-    return Promise.resolve(record);
+    return _promise2.default.resolve(record);
   }
 
   // Получаем все связанные объекты и сетим их себе
-  return Promise.all(promises).then(() => record);
+  return _promise2.default.all(promises).then(() => record);
 
   function __assignLink(propertyName, hasMany, pin) {
     const name = !!~propertyName.lastIndexOf('.') ? propertyName.slice(0, propertyName.lastIndexOf('.')) : propertyName;
@@ -44,7 +54,7 @@ exports.default = schema => (record, exec) => {
     const value = _dotObject2.default.pick(propertyName, record);
 
     if (value === undefined || value === null || hasMany && Array.isArray(value) && !value.length) {
-      return Promise.resolve(record);
+      return _promise2.default.resolve(record);
     }
 
     if (hasMany) {
@@ -53,11 +63,11 @@ exports.default = schema => (record, exec) => {
       criteria.id = value;
     }
 
-    return exec(_extends({}, pin, { criteria })).then(link => {
+    return exec((0, _extends3.default)({}, pin, { criteria })).then(link => {
       if (hasMany) {
         record[name] = link;
       } else {
-        Object.assign(_dotObject2.default.pick(name, record), link);
+        (0, _assign2.default)(_dotObject2.default.pick(name, record), link);
       }
 
       return record;

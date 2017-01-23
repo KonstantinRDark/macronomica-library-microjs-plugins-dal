@@ -4,6 +4,18 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _promise = require('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _objectDestructuringEmpty2 = require('babel-runtime/helpers/objectDestructuringEmpty');
+
+var _objectDestructuringEmpty3 = _interopRequireDefault(_objectDestructuringEmpty2);
+
+var _objectWithoutProperties2 = require('babel-runtime/helpers/objectWithoutProperties');
+
+var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
+
 var _microjs = require('@microjs/microjs');
 
 var _knex = require('knex');
@@ -18,15 +30,11 @@ var _pins = require('./pins');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
 exports.default = function () {
   var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
   let client = _ref.driver,
-      connection = _objectWithoutProperties(_ref, ['driver']);
+      connection = (0, _objectWithoutProperties3.default)(_ref, ['driver']);
 
   return (app, _ref2) => {
     let onClose = _ref2.onClose;
@@ -40,14 +48,12 @@ exports.default = function () {
     const middleware = (0, _knex2.default)(options);
 
     app.add(_pins.PIN_OPTIONS, (_ref3) => {
-      _objectDestructuringEmpty(_ref3);
-
-      return Promise.resolve(options);
+      (0, _objectDestructuringEmpty3.default)(_ref3);
+      return _promise2.default.resolve(options);
     });
     app.add(_pins.PIN_CONNECTION, (_ref4) => {
-      _objectDestructuringEmpty(_ref4);
-
-      return Promise.resolve(middleware);
+      (0, _objectDestructuringEmpty3.default)(_ref4);
+      return _promise2.default.resolve(middleware);
     });
 
     (0, _modules2.default)(app, plugin, { middleware, onClose });
