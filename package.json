@@ -1,6 +1,6 @@
 {
   "name": "@microjs/microjs-plugins-dal",
-  "version": "1.1.20",
+  "version": "1.1.21",
   "private": true,
   "description": "Плагин Microjs для взаимодействия с базой данных",
   "main": "index.js",
