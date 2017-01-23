@@ -75,16 +75,17 @@ export function buildFindList(app, middleware, msg) {
     }
 
     builder
-      .then((result = []) => new Promise(async resolve => {
+      .then((result = []) => {
         if (!result || !Array.isArray(result)) {
-          return (result);
+          return result;
         }
 
         const records = result.map(convertToResponse(schema, __fields));
-        
-        await schema.assignLinksToMany(records, pin => msg.act(pin));
-        resolve(records);
-      }))
+
+        return schema
+          .assignLinksToMany(records, pin => msg.act(pin))
+          .then(() => records);
+      })
       .then(resolve)
       .catch(internalErrorPromise(app, ERROR_INFO))
       .catch(reject);

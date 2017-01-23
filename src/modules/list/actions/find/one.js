@@ -47,16 +47,17 @@ export function buildFindOne(app, middleware, msg) {
 
     // Иначе вызовем его выполнение
     builder
-      .then(([ result ]) => new Promise(async resolve => {
+      .then(([ result ]) => {
         if (!result) {
-          return resolve(result);
+          return null;
         }
 
         const record = convertToResponse(schema, __fields)(result);
 
-        await schema.assignLinksToOne(record, pin => msg.act(pin));
-        resolve(record);
-      }))
+        return schema
+          .assignLinksToOne(record, pin => msg.act(pin))
+          .then(() => record);
+      })
       .then(resolve)
       .catch(internalErrorPromise(app, ERROR_INFO))
       .catch(reject);

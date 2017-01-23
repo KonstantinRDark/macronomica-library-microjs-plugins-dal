@@ -4,10 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
-
-var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
-
 var _slicedToArray2 = require('babel-runtime/helpers/slicedToArray');
 
 var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
@@ -121,24 +117,14 @@ function buildFindList(app, middleware, msg) {
 
     builder.then(function () {
       let result = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-      return new _promise2.default((() => {
-        var _ref = (0, _asyncToGenerator3.default)(function* (resolve) {
-          if (!result || !Array.isArray(result)) {
-            return result;
-          }
 
-          const records = result.map((0, _convertToResponse2.default)(schema, __fields));
+      if (!result || !Array.isArray(result)) {
+        return result;
+      }
 
-          yield schema.assignLinksToMany(records, function (pin) {
-            return msg.act(pin);
-          });
-          resolve(records);
-        });
+      const records = result.map((0, _convertToResponse2.default)(schema, __fields));
 
-        return function (_x2) {
-          return _ref.apply(this, arguments);
-        };
-      })());
+      return schema.assignLinksToMany(records, pin => msg.act(pin)).then(() => records);
     }).then(resolve).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO)).catch(reject);
   });
 }

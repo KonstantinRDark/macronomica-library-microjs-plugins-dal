@@ -4,10 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
-
-var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
-
 var _slicedToArray2 = require('babel-runtime/helpers/slicedToArray');
 
 var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
@@ -93,24 +89,14 @@ function buildFindOne(app, middleware, msg) {
       var _ref2 = (0, _slicedToArray3.default)(_ref, 1);
 
       let result = _ref2[0];
-      return new _promise2.default((() => {
-        var _ref3 = (0, _asyncToGenerator3.default)(function* (resolve) {
-          if (!result) {
-            return resolve(result);
-          }
 
-          const record = (0, _convertToResponse2.default)(schema, __fields)(result);
+      if (!result) {
+        return null;
+      }
 
-          yield schema.assignLinksToOne(record, function (pin) {
-            return msg.act(pin);
-          });
-          resolve(record);
-        });
+      const record = (0, _convertToResponse2.default)(schema, __fields)(result);
 
-        return function (_x) {
-          return _ref3.apply(this, arguments);
-        };
-      })());
+      return schema.assignLinksToOne(record, pin => msg.act(pin)).then(() => record);
     }).then(resolve).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO)).catch(reject);
   });
 }
