@@ -4,6 +4,10 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _like = require('./like');
+
+var _like2 = _interopRequireDefault(_like);
+
 var _in = require('./in');
 
 var _in2 = _interopRequireDefault(_in);
@@ -43,6 +47,7 @@ var _lte2 = _interopRequireDefault(_lte);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
+  [_like.KEY]: _like2.default,
   [_in.KEY]: _in2.default,
   [_nin.KEY]: _nin2.default,
   [_null.KEY]: _null2.default,

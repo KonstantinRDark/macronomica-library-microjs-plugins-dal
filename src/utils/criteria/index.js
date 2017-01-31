@@ -1,3 +1,4 @@
+import likeCriteria, {KEY as KEY_LIKE} from './like';
 import inCriteria, {KEY as KEY_IN} from './in';
 import ninCriteria, {KEY as KEY_NIN} from './nin';
 import nullCriteria, {KEY as KEY_NULL} from './null';
@@ -9,6 +10,7 @@ import ltCriteria, {KEY as KEY_LT} from './lt';
 import lteCriteria, {KEY as KEY_LTE} from './lte';
 
 export default {
+  [ KEY_LIKE ]: likeCriteria,
   [ KEY_IN ]  : inCriteria,
   [ KEY_NIN ] : ninCriteria,
   [ KEY_NULL ]: nullCriteria,
