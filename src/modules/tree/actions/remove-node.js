@@ -42,7 +42,7 @@ export function buildRemoveTreeNode (app, middleware, { schema, criteria = {}, o
     })
     // Удаляем себя
     .then(removeNode(app, id, schema, options))
-    .catch(internalErrorPromise(app, ERROR_INFO));
+    .catch(error => Promise.reject(internalErrorPromise(app, ERROR_INFO)(error)));
 }
 
 function removeNode(app, id, schema, options) {

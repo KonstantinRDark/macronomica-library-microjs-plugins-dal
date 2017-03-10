@@ -87,7 +87,6 @@ export function buildFindList(app, middleware, msg) {
           .then(() => records);
       })
       .then(resolve)
-      .catch(internalErrorPromise(app, ERROR_INFO))
-      .catch(reject);
+      .catch(error => reject(internalErrorPromise(app, ERROR_INFO)(error)));
   });
 }

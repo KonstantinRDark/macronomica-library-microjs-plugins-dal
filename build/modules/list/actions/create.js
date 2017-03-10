@@ -99,7 +99,7 @@ function buildCreate(app, middleware, _ref) {
       }
 
       return (0, _convertToResponse2.default)(schema, __fields)(result);
-    }).then(resolve).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO)).catch(reject);
+    }).then(resolve).catch(error => reject((0, _errors.internalErrorPromise)(app, ERROR_INFO)(error)));
   });
 }
 

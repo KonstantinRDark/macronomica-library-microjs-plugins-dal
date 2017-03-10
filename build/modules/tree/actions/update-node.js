@@ -88,6 +88,6 @@ function buildUpdateTreeNode(app, middleware, _ref) {
 
       return updated;
     });
-  }).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO));
+  }).catch(error => _promise2.default.reject((0, _errors.internalErrorPromise)(app, ERROR_INFO)(error)));
 }
 //# sourceMappingURL=update-node.js.map

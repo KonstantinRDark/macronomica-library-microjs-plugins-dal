@@ -60,7 +60,6 @@ export function buildRemove (app, middleware, { schema, criteria = {}, options =
         return convertToResponse(schema, __fields)([ result ]);
       })
       .then(resolve)
-      .catch(internalErrorPromise(app, ERROR_INFO))
-      .catch(reject);
+      .catch(error => reject(internalErrorPromise(app, ERROR_INFO)(error)));
   });
 }

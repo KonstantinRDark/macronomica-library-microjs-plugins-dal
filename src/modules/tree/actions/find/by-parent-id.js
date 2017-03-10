@@ -34,5 +34,5 @@ export function buildFindByParentIdTreeNodes(app, middleware, { schema, criteria
     options,
     criteria: { parentId }
   })
-  .catch(internalErrorPromise(app, ERROR_INFO));
+  .catch(error => Promise.reject(internalErrorPromise(app, ERROR_INFO)(error)));
 }

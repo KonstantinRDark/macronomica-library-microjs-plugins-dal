@@ -47,7 +47,7 @@ export function buildFindPathTreeNodes(app, middleware, { schema, criteria = {},
       return childrenPath(app, schema, parentId, parents);
     })
     .then(parents => parents.sort((a, b) => a.id - b.id))
-    .catch(internalErrorPromise(app, ERROR_INFO));
+    .catch(error => Promise.reject(internalErrorPromise(app, ERROR_INFO)(error)));
 }
 
 // Загружаем одну ноду по Id

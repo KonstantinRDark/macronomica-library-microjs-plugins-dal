@@ -68,7 +68,7 @@ function buildFindPathTreeNodes(app, middleware, _ref) {
 
     // Иначе запустим загрузку родителей
     return childrenPath(app, schema, parentId, parents);
-  }).then(parents => parents.sort((a, b) => a.id - b.id)).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO));
+  }).then(parents => parents.sort((a, b) => a.id - b.id)).catch(error => _promise2.default.reject((0, _errors.internalErrorPromise)(app, ERROR_INFO)(error)));
 }
 
 // Загружаем одну ноду по Id

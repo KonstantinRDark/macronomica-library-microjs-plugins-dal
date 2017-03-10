@@ -125,7 +125,7 @@ function buildUpdate(app, middleware, _ref) {
         }
 
         return (0, _convertToResponse2.default)(schema, __fields)(result);
-      }).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO));
+      }).catch(error => reject((0, _errors.internalErrorPromise)(app, ERROR_INFO)(error)));
     }).then(resolve).catch(reject);
   });
 }

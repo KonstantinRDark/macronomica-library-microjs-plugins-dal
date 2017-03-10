@@ -59,7 +59,6 @@ export function buildFindOne(app, middleware, msg) {
           .then(() => record);
       })
       .then(resolve)
-      .catch(internalErrorPromise(app, ERROR_INFO))
-      .catch(reject);
+      .catch(error => reject(internalErrorPromise(app, ERROR_INFO)(error)));
   });
 }

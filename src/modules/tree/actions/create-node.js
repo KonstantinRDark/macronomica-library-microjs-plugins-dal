@@ -28,5 +28,5 @@ export function buildCreateTreeNode (app, middleware, { schema, params = {}, opt
     .then(node => setParentLeafFalse(app, schema, parentId)
       .then(() => node)
     )
-    .catch(internalErrorPromise(app, ERROR_INFO));
+    .catch(error => Promise.reject(internalErrorPromise(app, ERROR_INFO)(error)));
 }

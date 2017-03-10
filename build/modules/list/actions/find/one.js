@@ -97,7 +97,7 @@ function buildFindOne(app, middleware, msg) {
       const record = (0, _convertToResponse2.default)(schema, __fields)(result);
 
       return schema.assignLinksToOne(record, pin => msg.act(pin)).then(() => record);
-    }).then(resolve).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO)).catch(reject);
+    }).then(resolve).catch(error => reject((0, _errors.internalErrorPromise)(app, ERROR_INFO)(error)));
   });
 }
 //# sourceMappingURL=one.js.map

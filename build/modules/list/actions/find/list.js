@@ -125,7 +125,7 @@ function buildFindList(app, middleware, msg) {
       const records = result.map((0, _convertToResponse2.default)(schema, __fields));
 
       return schema.assignLinksToMany(records, pin => msg.act(pin)).then(() => records);
-    }).then(resolve).catch((0, _errors.internalErrorPromise)(app, ERROR_INFO)).catch(reject);
+    }).then(resolve).catch(error => reject((0, _errors.internalErrorPromise)(app, ERROR_INFO)(error)));
   });
 }
 //# sourceMappingURL=list.js.map

@@ -87,7 +87,7 @@ export function buildUpdate (app, middleware, { schema, criteria = {}, params = 
 
             return convertToResponse(schema, __fields)(result);
           })
-          .catch(internalErrorPromise(app, ERROR_INFO));
+          .catch(error => reject(internalErrorPromise(app, ERROR_INFO)(error)));
       })
       .then(resolve)
       .catch(reject);

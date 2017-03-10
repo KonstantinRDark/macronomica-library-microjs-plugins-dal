@@ -66,5 +66,5 @@ export function buildUpdateTreeNode(app, middleware, { schema, criteria = {}, pa
           return updated;
         });
     })
-    .catch(internalErrorPromise(app, ERROR_INFO));
+    .catch(error => Promise.reject(internalErrorPromise(app, ERROR_INFO)(error)));
 }
