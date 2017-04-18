@@ -53,9 +53,10 @@ export function buildUpdate (app, middleware, { schema, criteria = {}, params = 
         }
 
         let __params;
-
+        
         try {
           __params = schema.setParams(params);
+          app.log.info('micro.plugins.dal.update', { criteria, params: __params });
         } catch (e) {
           if (e.type === 'micro.plugins.dal.schema.validate.error') {
             return reject(e);
