@@ -125,7 +125,11 @@ export default class Schema {
     
     for(let propertyName of names) {
       let property = schema.properties[ propertyName ];
-      let value = dot.pick(propertyName, params) || dot.pick(property.dbName, params);
+      let value = dot.pick(propertyName, params);
+      
+      if (value === undefined) {
+        value = dot.pick(property.dbName, params);
+      }
       
       if (value === undefined) {
         continue;

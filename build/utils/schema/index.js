@@ -192,7 +192,11 @@ var _initialiseProps = function () {
 
     for (let propertyName of names) {
       let property = schema.properties[propertyName];
-      let value = _dotObject2.default.pick(propertyName, params) || _dotObject2.default.pick(property.dbName, params);
+      let value = _dotObject2.default.pick(propertyName, params);
+
+      if (value === undefined) {
+        value = _dotObject2.default.pick(property.dbName, params);
+      }
 
       if (value === undefined) {
         continue;

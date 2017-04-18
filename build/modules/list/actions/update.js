@@ -98,7 +98,7 @@ function buildUpdate(app, middleware, _ref) {
 
       try {
         __params = schema.setParams(params);
-        app.log.info('micro.plugins.dal.update', { criteria, params: { old: params, new: __params } });
+        app.log.debug('micro.plugins.dal.update', { criteria, params: { old: params, new: __params } });
       } catch (e) {
         if (e.type === 'micro.plugins.dal.schema.validate.error') {
           return reject(e);

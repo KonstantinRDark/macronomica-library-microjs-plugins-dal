@@ -26,10 +26,6 @@ function convertIn(value, options) {
     value = value.toLowerCase() === 'true' ? true : options.default;
   }
 
-  if (isBoolean(value)) {
-    value = !!value ? 1 : 0;
-  }
-
   return value;
 }
 

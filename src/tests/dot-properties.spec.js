@@ -20,6 +20,11 @@ const micro = Micro({
 });
 
 const schema = new Schema('UserInfo', {
+  'price.nds': {
+    type    : SchemaTypes.boolean,
+    default : true,
+    required: true
+  },
   'dot.property1': {
     type       : SchemaTypes.number,
     description: 'Свойство записанное через точку'
@@ -49,6 +54,7 @@ describe('dot-properties', function() {
 
   it('#create return { id }', () => micro
     .act({ ...PIN_LIST_CREATE, schema, params: {
+      price     : { nds: true },
       dot       : { property: 1, property1: 1, property2: 2 },
       customProp: true,
     } })
@@ -69,6 +75,8 @@ describe('dot-properties', function() {
       should.exist(result),
       result.should.be.a('object'),
       result.should.have.property('id').be.a('number').equal(model.id),
+      result.should.have.property('price')
+        .property('nds').be.a('boolean').equal(model.price.nds),
       result.should.have.property('dot')
         .property('property1').be.a('number').equal(model.dot.property1),
       result.should.have.property('dot')
@@ -81,12 +89,14 @@ describe('dot-properties', function() {
       ...PIN_LIST_UPDATE,
       schema,
       criteria: { id: model.id },
-      params  : { dot: { property1: 2 } },
+      params  : { dot: { property1: 2 }, price: { nds: false } },
     })
     .then(() => findFull(model.id))
     .then(result => Promise.all([
       should.exist(result),
       result.should.be.a('object'),
+      result.should.have.property('price')
+        .property('nds').be.a('boolean').equal(false),
       result.should.have.property('dot')
         .property('property1').not.equal(model.dot.property1),
       result.should.have.property('dot')
@@ -99,6 +109,7 @@ describe('dot-properties', function() {
 function createTable(connection) {
   return connection.schema.createTableIfNotExists(tableName, function (table) {
     table.increments();
+    table.boolean(schema.properties[ 'price.nds' ].dbName);
     table.integer(schema.properties[ 'dot.property1' ].dbName);
     table.integer(schema.properties[ 'dot.property2' ].dbName);
   });

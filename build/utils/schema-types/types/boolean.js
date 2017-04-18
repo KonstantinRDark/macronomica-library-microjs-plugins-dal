@@ -61,10 +61,6 @@ function convertIn(value, options) {
     value = value.toLowerCase() === 'true' ? true : options.default;
   }
 
-  if ((0, _lodash6.default)(value)) {
-    value = !!value ? 1 : 0;
-  }
-
   return value;
 }
 
