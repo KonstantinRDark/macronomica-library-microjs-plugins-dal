@@ -65,6 +65,10 @@ export function buildUpdate (app, middleware, { schema, criteria = {}, params = 
           app.log.error(e);
           return reject(SetParamsInternalError());
         }
+        
+        if (isEmpty(__params)) {
+          return { id: criteria.id };
+        }
 
         let builder = setCriteria(app, middleware(schema.tableName), criteria, reject)
           .update(__params)

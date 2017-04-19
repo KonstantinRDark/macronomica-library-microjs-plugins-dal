@@ -108,6 +108,10 @@ function buildUpdate(app, middleware, _ref) {
         return reject(SetParamsInternalError());
       }
 
+      if ((0, _lodash2.default)(__params)) {
+        return { id: criteria.id };
+      }
+
       let builder = (0, _setCriteria2.default)(app, middleware(schema.tableName), criteria, reject).update(__params).returning(...__fields);
 
       if (outer) {
